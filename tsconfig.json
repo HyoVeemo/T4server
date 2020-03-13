@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "rootDir": "./src", // 컴파일할 대상의 root 디렉토리 지정.
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "esModuleInterop": true
+    /* 모듈이 ES6 module인지 CommonJS인지 체크하기 위해 타입스크립트가 import call을 wrap하게 만든다. 
+    만약 CommonJS 모듈이고 import default from 'module'을 사용 중이라면, 타입스크립트가 발견해서 올바른 CommonJS 모듈을 리턴해준다. 
+    CommonJS -> import * as namespaceObject from 'a-module' 
+    ES6 & Typescript -> import default from 'module' */
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
