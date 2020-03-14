@@ -28,6 +28,9 @@ export default class User extends Model<User> {
   })
   hospital: Hospital[]; // 리뷰 등록한 병원
 
+  @HasMany(() => Review)
+  review: Review[];
+
   @HasMany(() => Reservation)
   reservation: Reservation;
 

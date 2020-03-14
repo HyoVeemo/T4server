@@ -29,6 +29,8 @@ class ReviewRoute {
         this.reviewRouter.delete('/review/:idx', verify, deleteReview); // 리뷰 삭제 라우터
         this.reviewRouter.get('/review', verify, getMyReview); // 리뷰 모아보기
         this.reviewRouter.get('/review/:nick', verify, getUserReview);
+        this.reviewRouter.get('/rating/:hpid', verify, getRating); // 특정 병원 별점 보기
+        this.reviewRouter.get('/ratings', verify, getRatings); // 병원별 별점 보기
     }
 }
 
@@ -42,6 +44,7 @@ async function postReview(req, res) {
     const userId = res.locals.userId;
     const contents = req.body.contents;
     const imgUrl = req.body.url; // 이미지 주소
+    const rating = req.body.rating; // 별점
 
     try {
         const resultUser = await userService.getUser(userId);
@@ -50,7 +53,8 @@ async function postReview(req, res) {
             hpid: hpid,
             userIndex: userIndex,
             contents: contents,
-            img: imgUrl
+            img: imgUrl,
+            rating: rating
         };
 
         const result = await reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
@@ -131,6 +135,35 @@ async function getUserReview(req, res) {
             success: true,
             result,
             message: 'getUserReview: 200'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function getRating(req, res) {
+    try {
+        const hpid = req.params.hpid;
+        const sequelize = req.app.locals.sequelize;
+        const result = await reviewService.getRating(sequelize, hpid);
+        res.send({
+            success: true,
+            result,
+            message: 'getRating: 200'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function getRatings(req, res) { // 병원별 별점 
+    try {
+        const sequelize = req.app.locals.sequelize;
+        const result = await reviewService.getRatings(sequelize);
+        res.send({
+            success: true,
+            result,
+            message: 'getRatings: 200'
         });
     } catch (err) {
         console.error(err);

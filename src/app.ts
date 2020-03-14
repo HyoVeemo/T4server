@@ -19,13 +19,14 @@ export class Server {
     this.app = express();
     this.env = process.env.NODE_ENV === 'production' ? true : false;
     this.db = new Db(configInfo);
+    this.app.locals.sequelize = this.db.sequelize;
 
     /**
     *  데이터베이스 연결 ( 설정 주의 )
     *  force:true  | DROPS ALL TABLE AND CREATE
     *        false  | CREATE IF NOT EXIST
     */
-    this.db.sequelize.sync({force: true});
+    this.db.sequelize.sync({ force: false });
 
     this.initMiddlewares();
     this.setRouter();
