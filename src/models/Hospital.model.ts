@@ -16,12 +16,14 @@ export default class Hospital extends Model<Hospital> {
   )
   category: Category[];
 
+  @HasMany(() => Review)
+  review: Review[];
+
   @HasMany(() => HospitalSubscriber)
   hospitalSubscriber: HospitalSubscriber;
 
   @HasMany(() => Reservation)
   reservation: Reservation;
-
 
   @BelongsToMany(() => User, {
     through: {

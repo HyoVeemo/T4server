@@ -15,9 +15,10 @@ export async function verify(req: express.Request, res: express.Response, next: 
         if (!token) {
             throw new Error('There is no token')
         }
-
+        //console.log('token: ', token);
         const decoded = await verifyUser(token);
-        res.locals.userId = decoded.id || null;
+        //console.log('decoded: ', decoded);
+        res.locals.userId = decoded.tokenId || null;
 
         return next();
     } catch (err) {

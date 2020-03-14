@@ -1,4 +1,4 @@
-import { Model, Table, Column, Comment, PrimaryKey, ForeignKey, AllowNull, CreatedAt, Unique, AutoIncrement } from "sequelize-typescript";
+import { Model, Table, Column, DataType, Comment, PrimaryKey, ForeignKey, AllowNull, CreatedAt, Unique, AutoIncrement, BelongsTo } from "sequelize-typescript";
 import Hospital from "./Hospital.model";
 import User from "./User.model";
 
@@ -9,10 +9,16 @@ export default class Review extends Model<Review> {
     @Column
     reviewIndex: number;
 
+    @BelongsTo(() => Hospital)
+    hospital: Hospital;
+
     @PrimaryKey
     @ForeignKey(() => Hospital)
     @Column
     hpid: string;
+
+    @BelongsTo(() => User)
+    user: User;
 
     @PrimaryKey
     @ForeignKey(() => User)
@@ -20,12 +26,17 @@ export default class Review extends Model<Review> {
     userIndex: number;
 
     @Comment('게시글 내용')
-    @Column
+    @Column(DataType.TEXT) // 게시글은 무슨 타입이지??
     contents: string;
 
     @AllowNull(true)
     @Column
     img: string;
+
+    @Comment('별점')
+    @AllowNull(false)
+    @Column(DataType.INTEGER)
+    rating: number;
 
     @PrimaryKey
     @CreatedAt
