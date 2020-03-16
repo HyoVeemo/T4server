@@ -1,17 +1,21 @@
 import * as convert from 'xml-js'
+
 import request from "request-promise-native";
 import Hospital from "../models/Hospital.model";
 import Category from "../models/Category.model";
 
 export async function hospitalAPI() {
+  console.log("called");
   try {
-    const host1: string = process.env.API_HOST_FULL; // 모든 병원 데이터 가져옴
-    const host2: string = process.env.API_HOST_HPID; // 한 병원 데이터 가져옴
+    const host1: string = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire'; // 모든 병원 데이터 가져옴
+    const host2: string = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlBassInfoInqire'; // 한 병원 데이터 가져옴
+    const SERVICE_KEY: string = 'I2F%2B1Oce6drCgGSm33cvy%2F3uLnHQ4BY46ALKDYUbKqPqslTOBJTUzx1yH%2FPt%2FsnttC0mZeVuTudJWDJ70xLCnw%3D%3D';
+    console.log(SERVICE_KEY);
     const queryString1: string = `?Q0=${encodeURIComponent(
       "서울특별시"
     )}&Q1=${encodeURIComponent(
       "성북구"
-    )}&pageNo=1&numOfRows=1000&ServiceKey=${process.env.SERVICE_KEY}`;
+    )}&pageNo=1&numOfRows=1000&ServiceKey=${SERVICE_KEY}`;
     const requestUrl1: string = host1 + queryString1;
     const result1 = await request.get(requestUrl1); // <- 요청 보냄
     const xmlToJson = convert.xml2json(result1, {
@@ -24,7 +28,7 @@ export async function hospitalAPI() {
     let hospitalList;
     let time;
     for (const key in keys) {
-      const queryString2: string = `?HPID=${hospitalArr[key].hpid._text}&ServiceKey=${process.env.SERVICE_KEY}`;
+      const queryString2: string = `?HPID=${hospitalArr[key].hpid._text}&ServiceKey=${SERVICE_KEY}`;
       const requestUrl2: string = host2 + queryString2;
       const result2 = await request.get(requestUrl2);
       const xmlToJson2 = convert.xml2json(result2, {
@@ -56,7 +60,6 @@ export async function hospitalAPI() {
         hspiCategory.push(0);
       }
 
-      const hospital = jsonObj2.response.body.items.item;
       let arr = Object.keys(hospitalArr[key]); // 병원 목록에 들어있는 키들.
       let arr2 = [];
       for (const x of arr) {

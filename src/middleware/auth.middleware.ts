@@ -10,29 +10,29 @@ import { jwtToken } from '../utils/jwt.util'
  * @param next 
  */
 export async function verify(req: express.Request, res: express.Response, next: Function) {
-    try {
-        const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers['x-access-token'];
         if (!token) {
-            throw new Error('There is no token')
+            return res.status(403).json({
+                success:false,
+                statusCode: 403,
+                message: 'verify: 403'
+            })
         }
-
-        const decoded = await verifyUser(token);
-        res.locals.userId = decoded.id || null;
-
-        return next();
-    } catch (err) {
-        res.status(403).json({
-            success: false,
-            statusCode: 403,
-            message: 'verify:403'
+        try{
+            await verifyUser(token);
+            return next();
+        }catch (err) {
+            res.status(403).json({
+                success: false,
+                statusCode: 403,
+                message: 'verify:403'
         })
     }
 };
 
-async function verifyUser(token: string | string[]): Promise<any> {
+async function verifyUser(token: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
         await jwt.verify(token, jwtToken.secret, (err, decoded) => {
-
             if (err) {
                 return reject(err);
             }

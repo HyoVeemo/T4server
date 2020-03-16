@@ -1,4 +1,4 @@
-import { Model, Table, Column, Comment, PrimaryKey, ForeignKey, AllowNull, CreatedAt, Unique, AutoIncrement } from "sequelize-typescript";
+import { Model, Table, Column, Comment, PrimaryKey, ForeignKey, AllowNull, CreatedAt, Unique, AutoIncrement, DataType } from "sequelize-typescript";
 import Hospital from "./Hospital.model";
 import User from "./User.model";
 
@@ -20,7 +20,7 @@ export default class Review extends Model<Review> {
     userIndex: number;
 
     @Comment('게시글 내용')
-    @Column
+    @Column(DataType.TEXT)
     contents: string;
 
     @AllowNull(true)
