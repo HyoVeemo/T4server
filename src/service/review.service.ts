@@ -23,7 +23,7 @@ class ReviewService {
             }
         }
         const result = await Review.findAndCountAll(option);
-        
+
         return result;
     }
 
@@ -68,9 +68,22 @@ class ReviewService {
         }
     }
 
-   
+    async getRating(sequelize, hpid) {
+        return await Review.findOne({
+            where: {
+                hpid: hpid
+            },
+            attributes: ['hpid', [sequelize.fn('AVG', sequelize.col('rating')), 'ratingAvg']],
+        });
+    }
 
- 
+    async getRatings(sequelize) {
+        return await Review.findAll({
+            attributes: ['hpid', [sequelize.fn('AVG', sequelize.col('rating')), 'ratingAvg']],
+            group: 'hpid',
+            order: [[sequelize.fn('AVG', sequelize.col('rating')), 'DESC']]
+        });
+    }
 }
 
 export const reviewService = new ReviewService();

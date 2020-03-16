@@ -1,6 +1,8 @@
 import Hospital from '../models/Hospital.model'
 import HospitalCategory from '../models/HospitalCategory.model';
 import Category from '../models/Category.model';
+import User from '../models/User.model';
+import Review from '../models/Review.model';
 import Treatment from '../models/Treatment.model';
 import { Op } from 'sequelize';
 
@@ -115,17 +117,43 @@ export class HospitalService {
      * 병원 조회
      * @param hpid 
      */
-    async getHospital(hpid: string): Promise<any> {
+    async getHospital(hpid: string, sequelize): Promise<any> {
         let resultHospital = await Hospital.findAll({
             where: {
                 hpid: hpid
             },
+            attributes: [
+                'hpid',
+                'dutyName',
+                'dutyAddr',
+                'wgs84Lon',
+                'wgs84Lat',
+                'dutyTime1',
+                'dutyTime2',
+                'dutyTime3',
+                'dutyTime4',
+                'dutyTime5',
+                'dutyTime6',
+                'dutyTime7',
+                'dutyTime8',
+                'dutyTel',
+                'dutyInf',
+                [sequelize.fn('AVG', sequelize.col('review.rating')), 'ratingAvg']
+            ],
             include: [
                 {
+                    model: Review,
+                    as: 'review',
+                    attributes: [],
+                    required: false
+                },
+                {
                     model: Category,
+                    as: 'category',
                     required: true
-                }
-            ]
+                },
+            ],
+            group: ['hpid', 'category.dgid']
         });
         return resultHospital;
     }

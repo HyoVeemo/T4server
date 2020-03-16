@@ -24,11 +24,21 @@ class ReviewRoute {
         });
         this.reviewRouter.post('/img', this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer();
+<<<<<<< HEAD
         this.reviewRouter.post('/review/hpid/:hpid', this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
         this.reviewRouter.get('/review', getMyReview); // 리뷰 모아보기
         this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
         this.reviewRouter.patch('/review/revieIndex/:reviewIndex', this.upload2.none(), updateReview); // 리뷰 수정 라우터
         this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', deleteReview); // 리뷰 삭제 라우터
+=======
+        this.reviewRouter.post('/review/:hpid', verify, this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
+        this.reviewRouter.patch('/review/:idx', verify, this.upload2.none(), updateReview); // 리뷰 수정 라우터
+        this.reviewRouter.delete('/review/:idx', verify, deleteReview); // 리뷰 삭제 라우터
+        this.reviewRouter.get('/review', verify, getMyReview); // 리뷰 모아보기
+        this.reviewRouter.get('/review/:nick', verify, getUserReview);
+        this.reviewRouter.get('/rating/:hpid', verify, getRating); // 특정 병원 별점 보기
+        this.reviewRouter.get('/ratings', verify, getRatings); // 병원별 별점 보기
+>>>>>>> 2d7842604605ae8ecf5e0890792f1e0d3260e0ea
     }
 }
 
@@ -41,7 +51,12 @@ async function postReview(req, res) {
     const hpid = req.params.hpid;
     const userId = res.locals.userId;
     const contents = req.body.contents;
+<<<<<<< HEAD
     const imgUrl = req.body.url; 
+=======
+    const imgUrl = req.body.url; // 이미지 주소
+    const rating = req.body.rating; // 별점
+>>>>>>> 2d7842604605ae8ecf5e0890792f1e0d3260e0ea
 
     try {
         const resultUser = await userService.getUser(userId);
@@ -50,7 +65,8 @@ async function postReview(req, res) {
             hpid: hpid,
             userIndex: userIndex,
             contents: contents,
-            img: imgUrl
+            img: imgUrl,
+            rating: rating
         };
         const result = await reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
         res.send({
@@ -146,5 +162,37 @@ async function deleteReview(req, res) {
 
 }
 
+<<<<<<< HEAD
 
 export const reviewRoute:ReviewRoute = new ReviewRoute();
+=======
+async function getRating(req, res) {
+    try {
+        const hpid = req.params.hpid;
+        const sequelize = req.app.locals.sequelize;
+        const result = await reviewService.getRating(sequelize, hpid);
+        res.send({
+            success: true,
+            result,
+            message: 'getRating: 200'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function getRatings(req, res) { // 병원별 별점 
+    try {
+        const sequelize = req.app.locals.sequelize;
+        const result = await reviewService.getRatings(sequelize);
+        res.send({
+            success: true,
+            result,
+            message: 'getRatings: 200'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+export const reviewRoute = new ReviewRoute();
+>>>>>>> 2d7842604605ae8ecf5e0890792f1e0d3260e0ea

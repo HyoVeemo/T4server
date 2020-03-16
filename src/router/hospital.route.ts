@@ -6,11 +6,11 @@ class HospitalRoute {
     constructor() {
         this.hospitalRouter.get('/hospital/:hpid', getHospital)
         this.hospitalRouter.get('/hospital', pageListHospital)
-        this.hospitalRouter.get('/debug',loginTest);
+        this.hospitalRouter.get('/debug', loginTest);
     }
 }
 
-async function loginTest(req,res):Promise<any>{
+async function loginTest(req, res): Promise<any> {
     try {
 
         const token = auth(req);
@@ -33,9 +33,9 @@ async function loginTest(req,res):Promise<any>{
 
 async function getHospital(req, res): Promise<any> {
     let hpid = req.params.hpid;
-    
+    const sequelize = req.app.locals.sequelize;
     try {
-        const result = await hospitalService.getHospital(hpid);
+        const result = await hospitalService.getHospital(hpid, sequelize);
         res.send({
             success: true,
             statusCode: 200,
