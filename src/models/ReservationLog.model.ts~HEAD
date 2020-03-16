@@ -6,7 +6,7 @@ import Hospital from "./Hospital.model";
  * Table: 병원 예약 로그
  */
 @Table
-export default class Reservation extends Model<Reservation>{
+export default class ReservationLog extends Model<ReservationLog>{
     @PrimaryKey
     @AutoIncrement
     @Column
@@ -28,29 +28,24 @@ export default class Reservation extends Model<Reservation>{
     @Column(DataType.STRING)
     reservationTime: string;
 
-    @AllowNull(false)
-    @Comment('예약현황')
-    @Column(DataType.STRING)
+    @Default('INACTIVE')
+    @Column
     status: string;
 
     @Column
-    @Column(DataType.STRING)
-    userName: string;
+    alterUserName: string;
 
     @Column
-    @Column(DataType.STRING)
-    age: string;
+    alterAge: string;
 
     @Column
-    @Column(DataType.STRING)
-    tel: string;
+    alterTel: string;
 
     @Column
-    @Column(DataType.STRING)
-    email: string;
+    alterEmail: string;
 
     @CreatedAt
-    CreatedAt: Date;
+    createdAt: Date;
 
     @UpdatedAt
     updatedAt: Date;

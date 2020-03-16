@@ -1,23 +1,41 @@
 import Review from '../models/Review.model';
-
+interface ICreateReview{
+    hpid:string,
+    userIndex:number,
+    contents:string,
+    img?: string,
+}
 class ReviewService {
-    constructor() { }
-    async createReview(reviewData) { // 여긴 function 왜 없냐!!
+    constructor() {
+        
+    }
+
+
+    async createReview(reviewData:ICreateReview) { 
         const resultReview = await Review.create(reviewData);
         return resultReview.toJSON();
     }
 
-    async deleteReview(reviewIndex, userIndex) {
+    async getMyReview(userIndex:number) {
         const option = {
             where: {
-                reviewIndex: reviewIndex,
                 userIndex: userIndex
             }
         }
-        const result = await Review.destroy(option);
-        if (result === 0) {
-            return '해당 리뷰가 존재하지 않아 변화 없음.';
+        const result = await Review.findAndCountAll(option);
+
+        return result;
+    }
+
+    async getUserReview(userIndex) {
+        console.log(userIndex);
+        const option = {
+            where: {
+                userIndex: userIndex
+            }
         }
+        const result = await Review.findAndCountAll(option);
+        return result;
     }
 
     async updateReview(reviewIndex, userIndex, contents, imgUrl) {
@@ -37,25 +55,17 @@ class ReviewService {
         }
     }
 
-    async getMyReview(userIndex) {
+    async deleteReview(reviewIndex, userIndex) {
         const option = {
             where: {
+                reviewIndex: reviewIndex,
                 userIndex: userIndex
             }
         }
-        const result = await Review.findAndCountAll(option);
-        return result;
-    }
-
-    async getUserReview(userIndex) {
-        console.log(userIndex);
-        const option = {
-            where: {
-                userIndex: userIndex
-            }
+        const result = await Review.destroy(option);
+        if (result === 0) {
+            return '해당 리뷰가 존재하지 않아 변화 없음.';
         }
-        const result = await Review.findAndCountAll(option);
-        return result;
     }
 
     async getRating(sequelize, hpid) {

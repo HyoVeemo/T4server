@@ -21,7 +21,7 @@ export default class HospitalSubscriber extends Model<HospitalSubscriber>{
     hpid: string;
 
     @Column(DataType.INTEGER)
-    isGood: number;
+    isScrap: number;
 
     @CreatedAt
     CreatedAt: Date;

@@ -100,8 +100,8 @@ export class HospitalService {
         }
 
         if (pn) {
-            option.limit = pn.limit;
-            option.offset = pn.offset;
+            option.limit = pn.limit; // 개수
+            option.offset = pn.offset; // 시작 위치
         }
 
         let resultHospital = await Hospital.findAndCountAll(option);

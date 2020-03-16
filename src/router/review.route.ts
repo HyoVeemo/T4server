@@ -1,7 +1,7 @@
 import express from 'express';
 import { reviewService } from '../service/review.service'
-import { verify } from '../middleware/auth.middleware'
 import { userService } from '../service/user.service'
+import { auth } from '../utils/auth.util'
 import AWS from 'aws-sdk';
 import multer from 'multer';
 import multerS3 from 'multer-s3';
@@ -22,15 +22,13 @@ class ReviewRoute {
             }),
             limits: { fileSize: 5 * 1024 * 1024 },
         });
-        this.reviewRouter.post('/img', verify, this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
+        this.reviewRouter.post('/img', this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer();
-        this.reviewRouter.post('/review/:hpid', verify, this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
-        this.reviewRouter.patch('/review/:idx', verify, this.upload2.none(), updateReview); // 리뷰 수정 라우터
-        this.reviewRouter.delete('/review/:idx', verify, deleteReview); // 리뷰 삭제 라우터
-        this.reviewRouter.get('/review', verify, getMyReview); // 리뷰 모아보기
-        this.reviewRouter.get('/review/:nick', verify, getUserReview);
-        this.reviewRouter.get('/rating/:hpid', verify, getRating); // 특정 병원 별점 보기
-        this.reviewRouter.get('/ratings', verify, getRatings); // 병원별 별점 보기
+        this.reviewRouter.post('/review/hpid/:hpid', this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
+        this.reviewRouter.get('/review', getMyReview); // 리뷰 모아보기
+        this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
+        this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', this.upload2.none(), updateReview); // 리뷰 수정 라우터
+        this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', deleteReview); // 리뷰 삭제 라우터
     }
 }
 
@@ -48,7 +46,7 @@ async function postReview(req, res) {
 
     try {
         const resultUser = await userService.getUser(userId);
-        const userIndex = resultUser.getDataValue('userIndex');
+        const userIndex = resultUser.userIndex;
         const reviewData = {
             hpid: hpid,
             userIndex: userIndex,
@@ -56,62 +54,47 @@ async function postReview(req, res) {
             img: imgUrl,
             rating: rating
         };
-
         const result = await reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
-
         res.send({
             success: true,
             result,
             message: 'createReview: 200'
         });
+
     } catch (err) {
         console.error(err);
-    }
+        res.send({
+            success: false,
+            message: 'createReview: 500'
+        });
+    };
 }
 
 async function updateReview(req, res) {
-    const reviewIndex = req.params.idx;
-    const userId = res.locals.userId;
+    const reviewIndex = req.params.reviewIndex;
+    const { tokenIndex: userIndex } = auth(req);
     const contents = req.body.contents;
     const imgUrl = req.body.url || null;
     try {
-        const resultUser = await userService.getUser(userId);
-        const userIndex = resultUser.getDataValue('userIndex');
-        const result = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
+        const resultUser = await userService.getUser(userIndex);
+        const resultReview = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
         res.send({
             success: true,
-            result,
+            result: resultReview,
             message: 'updateReview: 200'
         });
     } catch (err) {
         console.error(err);
-    }
-
-}
-
-async function deleteReview(req, res) { // 왜 여기선 function 붙이고
-    const reviewIndex = req.params.idx;
-    const userId = res.locals.userId;
-    try {
-        const resultUser = await userService.getUser(userId);
-        const userIndex = resultUser.getDataValue('userIndex');
-        const result = await reviewService.deleteReview(reviewIndex, userIndex);
         res.send({
-            success: true,
-            result,
-            message: 'deleteReview: 200'
+            success: false,
+            message: 'updateReview: 500'
         });
-    } catch (err) {
-        console.error(err);
     }
-
 }
 
 async function getMyReview(req, res) {
-    const userId = res.locals.userId;
+    const { tokenIndex: userIndex } = auth(req);
     try {
-        const resultUser = await userService.getUser(userId);
-        const userIndex = resultUser.getDataValue('userIndex');
         const result = await reviewService.getMyReview(userIndex);
         res.send({
             success: true,
@@ -119,26 +102,50 @@ async function getMyReview(req, res) {
             message: 'getReview: 200'
         });
     } catch (err) {
-        console.error(err);
+        res.send({
+            success: false,
+            message: 'getReview: 500'
+        });
     }
 }
 
-async function getUserReview(req, res) {
-    const userNickName = req.params.nick;
-    console.log('userNick: ', userNickName);
+async function getReviewByUserNickName(req, res) {
+    const userNickName = req.params.userNickName;
     try {
         const resultUser = await userService.getUser(userNickName);
-        console.log('resultUser: ', resultUser);
-        const userIndex = resultUser.getDataValue('userIndex');
-        const result = await reviewService.getUserReview(userIndex);
+        const result = await reviewService.getUserReview(resultUser.userIndex);
         res.send({
             success: true,
             result,
-            message: 'getUserReview: 200'
+            message: 'getReviewByUserNickName: 200'
         });
     } catch (err) {
         console.error(err);
+        res.send({
+            success: false,
+            message: 'getReviewByUserNickName: 500'
+        });
     }
+}
+
+async function deleteReview(req, res) {
+    const reviewIndex = req.params.reviewIndex;
+    const { tokenIndex: userIndex } = auth(req);
+    try {
+        const result = await reviewService.deleteReview(reviewIndex, userIndex);
+        res.send({
+            success: true,
+            result,
+            message: 'deleteReview: 200'
+        });
+    } catch (err) {
+        console.log(err);
+        res.send({
+            success: false,
+            message: 'deleteReview: 500'
+        });
+    }
+
 }
 
 async function getRating(req, res) {

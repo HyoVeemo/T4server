@@ -4,6 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
+    "outDir": "./dist",
     "rootDir": "./src", // 컴파일할 대상의 root 디렉토리 지정.
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

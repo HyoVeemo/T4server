@@ -1,7 +1,7 @@
 import { Table, Column, Model, CreatedAt, UpdatedAt, BelongsToMany, HasMany, Comment, Unique, AllowNull, PrimaryKey, AutoIncrement, DataType } from "sequelize-typescript";
 import Review from "./Review.model";
 import Hospital from "./Hospital.model";
-import Reservation from "./Reservation.mdoel";
+import Reservation from "./Reservation.model";
 
 @Table({
   tableName: "User",
@@ -32,7 +32,7 @@ export default class User extends Model<User> {
   review: Review[];
 
   @HasMany(() => Reservation)
-  reservation: Reservation;
+  reservation: Reservation[];
 
   @PrimaryKey
   @AutoIncrement
@@ -66,6 +66,9 @@ export default class User extends Model<User> {
 
   @Column(DataType.STRING)
   tel: string;
+
+  @Column(DataType.STRING)
+  email: string;
 
   @Column(DataType.STRING)
   avartar: string;
