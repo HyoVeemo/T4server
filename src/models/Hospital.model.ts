@@ -4,7 +4,7 @@ import HospitalCategory from "./HospitalCategory.model";
 import User from "./User.model";
 import Review from "./Review.model";
 import HospitalSubscriber from "./HospitalSubscriber.model";
-import Reservation from "./Reservation.mdoel";
+import Reservation from "./Reservation.model";
 
 @Table
 export default class Hospital extends Model<Hospital> {

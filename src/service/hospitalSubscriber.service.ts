@@ -28,7 +28,6 @@ export class HospitalSubscriberService{
         return resultHospitalSubscriber.toJSON();
     }
 
-    async 
 
     async updateHospitalSubscriber(hpid:string,userIndex:number,hospitalSubscriberData:any):Promise<any>{
         const result = await HospitalSubscriber.update(hospitalSubscriberData,{

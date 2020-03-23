@@ -1,7 +1,7 @@
 import { Table, Column, Model, CreatedAt, UpdatedAt, BelongsToMany, HasMany, Comment, Unique, AllowNull, PrimaryKey, AutoIncrement, DataType } from "sequelize-typescript";
 import Review from "./Review.model";
 import Hospital from "./Hospital.model";
-import Reservation from "./Reservation.mdoel";
+import Reservation from "./Reservation.model";
 
 @Table({
   tableName: "User",
