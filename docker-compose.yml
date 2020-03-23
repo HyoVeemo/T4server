@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  service-name:
+    image: docker-image-name:latest
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE}
+    volumes:
+      - ~/.aws/:/root/.aws:ro
