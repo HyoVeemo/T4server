@@ -1,9 +1,6 @@
-version: '3'
-
 services:
-  service-name:
-    image: docker-image-name:latest
+  web:
+    build: .
     environment:
-      - AWS_PROFILE=${AWS_PROFILE}
-    volumes:
-      - ~/.aws/:/root/.aws:ro
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
