@@ -26,7 +26,7 @@ export default class Review extends Model<Review> {
     userIndex: number;
 
     @Comment('게시글 내용')
-    @Column(DataType.TEXT) // 게시글은 무슨 타입이지??
+    @Column(DataType.TEXT)
     contents: string;
 
     @AllowNull(true)

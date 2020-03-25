@@ -45,8 +45,7 @@ __decorate([
 ], Review.prototype, "userIndex", void 0);
 __decorate([
     sequelize_typescript_1.Comment('게시글 내용'),
-    sequelize_typescript_1.Column(sequelize_typescript_1.DataType.TEXT) // 게시글은 무슨 타입이지??
-    ,
+    sequelize_typescript_1.Column(sequelize_typescript_1.DataType.TEXT),
     __metadata("design:type", String)
 ], Review.prototype, "contents", void 0);
 __decorate([

@@ -20,8 +20,11 @@ aws_sdk_1.default.config.update({ region: 'ap-northeast-2' });
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const credentials = new aws_sdk_1.default.SharedIniFileCredentials();
-            aws_sdk_1.default.config.credentials = credentials; // ~/.aws/credentials 에 저장된 인증 정보 가져옴.
+            // ~/.aws/credentials 에 저장된 인증 정보 가져옴
+            aws_sdk_1.default.config.credentials = credentials;
             const ssm = yield new aws_sdk_1.default.SSM();
+            // Request
+            // 정보를 얻고싶은 parameter 이름
             const params = {
                 Name: 'config',
                 WithDecryption: false

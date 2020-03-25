@@ -30,6 +30,7 @@ export async function verify(req: express.Request, res: express.Response, next: 
     }
 };
 
+
 async function verifyUser(token: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
         await jwt.verify(token, jwtToken.secret, (err, decoded) => {

@@ -6,6 +6,7 @@ import HospitalOffice from "./HospitalOffice.model";
 import Review from "./Review.model";
 import Reservation from "./Reservation.model";
 import ReservationLog from "./ReservationLog.model";
+import HospitalSubscriber from "./HospitalSubscriber.model";
 
 @Table
 export default class Hospital extends Model<Hospital> {
