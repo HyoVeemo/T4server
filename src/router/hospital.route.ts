@@ -4,15 +4,14 @@ import { auth } from '../utils/auth.util'
 class HospitalRoute {
     public hospitalRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalRouter.get('/hospital/:hpid', getHospital)
-        this.hospitalRouter.get('/hospital', pageListHospital)
+        this.hospitalRouter.get('/hospital/:hpid', getHospital);
+        this.hospitalRouter.get('/hospital', pageListHospital);
         this.hospitalRouter.get('/debug', loginTest);
     }
 }
 
 async function loginTest(req, res): Promise<any> {
     try {
-
         const token = auth(req);
         console.log(token);
 

@@ -29,6 +29,8 @@ class ReviewRoute {
         this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
         this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', this.upload2.none(), updateReview); // 리뷰 수정 라우터
         this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', deleteReview); // 리뷰 삭제 라우터
+        this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
+        this.reviewRouter.get('/review/ratings', getRatings); // 모든 병원 평점 가져오기
     }
 }
 
@@ -39,14 +41,12 @@ async function uploadImg(req, res) {
 
 async function postReview(req, res) {
     const hpid = req.params.hpid;
-    const userId = res.locals.userId;
+    const { tokenIndex: userIndex } = auth(req);
     const contents = req.body.contents;
     const imgUrl = req.body.url; // 이미지 주소
     const rating = req.body.rating; // 별점
 
     try {
-        const resultUser = await userService.getUser(userId);
-        const userIndex = resultUser.userIndex;
         const reviewData = {
             hpid: hpid,
             userIndex: userIndex,
@@ -76,7 +76,6 @@ async function updateReview(req, res) {
     const contents = req.body.contents;
     const imgUrl = req.body.url || null;
     try {
-        const resultUser = await userService.getUser(userIndex);
         const resultReview = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
         res.send({
             success: true,
@@ -160,6 +159,10 @@ async function getRating(req, res) {
         });
     } catch (err) {
         console.error(err);
+        res.send({
+            success: false,
+            message: 'getRating: 500'
+        });
     }
 }
 
@@ -174,6 +177,10 @@ async function getRatings(req, res) { // 병원별 별점
         });
     } catch (err) {
         console.error(err);
+        res.send({
+            success: false,
+            message: 'getRatings: 500'
+        });
     }
 }
 export const reviewRoute = new ReviewRoute();

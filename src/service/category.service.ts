@@ -1,17 +1,17 @@
 import Category from '../models/Category.model';
 
-export class CategoryService{
-    constructor(){
+export class CategoryService {
+    constructor() {
     }
-    
-    async listCategory(){
+
+    async listCategory() {
         let resultCategory = await Category.findAll();
         let results: Array<any> = [];
-		for (const row of resultCategory) {
-			results.push(row.toJSON());
-		}
+        for (const row of resultCategory) {
+            results.push(row.toJSON());
+        }
 
-		return results; 
+        return results;
     }
 }
 

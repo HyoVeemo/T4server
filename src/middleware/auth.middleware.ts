@@ -11,35 +11,21 @@ import { jwtToken } from '../utils/jwt.util'
  */
 export async function verify(req: express.Request, res: express.Response, next: Function) {
     const token = req.headers['x-access-token'];
-        if (!token) {
-            return res.status(403).json({
-                success:false,
-                statusCode: 403,
-                message: 'verify: 403'
-            })
-        }
-<<<<<<< HEAD
-        try{
-            await verifyUser(token);
-            return next();
-        }catch (err) {
-            res.status(403).json({
-                success: false,
-                statusCode: 403,
-                message: 'verify:403'
-=======
-        //console.log('token: ', token);
-        const decoded = await verifyUser(token);
-        //console.log('decoded: ', decoded);
-        res.locals.userId = decoded.tokenId || null;
-
+    if (!token) {
+        return res.status(403).json({
+            success: false,
+            statusCode: 403,
+            message: 'verify: 403'
+        })
+    }
+    try {
+        await verifyUser(token);
         return next();
     } catch (err) {
         res.status(403).json({
             success: false,
             statusCode: 403,
             message: 'verify:403'
->>>>>>> 2d7842604605ae8ecf5e0890792f1e0d3260e0ea
         })
     }
 };
