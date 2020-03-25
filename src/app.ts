@@ -6,7 +6,8 @@ import { categoryRoute } from "./router/category.route";
 import { hospitalRoute } from "./router/hospital.route";
 import { reviewRoute } from './router/review.route';
 import { reservationRoute } from './router/reservation.route';
-import { verify } from './middleware/auth.middleware'
+import { hospitalSubscriberRoute } from './router/hospitalSubscriber.route';
+import { verify } from './middleware/auth.middleware';
 import Db from './db';
 
 
@@ -46,5 +47,6 @@ export class Server {
     this.app.use(verify);
     this.app.use(reviewRoute.reviewRouter);
     this.app.use(reservationRoute.reservationRouter);
+    this.app.use(hospitalSubscriberRoute.hospitalSubscriberRouter);
   }
 }

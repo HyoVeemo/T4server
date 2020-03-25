@@ -10,7 +10,6 @@ class ReviewService {
 
     }
 
-
     async createReview(reviewData: ICreateReview) {
         const resultReview = await Review.create(reviewData);
         return resultReview.toJSON();

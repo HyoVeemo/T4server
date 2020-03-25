@@ -18,6 +18,7 @@ const category_route_1 = require("./router/category.route");
 const hospital_route_1 = require("./router/hospital.route");
 const review_route_1 = require("./router/review.route");
 const reservation_route_1 = require("./router/reservation.route");
+const hospitalSubscriber_route_1 = require("./router/hospitalSubscriber.route");
 const auth_middleware_1 = require("./middleware/auth.middleware");
 const db_1 = __importDefault(require("./db"));
 class Server {
@@ -47,6 +48,7 @@ class Server {
         this.app.use(auth_middleware_1.verify);
         this.app.use(review_route_1.reviewRoute.reviewRouter);
         this.app.use(reservation_route_1.reservationRoute.reservationRouter);
+        this.app.use(hospitalSubscriber_route_1.hospitalSubscriberRoute.hospitalSubscriberRouter);
     }
 }
 exports.Server = Server;
