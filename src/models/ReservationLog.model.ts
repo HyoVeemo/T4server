@@ -1,24 +1,38 @@
-import { Model,Default, ForeignKey, Table, Column, HasMany, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, NotNull } from "sequelize-typescript";
+import { Model, Default, BelongsTo, ForeignKey, Table, Column, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull } from "sequelize-typescript";
 import User from "./User.model";
 import Hospital from "./Hospital.model";
+import HospitalOffice from './HospitalOffice.model';
 
 /**
  * Table: 병원 예약 로그
  */
 @Table
-export default class Reservation extends Model<Reservation>{
+export default class ReservationLog extends Model<ReservationLog>{
+    @BelongsTo(() => User)
+    user: User;
+
+    @BelongsTo(() => Hospital)
+    hospital: Hospital;
+
+    @BelongsTo(() => HospitalOffice)
+    hospitalOffice: HospitalOffice;
+
     @PrimaryKey
     @AutoIncrement
     @Column
-    reservationLogIndex:number;
+    reservationLogIndex: number;
 
-    @AllowNull(false)
+    @ForeignKey(() => User)
     @Column
     userIndex: number;
 
-    @AllowNull(false)
+    @ForeignKey(() => Hospital)
     @Column
     hpid: string;
+
+    @ForeignKey(() => HospitalOffice)
+    @Column
+    officeIndex: number;
 
     @AllowNull(false)
     @Column(DataType.STRING)
@@ -28,30 +42,25 @@ export default class Reservation extends Model<Reservation>{
     @Column(DataType.STRING)
     reservationTime: string;
 
-    @AllowNull(false)
-    @Comment('예약현황')
-    @Column(DataType.STRING)
+    @Default('INACTIVE')
+    @Column
     status: string;
 
     @Column
-    @Column(DataType.STRING)
-    userName: string;
+    alterUserName: string;
 
     @Column
-    @Column(DataType.STRING)
-    age: string;
-    
+    alterAge: string;
+
     @Column
-    @Column(DataType.STRING)
-    tel: string;
-    
+    alterTel: string;
+
     @Column
-    @Column(DataType.STRING)
-    email: string;
-        
+    alterEmail: string;
+
     @CreatedAt
-    CreatedAt: Date;
-  
+    createdAt: Date;
+
     @UpdatedAt
     updatedAt: Date;
 }

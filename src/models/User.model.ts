@@ -2,6 +2,7 @@ import { Table, Column, Model, CreatedAt, UpdatedAt, BelongsToMany, HasMany, Com
 import Review from "./Review.model";
 import Hospital from "./Hospital.model";
 import Reservation from "./Reservation.model";
+import ReservationLog from "./ReservationLog.model";
 
 @Table({
   tableName: "User",
@@ -15,6 +16,7 @@ import Reservation from "./Reservation.model";
       "age",
       "gender",
       "tel",
+      "email",
       "avartar"
     ]
   }
@@ -32,7 +34,10 @@ export default class User extends Model<User> {
   review: Review[];
 
   @HasMany(() => Reservation)
-  reservation: Reservation;
+  reservation: Reservation[];
+
+  @HasMany(() => Reservation)
+  reservationLog: ReservationLog[];
 
   @PrimaryKey
   @AutoIncrement
@@ -64,8 +69,13 @@ export default class User extends Model<User> {
   @Column(DataType.STRING)
   gender: string;
 
+  @Unique
   @Column(DataType.STRING)
   tel: string;
+
+  @Unique
+  @Column(DataType.STRING)
+  email: string;
 
   @Column(DataType.STRING)
   avartar: string;

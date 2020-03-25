@@ -10,7 +10,6 @@ export async function hospitalAPI() {
     const host1: string = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire'; // 모든 병원 데이터 가져옴
     const host2: string = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlBassInfoInqire'; // 한 병원 데이터 가져옴
     const SERVICE_KEY: string = 'I2F%2B1Oce6drCgGSm33cvy%2F3uLnHQ4BY46ALKDYUbKqPqslTOBJTUzx1yH%2FPt%2FsnttC0mZeVuTudJWDJ70xLCnw%3D%3D';
-    console.log(SERVICE_KEY);
     const queryString1: string = `?Q0=${encodeURIComponent(
       "서울특별시"
     )}&Q1=${encodeURIComponent(

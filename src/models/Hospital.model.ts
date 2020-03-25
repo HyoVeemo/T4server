@@ -2,9 +2,11 @@ import { Model, Table, Column, Comment, BelongsToMany, PrimaryKey, DataType, All
 import Category from "./Category.model";
 import HospitalCategory from "./HospitalCategory.model";
 import User from "./User.model";
+import HospitalOffice from "./HospitalOffice.model";
 import Review from "./Review.model";
-import HospitalSubscriber from "./HospitalSubscriber.model";
 import Reservation from "./Reservation.model";
+import ReservationLog from "./ReservationLog.model";
+import HospitalSubscriber from "./HospitalSubscriber.model";
 
 @Table
 export default class Hospital extends Model<Hospital> {
@@ -19,11 +21,14 @@ export default class Hospital extends Model<Hospital> {
   @HasMany(() => Review)
   review: Review[];
 
-  @HasMany(() => HospitalSubscriber)
-  hospitalSubscriber: HospitalSubscriber;
+  @HasMany(() => HospitalOffice)
+  hospitalOffice: HospitalOffice[];
 
   @HasMany(() => Reservation)
-  reservation: Reservation;
+  reservation: Reservation[];
+
+  @HasMany(() => ReservationLog)
+  reservationLog: ReservationLog[];
 
   @BelongsToMany(() => User, {
     through: {

@@ -1,6 +1,7 @@
-import { Model,Default, ForeignKey, Table, Column, HasMany, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, NotNull } from "sequelize-typescript";
+import { Model, Default, ForeignKey, Table, Column, BelongsTo, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, NotNull } from "sequelize-typescript";
 import User from "./User.model";
 import Hospital from "./Hospital.model";
+import HospitalOffice from './HospitalOffice.model';
 import { any } from "bluebird";
 
 /**
@@ -8,20 +9,31 @@ import { any } from "bluebird";
  */
 @Table
 export default class Reservation extends Model<Reservation>{
+    @BelongsTo(() => User)
+    user: User;
+
+    @BelongsTo(() => Hospital)
+    hospital: Hospital;
+
+    @BelongsTo(() => HospitalOffice)
+    hospitalOffice: HospitalOffice;
+
     @PrimaryKey
     @AutoIncrement
     @Column
-    reservationIndex:number;
+    reservationIndex: number;
 
-    @ForeignKey(()=>User)
-    @AllowNull(false)
+    @ForeignKey(() => User)
     @Column
     userIndex: number;
 
-    @ForeignKey(()=>Hospital)
-    @AllowNull(false)
+    @ForeignKey(() => Hospital)
     @Column
     hpid: string;
+
+    @ForeignKey(() => HospitalOffice)
+    @Column
+    officeIndex: number;
 
     @AllowNull(false)
     @Column(DataType.STRING)
@@ -31,30 +43,26 @@ export default class Reservation extends Model<Reservation>{
     @Column(DataType.STRING)
     reservationTime: string;
 
-    @AllowNull(false)
-    @Comment('예약현황: PENDING,ACTIVE,INACTIVE')
-    @Column(DataType.STRING)
+    @Comment('예약현황: PENDING -> (병원에서 예약 확인 후) ACTIVE, (reservationTime이 지나거나, 예약 캔슬되면 INACTIVE -> Log로 이동')
+    @Default('PENDING')
+    @Column
     status: string;
 
     @Column
-    @Column(DataType.STRING)
-    userName: string;
+    alterUserName: string;
 
     @Column
-    @Column(DataType.STRING)
-    age: string;
-    
+    alterAge: string;
+
     @Column
-    @Column(DataType.STRING)
-    tel: string;
-    
+    alterTel: string;
+
     @Column
-    @Column(DataType.STRING)
-    email: string;
-    
+    alterEmail: string;
+
     @CreatedAt
-    CreatedAt: Date;
-  
+    createdAt: Date;
+
     @UpdatedAt
     updatedAt: Date;
 }

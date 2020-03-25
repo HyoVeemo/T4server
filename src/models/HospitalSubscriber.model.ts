@@ -10,13 +10,13 @@ export default class HospitalSubscriber extends Model<HospitalSubscriber>{
     @PrimaryKey
     @AutoIncrement
     @Column
-    hospitalSubscriberIndex:number;
+    hospitalSubscriberIndex: number;
 
-    @ForeignKey(()=>User)
+    @ForeignKey(() => User)
     @Column
     userIndex: number;
 
-    @ForeignKey(()=>Hospital)
+    @ForeignKey(() => Hospital)
     @Column
     hpid: string;
 
@@ -25,7 +25,7 @@ export default class HospitalSubscriber extends Model<HospitalSubscriber>{
 
     @CreatedAt
     CreatedAt: Date;
-  
+
     @UpdatedAt
     updatedAt: Date;
 }

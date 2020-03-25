@@ -1,9 +1,8 @@
 import Hospital from '../models/Hospital.model'
 import HospitalCategory from '../models/HospitalCategory.model';
 import Category from '../models/Category.model';
-import User from '../models/User.model';
 import Review from '../models/Review.model';
-import Treatment from '../models/Treatment.model';
+import HospitalOffice from '../models/HospitalOffice.model';
 import { Op } from 'sequelize';
 
 
@@ -100,8 +99,8 @@ export class HospitalService {
         }
 
         if (pn) {
-            option.limit = pn.limit;
-            option.offset = pn.offset;
+            option.limit = pn.limit; // 개수
+            option.offset = pn.offset; // 시작 위치
         }
 
         let resultHospital = await Hospital.findAndCountAll(option);
@@ -156,6 +155,15 @@ export class HospitalService {
             group: ['hpid', 'category.dgid']
         });
         return resultHospital;
+    }
+
+    async getHpidByOfficeIndex(officeIndex: number): Promise<any> {
+        let resultHospitalOffice: HospitalOffice = await HospitalOffice.findOne({
+            where: {
+                officeIndex: officeIndex
+            }
+        });
+        return resultHospitalOffice;
     }
 }
 

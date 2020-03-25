@@ -3,32 +3,32 @@ import { hospitalSubscriberService } from '../service/hospitalSubscriber.service
 import { auth } from '../utils/auth.util'
 
 
-class HospitalSubscriberRoute{
+class HospitalSubscriberRoute {
     public hospitalSubscriberRouter: express.Router = express.Router();
-    constructor(){
-        this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid',updateHospitalSubscriber);
+    constructor() {
+        this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', updateHospitalSubscriber);
     }
 }
 
-async function updateHospitalSubscriber(req,res):Promise<any>{
-    try{
+async function updateHospitalSubscriber(req, res): Promise<any> {
+    try {
         const hpid = req.params.hpid;
-        let {tokenIndex: userIndex} = auth(req);
-        let result = await hospitalSubscriberService.getHospitalSubscriber(userIndex,hpid);
-        
-        
+        let { tokenIndex: userIndex } = auth(req);
+        let result = await hospitalSubscriberService.getHospitalSubscriber(userIndex, hpid);
+
+
         //구독 정보가 있는 경우
-        if(!result){ 
+        if (!result) {
             await hospitalSubscriberService.createHospitalSubscriber({
                 hpid: hpid,
                 userIndex: userIndex,
-                isScrap:1
+                isScrap: 1
             })
-        }else{
+        } else {
             await hospitalSubscriberService.deleteHospitalSubscriber(hpid, userIndex);
         }
 
-        delete result[0].userIndex;
+        //delete result[0].userIndex;
         res.send({
             success: true,
             statusCode: 200,
@@ -36,10 +36,10 @@ async function updateHospitalSubscriber(req,res):Promise<any>{
             message: 'putHospitalSubscriber: 200'
         })
 
-    }catch(err){
+    } catch (err) {
         console.log(err);
         res.send({
-            success:false,
+            success: false,
             statusCode: 500,
             message: 'putHospitalSubscriber: 500'
         })

@@ -1,22 +1,21 @@
 import Review from '../models/Review.model';
-interface ICreateReview{
-    hpid:string,
-    userIndex:number,
-    contents:string,
+interface ICreateReview {
+    hpid: string,
+    userIndex: number,
+    contents: string,
     img?: string,
 }
 class ReviewService {
     constructor() {
-        
+
     }
 
-
-    async createReview(reviewData:ICreateReview) { 
+    async createReview(reviewData: ICreateReview) {
         const resultReview = await Review.create(reviewData);
         return resultReview.toJSON();
     }
 
-    async getMyReview(userIndex:number) {
+    async getMyReview(userIndex: number) {
         const option = {
             where: {
                 userIndex: userIndex

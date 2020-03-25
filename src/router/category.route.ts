@@ -1,5 +1,5 @@
-import * as express from 'express'
-import { categoryService } from '../service/category.service'
+import * as express from 'express';
+import { categoryService } from '../service/category.service';
 
 class CategoryRoute {
     public categoryRouter: express.Router = express.Router();
