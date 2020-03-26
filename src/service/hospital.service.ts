@@ -3,7 +3,7 @@ import HospitalCategory from '../models/HospitalCategory.model';
 import Category from '../models/Category.model';
 import Review from '../models/Review.model';
 import HospitalOffice from '../models/HospitalOffice.model';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 
 
 interface IHospitalCreateData {
@@ -37,13 +37,6 @@ export class HospitalService {
         return resultHospital;
     }
 
-    /**
-     * service: 병원 목록 리스트 개수 조회
-     * @param filter 
-     */
-    async listHospital(filter?: any): Promise<any> {
-
-    }
 
     /**
      * service: 병원 목록 조회
@@ -51,65 +44,47 @@ export class HospitalService {
      * @param order 
      * @param pn 
      */
-    async pagelistHospital(filter?: any, order?: any, pn?: any): Promise<any> {
-        let hospitalWhere: any = {};
+    async listHospital(filter?: any): Promise<any> {
 
-        if (filter) {
-            if (filter.hospitalCategoryName) {
-                hospitalWhere.hospitalCategoryName = filter.hospitalCategoryName
-            }
-            if (filter.dutyName) {
-                hospitalWhere.dutyName = filter.dutyName
-            }
+        const lon = filter.lon;
+        const lat = filter.lat;
+        console.log(lon, lat)
+        const query = `SELECT
+        t1.hpid,
+        t1.dutyName,
+        t1.dutyTel,
+        t1.dutyAddr,
+        t1.wgs84Lon,
+        t1.wgs84Lat,
+        t1.dutyTime1,
+        t1.dutyTime2,
+        t1.dutyTime3,
+        t1.dutyTime4,
+        t1.dutyTime5,
+        t1.dutyTime6,
+        t1.dutyTime7,
+        t1.dutyTime8,
+        (6371*acos(cos(radians(:lat))*cos(radians(t1.wgs84Lat))*cos(radians(t1.wgs84Lon)-radians(:lon)) 
+        +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance,
+        t3.hospitalCategoryName
+        FROM Hospitals AS t1
+        INNER JOIN HospitalCategories AS t2 ON t1.hpid = t2.hpid
+        INNER JOIN Categories AS t3 ON t2.dgid = t3.dgid
+        HAVING distance < 5
+        ORDER by distance ASC limit 50;`;
+        const values = {
+            lat: lat,
+            lon: lon
         }
 
-        let option: any = {
-            where: {
-                [Op.or]: [
-                    {
-                        dutyName: hospitalWhere.dutyName
-                    },
-                    {
-                        '$hospital->hospitalCategory->category.hospitalCategoryName$': hospitalWhere.hospitalCategoryName
-                    }
-                ]
-            },
-            include: [
-                {
-                    model: HospitalCategory,
-                    required: true,
-                    include: [
-                        {
-                            model: Category,
-                            required: true,
-                            attributes: [
-                                'hospitalCategoryName'
-                            ]
-                        }
-                    ]
-                }
-            ],
-        }
+        let resultHospital = await Hospital.sequelize.query(query,{
+            replacements: values,
+            type: QueryTypes.SELECT,
+            raw: true
+        });
+        console.log(resultHospital);
 
-        /** 정렬 */
-        if (order) {
-            option.order = order;
-        } else {
-            option.order = [['dutyName', 'DESC']]
-        }
-
-        if (pn) {
-            option.limit = pn.limit; // 개수
-            option.offset = pn.offset; // 시작 위치
-        }
-
-        let resultHospital = await Hospital.findAndCountAll(option);
-        let results: Array<any> = [];
-        for (const row of resultHospital.rows) {
-            results.push(row.toJSON);
-        }
-
-        return results;
+        return resultHospital;
     }
 
     /**

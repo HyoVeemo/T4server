@@ -5,30 +5,10 @@ class HospitalRoute {
     public hospitalRouter: express.Router = express.Router();
     constructor() {
         this.hospitalRouter.get('/hospital/:hpid', getHospital);
-        this.hospitalRouter.get('/hospital', pageListHospital);
-        this.hospitalRouter.get('/debug', loginTest);
+        this.hospitalRouter.get('/hospital', listHospital);
     }
 }
 
-async function loginTest(req, res): Promise<any> {
-    try {
-        const token = auth(req);
-        console.log(token);
-
-        res.send({
-            success: true,
-            statusCode: 200,
-            result: token
-        })
-    } catch (err) {
-        console.log(err);
-        res.send({
-            success: false,
-            statusCode: 500,
-            message: 'getHospital: 500'
-        })
-    }
-}
 
 async function getHospital(req, res): Promise<any> {
     let hpid = req.params.hpid;
@@ -50,22 +30,24 @@ async function getHospital(req, res): Promise<any> {
     }
 }
 
-async function pageListHospital(req, res): Promise<any> {
+async function listHospital(req, res): Promise<any> {
     try {
-        let { filter, order, pn } = req.query;
-        const result = await hospitalService.pageListHospital(filter, order, pn);
+    
+        let { filter } = req.query; // { lon:127.026,lat:37.5872 }
+        filter = JSON.parse(filter);
+        const result = await hospitalService.listHospital(filter);
         res.send({
             success: true,
             statusCode: 200,
             result: result,
-            message: 'pageListHospital'
+            message: 'listHospital'
         })
     } catch (err) {
         console.log(err);
         res.send({
             success: false,
             statusCode: 500,
-            message: 'pageListHospital: 500'
+            message: 'listHospital: 500'
         })
     }
 }

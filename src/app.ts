@@ -2,7 +2,6 @@ import * as bodyParser from "body-parser";
 import logger from "morgan"; // Express 서버에서 발생하는 이벤트들 기록해주는 미들웨어.
 import express from "express";
 import { signRoute } from "./router/sign.route";
-import { categoryRoute } from "./router/category.route";
 import { hospitalRoute } from "./router/hospital.route";
 import { reviewRoute } from './router/review.route';
 import { reservationRoute } from './router/reservation.route';
@@ -41,8 +40,8 @@ export class Server {
 
   private setRouter() {
     this.app.use(signRoute.signRouter);
-    this.app.use(categoryRoute.categoryRouter);
     this.app.use(hospitalRoute.hospitalRouter);
+
     //로그인 후 사용 가능한 기능    
     this.app.use(verify);
     this.app.use(reviewRoute.reviewRouter);

@@ -22,6 +22,8 @@ class ReviewRoute {
             }),
             limits: { fileSize: 5 * 1024 * 1024 },
         });
+
+        
         this.reviewRouter.post('/img', this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer();
         this.reviewRouter.post('/review/hpid/:hpid', this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
