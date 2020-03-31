@@ -18,35 +18,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = __importStar(require("express"));
 const hospital_service_1 = require("../service/hospital.service");
-const auth_util_1 = require("../utils/auth.util");
 class HospitalRoute {
     constructor() {
         this.hospitalRouter = express.Router();
         this.hospitalRouter.get('/hospital/:hpid', getHospital);
-        this.hospitalRouter.get('/hospital', pageListHospital);
-        this.hospitalRouter.get('/debug', loginTest);
+        this.hospitalRouter.get('/hospital', listHospital);
     }
-}
-function loginTest(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const token = auth_util_1.auth(req);
-            console.log(token);
-            res.send({
-                success: true,
-                statusCode: 200,
-                result: token
-            });
-        }
-        catch (err) {
-            console.log(err);
-            res.send({
-                success: false,
-                statusCode: 500,
-                message: 'getHospital: 500'
-            });
-        }
-    });
 }
 function getHospital(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -70,16 +47,17 @@ function getHospital(req, res) {
         }
     });
 }
-function pageListHospital(req, res) {
+function listHospital(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let { filter, order, pn } = req.query;
-            const result = yield hospital_service_1.hospitalService.pageListHospital(filter, order, pn);
+            let { filter } = req.query; // { lon:127.026,lat:37.5872 }
+            filter = JSON.parse(filter);
+            const result = yield hospital_service_1.hospitalService.listHospital(filter);
             res.send({
                 success: true,
                 statusCode: 200,
                 result: result,
-                message: 'pageListHospital'
+                message: 'listHospital'
             });
         }
         catch (err) {
@@ -87,7 +65,7 @@ function pageListHospital(req, res) {
             res.send({
                 success: false,
                 statusCode: 500,
-                message: 'pageListHospital: 500'
+                message: 'listHospital: 500'
             });
         }
     });

@@ -14,7 +14,6 @@ const bodyParser = __importStar(require("body-parser"));
 const morgan_1 = __importDefault(require("morgan")); // Express 서버에서 발생하는 이벤트들 기록해주는 미들웨어.
 const express_1 = __importDefault(require("express"));
 const sign_route_1 = require("./router/sign.route");
-const category_route_1 = require("./router/category.route");
 const hospital_route_1 = require("./router/hospital.route");
 const review_route_1 = require("./router/review.route");
 const reservation_route_1 = require("./router/reservation.route");
@@ -42,7 +41,6 @@ class Server {
     }
     setRouter() {
         this.app.use(sign_route_1.signRoute.signRouter);
-        this.app.use(category_route_1.categoryRoute.categoryRouter);
         this.app.use(hospital_route_1.hospitalRoute.hospitalRouter);
         //로그인 후 사용 가능한 기능    
         this.app.use(auth_middleware_1.verify);
