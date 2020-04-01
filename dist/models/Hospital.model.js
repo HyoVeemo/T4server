@@ -70,6 +70,10 @@ __decorate([
     __metadata("design:type", String)
 ], Hospital.prototype, "dutyAddr", void 0);
 __decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
+], Hospital.prototype, "dutyMapimg", void 0);
+__decorate([
     sequelize_typescript_1.Comment("경도"),
     sequelize_typescript_1.Column(sequelize_typescript_1.DataType.FLOAT),
     __metadata("design:type", Number)

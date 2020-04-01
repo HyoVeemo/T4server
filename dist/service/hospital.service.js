@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Hospital_model_1 = __importDefault(require("../models/Hospital.model"));
-const HospitalCategory_model_1 = __importDefault(require("../models/HospitalCategory.model"));
 const Category_model_1 = __importDefault(require("../models/Category.model"));
 const Review_model_1 = __importDefault(require("../models/Review.model"));
 const HospitalOffice_model_1 = __importDefault(require("../models/HospitalOffice.model"));
@@ -31,74 +30,50 @@ class HospitalService {
         });
     }
     /**
-     * service: 병원 목록 리스트 개수 조회
-     * @param filter
-     */
-    listHospital(filter) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    /**
      * service: 병원 목록 조회
      * @param filter
      * @param order
      * @param pn
      */
-    pagelistHospital(filter, order, pn) {
+    listHospital(filter) {
         return __awaiter(this, void 0, void 0, function* () {
-            let hospitalWhere = {};
-            if (filter) {
-                if (filter.hospitalCategoryName) {
-                    hospitalWhere.hospitalCategoryName = filter.hospitalCategoryName;
-                }
-                if (filter.dutyName) {
-                    hospitalWhere.dutyName = filter.dutyName;
-                }
-            }
-            let option = {
-                where: {
-                    [sequelize_1.Op.or]: [
-                        {
-                            dutyName: hospitalWhere.dutyName
-                        },
-                        {
-                            '$hospital->hospitalCategory->category.hospitalCategoryName$': hospitalWhere.hospitalCategoryName
-                        }
-                    ]
-                },
-                include: [
-                    {
-                        model: HospitalCategory_model_1.default,
-                        required: true,
-                        include: [
-                            {
-                                model: Category_model_1.default,
-                                required: true,
-                                attributes: [
-                                    'hospitalCategoryName'
-                                ]
-                            }
-                        ]
-                    }
-                ],
+            const lon = filter.lon;
+            const lat = filter.lat;
+            console.log(lon, lat);
+            const query = `SELECT
+        t1.hpid,
+        t1.dutyName,
+        t1.dutyTel,
+        t1.dutyAddr,
+        t1.wgs84Lon,
+        t1.wgs84Lat,
+        t1.dutyTime1,
+        t1.dutyTime2,
+        t1.dutyTime3,
+        t1.dutyTime4,
+        t1.dutyTime5,
+        t1.dutyTime6,
+        t1.dutyTime7,
+        t1.dutyTime8,
+        (6371*acos(cos(radians(:lat))*cos(radians(t1.wgs84Lat))*cos(radians(t1.wgs84Lon)-radians(:lon)) 
+        +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance,
+        t3.hospitalCategoryName
+        FROM Hospitals AS t1
+        INNER JOIN HospitalCategories AS t2 ON t1.hpid = t2.hpid
+        INNER JOIN Categories AS t3 ON t2.dgid = t3.dgid
+        HAVING distance < 5
+        ORDER by distance ASC limit 50;`;
+            const values = {
+                lat: lat,
+                lon: lon
             };
-            /** 정렬 */
-            if (order) {
-                option.order = order;
-            }
-            else {
-                option.order = [['dutyName', 'DESC']];
-            }
-            if (pn) {
-                option.limit = pn.limit; // 개수
-                option.offset = pn.offset; // 시작 위치
-            }
-            let resultHospital = yield Hospital_model_1.default.findAndCountAll(option);
-            let results = [];
-            for (const row of resultHospital.rows) {
-                results.push(row.toJSON);
-            }
-            return results;
+            let resultHospital = yield Hospital_model_1.default.sequelize.query(query, {
+                replacements: values,
+                type: sequelize_1.QueryTypes.SELECT,
+                raw: true
+            });
+            console.log(resultHospital);
+            return resultHospital;
         });
     }
     /**
