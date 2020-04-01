@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-//import { hospitalAPI } from './utils/hospitalApi.util'
+const hospitalApi_util_1 = require("./utils/hospitalApi.util");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 aws_sdk_1.default.config.update({ region: 'ap-northeast-2' });
 (function () {
@@ -42,7 +42,7 @@ aws_sdk_1.default.config.update({ region: 'ap-northeast-2' });
                 .on("error", err => {
                 console.error(err);
             });
-            //hospitalAPI();
+            hospitalApi_util_1.hospitalAPI();
         }
         catch (err) {
             console.error(err);

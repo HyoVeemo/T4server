@@ -38,26 +38,38 @@ export async function hospitalAPI() {
 
       const hspiInf = jsonObj2.response.body.items.item;
       const hspi_keys = Object.keys(hspiInf); // 병원 상세 정보 키들
-      const hspiCategory = []; // 병원 각각의 카테고리(mysql에 저장돼있는 카테고리들 한정)
+      let hspiCategory = []; // 병원 각각의 카테고리(mysql에 저장돼있는 카테고리들 한정)
+
       if (hspi_keys[0] === "dgidIdName") {
         const str = jsonObj2.response.body.items.item.dgidIdName._text;
         /* 카테고리들 배열에 집어넣기. */
         const categories = str.split(",");
         const categoryArr = []; // 각 병원의 카테고리(요청 받아 온 카테고리들)
-        for (const c of categories) {
+        for (let c of categories) {
+          if (c === '치료방사선과' || c === '임상병리과' || c === '해부병리과' || c === '핵의학과') {
+            c = '기타';
+          } else if (c === '사상체질과' || c === '침구과' || c === '한방내과' || c === '한방부인과' || c === '한방소아과' || c === '한방신경정신과' || c === '한방안이비인후피부과' || c === '한방재활의학과' || c === '한방응급과') {
+            c = '한의원';
+          } else if (c === '구강내과' || c === '구강병리과' || c === '구강악안면방사선과' || c === '소아치과' || c === '예방치과' || c === '치과교정과' || c === '치과보존과' || c === '치과보철과' || c === '치주과') {
+            c = '치과';
+          }
           categoryArr.push(c);
         }
         for (const cn of categoryArr) {
           const category = await Category.findAll({
-            where: { HospitalCategoryName: cn } // 카테고리 테이블에서 로우 전부 찾아서 가져오기.
+            where: { HospitalCategoryName: cn } // 카테고리 테이블에서 일치하는 카테고리 로우 전부 찾아서 가져오기.
           });
           if (category[0] && category[0]["dataValues"]) {
-            hspiCategory.push(category[0]["dataValues"].dgid);
+            hspiCategory.push(category[0]["dataValues"].dgid); // 외래키(dgid)로 테이블끼리 관계 맺기 위함.
           }
         }
       } else {
         hspiCategory.push(0);
       }
+
+      hspiCategory = hspiCategory.filter((item, index) => { // 배열 중복 제거.
+        return hspiCategory.indexOf(item) === index;
+      });
 
       let arr = Object.keys(hospitalArr[key]); // 병원 목록에 들어있는 키들.
       let arr2 = [];
@@ -65,7 +77,9 @@ export async function hospitalAPI() {
         if (x.slice(0, 8) === "dutyTime") arr2.push(x);
         if (x.slice(0, 5) === "wgs84") arr2.push(x);
         if (x.slice(0, 7) === "dutyInf") arr2.push(x);
+        if (x.slice(0, 10) === "dutyMapimg") arr2.push(x);
       }
+
       const obj = {};
       const obj2 = [
         "dutyTime1c",
@@ -86,13 +100,16 @@ export async function hospitalAPI() {
         "dutyTime8s",
         "wgs84Lon",
         "wgs84Lat",
-        "dutyInf"
+        "dutyInf",
+        "dutyMapimg"
       ];
 
       for (var s = 1; s < obj2.length; s += 2) {
         if (arr2.indexOf(obj2[s]) !== -1) {
           if (obj2[s] === "wgs84Lat") {
             obj[obj2[s]] = hospitalArr[key].wgs84Lat._text;
+          } else if (obj2[s] === "dutyMapimg") {
+            obj[obj2[s]] = hospitalArr[key].dutyMapimg._text;
           } else {
             obj[obj2[s]] = `${hospitalArr[key][obj2[s]]._text.slice(
               0,
@@ -125,6 +142,7 @@ export async function hospitalAPI() {
         hpid: hospitalArr[key].hpid._text,
         dutyName: hospitalArr[key].dutyName._text,
         dutyAddr: hospitalArr[key].dutyAddr._text,
+        dutyMapimg: obj["dutyMapimg"],
         wgs84Lon: obj["wgs84Lon"],
         wgs84Lat: obj["wgs84Lat"],
         dutyTime1: `${obj["dutyTime1s"]}~${obj["dutyTime1c"]}`,

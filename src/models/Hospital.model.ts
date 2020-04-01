@@ -53,6 +53,9 @@ export default class Hospital extends Model<Hospital> {
   @Column
   dutyAddr: string; // 주소 // 예: 서울특별시 강남구 일원동50 (일원로81)
 
+  @Column
+  dutyMapimg: string;
+
   @Comment("경도")
   @Column(DataType.FLOAT)
   wgs84Lon: number;
