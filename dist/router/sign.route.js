@@ -31,7 +31,7 @@ class SignRoute {
         // .MATHOD("{path}", function )
         this.signRouter.post("/signUp", signUp);
         //this.signRouter.get("/signIn", signIn);
-        this.signRouter.get("/signIn", signIn);
+        this.signRouter.post("/signIn", signIn);
     }
 }
 /**

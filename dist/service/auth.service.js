@@ -42,6 +42,7 @@ class AuthService {
      */
     signIn(userData) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('userData: ', userData);
             //데이터 없음
             if (userData.userId === undefined || userData.userPw === undefined) {
                 throw new Error('No UserData Input');
