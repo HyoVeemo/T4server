@@ -43,6 +43,7 @@ export class AuthService {
      * @param userData 
      */
     async signIn(userData: ILoginData): Promise<any> {
+        console.log('userData: ', userData);
         //데이터 없음
         if (userData.userId === undefined || userData.userPw === undefined) {
             throw new Error('No UserData Input');
