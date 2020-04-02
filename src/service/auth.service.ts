@@ -62,9 +62,9 @@ export class AuthService {
         }
 
         resultUser = resultUser.toJSON() as User;
+        
 
         if (resultUser) {
-
             // Token 생성. 
             const token = jwt.sign({
                 tokenIndex: resultUser.userIndex,
@@ -77,9 +77,11 @@ export class AuthService {
                 tokenTel: resultUser.tel,
                 tokenEmail: resultUser.email
             }, jwtToken.secret);
-
+            delete resultUser.userPw;
             // 로그인한 사용자에게 token 제공. User 인증이 필요한 API 요청 시(글쓰기, 마이페이지 등) Request header에 토큰을 넣어 보낸다
-            return { token };
+            return {
+                ...resultUser, 
+                token };
         }
     }
 }

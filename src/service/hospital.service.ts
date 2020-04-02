@@ -45,7 +45,6 @@ export class HospitalService {
      * @param pn 
      */
     async listHospital(filter?: any): Promise<any> {
-
         const lon = filter.lon;
         const lat = filter.lat;
         console.log(lon, lat)
@@ -54,6 +53,7 @@ export class HospitalService {
         t1.dutyName,
         t1.dutyTel,
         t1.dutyAddr,
+        t1.dutyInfom
         t1.wgs84Lon,
         t1.wgs84Lat,
         t1.dutyTime1,

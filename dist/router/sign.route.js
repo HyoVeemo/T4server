@@ -30,7 +30,7 @@ class SignRoute {
         //정의된 라우터 REST API 정의
         // .MATHOD("{path}", function )
         this.signRouter.post("/signUp", signUp);
-        this.signRouter.get("/signIn", signIn);
+        this.signRouter.post("/signIn", signIn);
     }
 }
 /**
