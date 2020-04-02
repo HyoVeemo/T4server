@@ -13,7 +13,6 @@ class SignRoute {
     //정의된 라우터 REST API 정의
     // .MATHOD("{path}", function )
     this.signRouter.post("/signUp", signUp)
-    //this.signRouter.get("/signIn", signIn);
     this.signRouter.post("/signIn", signIn);
   }
 }
@@ -50,10 +49,8 @@ async function signUp(req, res): Promise<any> {
  */
 async function signIn(req, res): Promise<any> {
   try {
-    console.log('req : ', req);
-    console.log('req.body : ', req.body.body);
-    const result = await authService.signIn(req.body);
-    console.log('signIn - result : ', result);
+    const result = await authService.signIn(req.body); // 프론트에서 보낼 때는 req.body -> req.body.body던데 뭐가 맞는 거지!?
+
     res.send({
       success: true,
       result: result,

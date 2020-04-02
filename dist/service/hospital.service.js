@@ -45,6 +45,8 @@ class HospitalService {
         t1.dutyName,
         t1.dutyTel,
         t1.dutyAddr,
+        t1.dutyMapimg,
+        t1.dutyInf,
         t1.wgs84Lon,
         t1.wgs84Lat,
         t1.dutyTime1,
@@ -72,7 +74,6 @@ class HospitalService {
                 type: sequelize_1.QueryTypes.SELECT,
                 raw: true
             });
-            console.log(resultHospital);
             return resultHospital;
         });
     }
@@ -90,6 +91,7 @@ class HospitalService {
                     'hpid',
                     'dutyName',
                     'dutyAddr',
+                    'dutyMapimg',
                     'wgs84Lon',
                     'wgs84Lat',
                     'dutyTime1',
