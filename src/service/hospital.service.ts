@@ -53,7 +53,7 @@ export class HospitalService {
         t1.dutyName,
         t1.dutyTel,
         t1.dutyAddr,
-        t1.dutyInfom
+        t1.dutyInf,
         t1.wgs84Lon,
         t1.wgs84Lat,
         t1.dutyTime1,
