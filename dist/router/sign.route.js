@@ -30,6 +30,7 @@ class SignRoute {
         //정의된 라우터 REST API 정의
         // .MATHOD("{path}", function )
         this.signRouter.post("/signUp", signUp);
+        //this.signRouter.get("/signIn", signIn);
         this.signRouter.get("/signIn", signIn);
     }
 }
@@ -68,6 +69,8 @@ function signUp(req, res) {
 function signIn(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log('req : ', req);
+            console.log('req.body : ', req.body);
             const result = yield auth_service_1.authService.signIn(req.body);
             res.send({
                 success: true,
