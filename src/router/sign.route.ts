@@ -52,7 +52,8 @@ async function signIn(req, res): Promise<any> {
   try {
     console.log('req : ', req);
     console.log('req.body : ', req.body.body);
-    const result = await authService.signIn(req.body.body);
+    const result = await authService.signIn(req.body);
+    console.log('signIn - result : ', result);
     res.send({
       success: true,
       result: result,

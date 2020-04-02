@@ -50,6 +50,7 @@ export class AuthService {
         }
         //유저 조회 
         let resultUser = await userService.getUser(userData.userId);
+        console.log('resultUser: ', resultUser)
 
         //일치하는 유저 없음
         if (!resultUser) {
@@ -78,7 +79,7 @@ export class AuthService {
                 tokenTel: resultUser.tel,
                 tokenEmail: resultUser.email
             }, jwtToken.secret);
-
+            console.log('token', token);
             // 로그인한 사용자에게 token 제공. User 인증이 필요한 API 요청 시(글쓰기, 마이페이지 등) Request header에 토큰을 넣어 보낸다
             return { token };
         }

@@ -70,8 +70,9 @@ function signIn(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log('req : ', req);
-            console.log('req.body : ', req.body);
+            console.log('req.body : ', req.body.body);
             const result = yield auth_service_1.authService.signIn(req.body);
+            console.log('signIn - result : ', result);
             res.send({
                 success: true,
                 result: result,
