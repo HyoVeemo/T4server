@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc-watch --onsuccess \" node dist/server.js\"",
+    "start": "tsc --p tsconfig.json && node dist/server.js",
+    "dev": "tsc-watch --onsuccess \" node dist/server.js\"",
     "tsc": "tsc --p tsconfig.json"
   },
   "dependencies": {
