@@ -48,6 +48,7 @@ class AuthService {
             }
             //유저 조회 
             let resultUser = yield user_service_1.userService.getUser(userData.userId);
+            console.log('resultUser: ', resultUser);
             //일치하는 유저 없음
             if (!resultUser) {
                 throw new Error('user id does not exist');

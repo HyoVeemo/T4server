@@ -68,7 +68,7 @@ function signUp(req, res) {
 function signIn(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield auth_service_1.authService.signIn(req.body);
+            const result = yield auth_service_1.authService.signIn(req.body); // 프론트에서 보낼 때는 req.body -> req.body.body던데 뭐가 맞는 거지!?
             res.send({
                 success: true,
                 result: result,

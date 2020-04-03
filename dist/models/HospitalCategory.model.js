@@ -18,6 +18,10 @@ const Category_model_1 = __importDefault(require("./Category.model"));
 let HospitalCategory = class HospitalCategory extends sequelize_typescript_1.Model {
 };
 __decorate([
+    sequelize_typescript_1.BelongsTo(() => Category_model_1.default),
+    __metadata("design:type", Category_model_1.default)
+], HospitalCategory.prototype, "category", void 0);
+__decorate([
     sequelize_typescript_1.ForeignKey(() => Hospital_model_1.default),
     sequelize_typescript_1.Column,
     __metadata("design:type", String)

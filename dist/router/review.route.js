@@ -62,8 +62,10 @@ function postReview(req, res) {
                 hpid: hpid,
                 userIndex: userIndex,
                 contents: contents,
-                img: imgUrl
+                img: imgUrl,
+                rating: rating
             };
+            console.log(reviewData);
             const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
             res.send({
                 success: true,
