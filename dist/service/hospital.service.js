@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Hospital_model_1 = __importDefault(require("../models/Hospital.model"));
+const HospitalCategory_model_1 = __importDefault(require("../models/HospitalCategory.model"));
 const Category_model_1 = __importDefault(require("../models/Category.model"));
 const Review_model_1 = __importDefault(require("../models/Review.model"));
 const HospitalOffice_model_1 = __importDefault(require("../models/HospitalOffice.model"));
@@ -40,31 +41,31 @@ class HospitalService {
             const lon = filter.lon;
             const lat = filter.lat;
             console.log(lon, lat);
-            const query = `SELECT
-        t1.hpid,
-        t1.dutyName,
-        t1.dutyTel,
-        t1.dutyAddr,
-        t1.dutyMapimg,
-        t1.dutyInf,
-        t1.wgs84Lon,
-        t1.wgs84Lat,
-        t1.dutyTime1,
-        t1.dutyTime2,
-        t1.dutyTime3,
-        t1.dutyTime4,
-        t1.dutyTime5,
-        t1.dutyTime6,
-        t1.dutyTime7,
-        t1.dutyTime8,
+            const query = `SELECT 
+        t1.hpid, 
+        t1.dutyName, 
+        t1.dutyAddr, 
+        t1.dutyMapimg, 
+        t1.wgs84Lon, 
+        t1.wgs84Lat, 
+        t1.dutyTime1, 
+        t1.dutyTime2, 
+        t1.dutyTime3, 
+        t1.dutyTime4, 
+        t1.dutyTime5, 
+        t1.dutyTime6, 
+        t1.dutyTime7, 
+        t1.dutyTime8, 
+        t1.dutyTel, 
+        t1.dutyInf, 
         (6371*acos(cos(radians(:lat))*cos(radians(t1.wgs84Lat))*cos(radians(t1.wgs84Lon)-radians(:lon)) 
-        +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance,
-        t3.hospitalCategoryName
-        FROM Hospitals AS t1
-        INNER JOIN HospitalCategories AS t2 ON t1.hpid = t2.hpid
-        INNER JOIN Categories AS t3 ON t2.dgid = t3.dgid
-        HAVING distance < 5
-        ORDER by distance ASC limit 50;`;
+        +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance, 
+        AVG(review.rating) AS ratingAvg
+        FROM Hospitals AS t1 
+        LEFT OUTER JOIN Reviews AS review ON t1.hpid = review.hpid 
+        GROUP BY hpid
+        HAVING distance < 5 
+        ORDER BY distance ASC limit 5;`;
             const values = {
                 lat: lat,
                 lon: lon
@@ -74,11 +75,35 @@ class HospitalService {
                 type: sequelize_1.QueryTypes.SELECT,
                 raw: true
             });
+            let categories; // 병원 각각의 카테고리 넣을 배열.
+            for (const hospital of resultHospital) {
+                /** 각 병원의 카테고리를 찾는다 */
+                let hpid = hospital["hpid"];
+                let resultCategory = yield HospitalCategory_model_1.default.findAll({
+                    where: {
+                        hpid: hpid
+                    },
+                    include: [
+                        {
+                            model: Category_model_1.default,
+                            as: 'category',
+                            required: true
+                        }
+                    ],
+                });
+                /** 카테고리 배열에 찾은 카테고리들을 넣어준다. */
+                categories = [];
+                for (const i of resultCategory) {
+                    categories.push(i.category.hospitalCategoryName);
+                }
+                hospital["category"] = categories;
+            }
+            /** 결과 리턴 */
             return resultHospital;
         });
     }
     /**
-     * 병원 조회
+     * 병원 개별 조회
      * @param hpid
      */
     getHospital(hpid, sequelize) {

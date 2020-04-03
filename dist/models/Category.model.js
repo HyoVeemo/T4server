@@ -31,6 +31,10 @@ __decorate([
     __metadata("design:type", Treatment_model_1.default)
 ], Category.prototype, "treatment", void 0);
 __decorate([
+    sequelize_typescript_1.HasMany(() => HospitalCategory_model_1.default),
+    __metadata("design:type", Array)
+], Category.prototype, "hospitalCategory", void 0);
+__decorate([
     sequelize_typescript_1.PrimaryKey,
     sequelize_typescript_1.AutoIncrement,
     sequelize_typescript_1.Column,

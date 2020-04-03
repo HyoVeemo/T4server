@@ -1,4 +1,4 @@
-import { Model, Table, Column, HasMany, AutoIncrement, PrimaryKey, AllowNull, BelongsToMany } from "sequelize-typescript";
+import { Model, Table, Column, HasMany, AutoIncrement, BelongsTo, PrimaryKey, AllowNull, BelongsToMany, ForeignKey } from "sequelize-typescript";
 import Hospital from "./Hospital.model";
 import HospitalCategory from "./HospitalCategory.model";
 import Treatment from "./Treatment.model";
@@ -21,6 +21,9 @@ export default class Category extends Model<HospitalCategory> {
 
   @HasMany(() => Treatment)
   treatment: Treatment;
+
+  @HasMany(() => HospitalCategory)
+  hospitalCategory: HospitalCategory[]
 
   @PrimaryKey
   @AutoIncrement

@@ -23,7 +23,7 @@ class ReviewRoute {
             limits: { fileSize: 5 * 1024 * 1024 },
         });
 
-        
+
         this.reviewRouter.post('/img', this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer();
         this.reviewRouter.post('/review/hpid/:hpid', this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
@@ -53,8 +53,10 @@ async function postReview(req, res) {
             hpid: hpid,
             userIndex: userIndex,
             contents: contents,
-            img: imgUrl
+            img: imgUrl,
+            rating: rating
         };
+
         const result = await reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
         res.send({
             success: true,
