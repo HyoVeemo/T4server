@@ -16,6 +16,17 @@ const Review_model_1 = __importDefault(require("../models/Review.model"));
 class ReviewService {
     constructor() {
     }
+    getAllReview(hpid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const option = {
+                where: {
+                    hpid: hpid
+                }
+            };
+            const result = yield Review_model_1.default.findAndCountAll(option);
+            return result;
+        });
+    }
     createReview(reviewData) {
         return __awaiter(this, void 0, void 0, function* () {
             const resultReview = yield Review_model_1.default.create(reviewData);

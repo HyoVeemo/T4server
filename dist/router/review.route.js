@@ -36,6 +36,7 @@ class ReviewRoute {
         this.reviewRouter.post('/img', this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer_1.default();
         this.reviewRouter.post('/review/hpid/:hpid', this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
+        this.reviewRouter.get('/review/hpid/:hpid', getAllReview);
         this.reviewRouter.get('/review', getMyReview); // 리뷰 모아보기
         this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
         this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', this.upload2.none(), updateReview); // 리뷰 수정 라우터
@@ -43,6 +44,24 @@ class ReviewRoute {
         this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
         this.reviewRouter.get('/review/ratings', getRatings); // 모든 병원 평점 가져오기
     }
+}
+function getAllReview(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield review_service_1.reviewService.getAllReview(req.params.hpid);
+            res.send({
+                success: true,
+                result,
+                message: 'getAllReview: 200'
+            });
+        }
+        catch (err) {
+            res.send({
+                success: false,
+                message: 'getAllReview: 500'
+            });
+        }
+    });
 }
 function uploadImg(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -65,7 +84,6 @@ function postReview(req, res) {
                 img: imgUrl,
                 rating: rating
             };
-            console.log(reviewData);
             const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
             res.send({
                 success: true,
