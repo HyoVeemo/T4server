@@ -73,7 +73,7 @@ export class HospitalService {
         LEFT OUTER JOIN Reviews AS review ON t1.hpid = review.hpid 
         GROUP BY hpid
         HAVING distance < 5 
-        ORDER BY distance ASC limit 5;`;
+        ORDER BY distance ASC limit 50;`;
 
         const values = {
             lat: lat,
