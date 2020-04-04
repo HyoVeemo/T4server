@@ -52,6 +52,7 @@ async function reserveHospital(req, res) {
         console.error(err);
         res.send({
             success: false,
+            result: err,
             message: 'createReservation: 500'
         });
     }
@@ -70,6 +71,7 @@ async function getReservation(req, res) {
     } catch (err) {
         res.send({
             success: false,
+            result: err,
             message: 'getReservation: 500'
         });
     }
@@ -87,6 +89,7 @@ async function getReservationLog(req, res) {
     } catch (err) {
         res.send({
             success: false,
+            result: err,
             message: 'getReservationLog: 500'
         });
     }
@@ -106,6 +109,7 @@ async function cancelReservation(req, res) {
         console.error(err);
         res.send({
             success: false,
+            result: err,
             message: 'cancelReservation: 500'
         });
     }

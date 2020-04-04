@@ -54,6 +54,7 @@ function signUp(req, res) {
             res.send({
                 success: false,
                 statusCode: 500,
+                result: err,
                 message: 'createUser: 500'
             });
         }

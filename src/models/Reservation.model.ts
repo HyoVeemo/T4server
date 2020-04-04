@@ -1,4 +1,4 @@
-import { Model, Default, ForeignKey, Table, Column, BelongsTo, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, NotNull } from "sequelize-typescript";
+import { Model, Default, ForeignKey, Table, Column, IsDate, BelongsTo, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, NotNull } from "sequelize-typescript";
 import User from "./User.model";
 import Hospital from "./Hospital.model";
 import HospitalOffice from './HospitalOffice.model';
@@ -35,6 +35,7 @@ export default class Reservation extends Model<Reservation>{
     @Column
     officeIndex: number;
 
+    @IsDate
     @AllowNull(false)
     @Column(DataType.STRING)
     reservationDate: string;

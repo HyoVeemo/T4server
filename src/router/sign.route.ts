@@ -36,6 +36,7 @@ async function signUp(req, res): Promise<any> {
     res.send({
       success: false,
       statusCode: 500,
+      result: err,
       message: 'createUser: 500'
     });
   }
