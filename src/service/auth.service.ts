@@ -2,7 +2,6 @@
 import * as jwt from 'jsonwebtoken';
 import { userService } from "../service/user.service";
 import { hashSync, compareSync } from 'bcryptjs';
-import { jwtToken } from '../utils/jwt.util';
 import User from '../models/User.model';
 
 interface ICreateUserData { // 회원가입용
@@ -42,14 +41,14 @@ export class AuthService {
      * service: 로그인
      * @param userData 
      */
-    async signIn(userData: ILoginData): Promise<any> {
+    async signIn(req): Promise<any> {
+        let userData: ILoginData = req.body;
         //데이터 없음
         if (userData.userId === undefined || userData.userPw === undefined) {
             throw new Error('No UserData Input');
         }
         //유저 조회 
         let resultUser = await userService.getUser(userData.userId);
-        console.log('resultUser: ', resultUser)
 
         //일치하는 유저 없음
         if (!resultUser) {
@@ -76,7 +75,7 @@ export class AuthService {
                 tokenGender: resultUser.gender,
                 tokenTel: resultUser.tel,
                 tokenEmail: resultUser.email
-            }, jwtToken.secret);
+            }, req.app.locals.secret);
             delete resultUser.userPw;
             // 로그인한 사용자에게 token 제공. User 인증이 필요한 API 요청 시(글쓰기, 마이페이지 등) Request header에 토큰을 넣어 보낸다
             return {

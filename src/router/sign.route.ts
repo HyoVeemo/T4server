@@ -50,7 +50,7 @@ async function signUp(req, res): Promise<any> {
  */
 async function signIn(req, res): Promise<any> {
   try {
-    const result = await authService.signIn(req.body);
+    const result = await authService.signIn(req);
 
     res.send({
       success: true,
