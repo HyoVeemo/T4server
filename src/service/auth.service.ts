@@ -64,7 +64,6 @@ export class AuthService {
 
         resultUser = resultUser.toJSON() as User;
 
-
         if (resultUser) {
             // Token 생성. 
             const token = jwt.sign({

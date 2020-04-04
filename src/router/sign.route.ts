@@ -49,7 +49,7 @@ async function signUp(req, res): Promise<any> {
  */
 async function signIn(req, res): Promise<any> {
   try {
-    const result = await authService.signIn(req.body); // 프론트에서 보낼 때는 req.body -> req.body.body던데 뭐가 맞는 거지!?
+    const result = await authService.signIn(req.body);
 
     res.send({
       success: true,

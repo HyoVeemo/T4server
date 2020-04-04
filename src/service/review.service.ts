@@ -15,6 +15,17 @@ class ReviewService {
         return resultReview.toJSON();
     }
 
+    async getAllReview(hpid: string) {
+        const option = {
+            where: {
+                hpid: hpid
+            }
+        }
+        const result = await Review.findAndCountAll(option);
+
+        return result;
+    }
+
     async getMyReview(userIndex: number) {
         const option = {
             where: {
