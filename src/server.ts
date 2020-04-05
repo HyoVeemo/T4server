@@ -21,8 +21,9 @@ AWS.config.update({ region: 'ap-northeast-2' });
     const configInfo = JSON.parse(data.Parameter.Value);
     //console.log({ configInfo });
     const port = Number(configInfo.PORT);
+    const secret = configInfo.secret;
 
-    const app = new Server(configInfo).app;
+    const app = new Server(configInfo, secret).app;
     await app.set("port", port);
     app
       .listen(app.get("port"), async () => {

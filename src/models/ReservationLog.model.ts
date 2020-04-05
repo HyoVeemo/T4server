@@ -1,4 +1,4 @@
-import { Model, Default, BelongsTo, ForeignKey, Table, Column, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull } from "sequelize-typescript";
+import { Model, Default, BelongsTo, ForeignKey, Table, Column, IsDate, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull } from "sequelize-typescript";
 import User from "./User.model";
 import Hospital from "./Hospital.model";
 import HospitalOffice from './HospitalOffice.model';
@@ -34,6 +34,7 @@ export default class ReservationLog extends Model<ReservationLog>{
     @Column
     officeIndex: number;
 
+    @IsDate
     @AllowNull(false)
     @Column(DataType.STRING)
     reservationDate: string;

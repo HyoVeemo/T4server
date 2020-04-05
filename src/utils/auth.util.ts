@@ -1,9 +1,8 @@
 import * as jwt from 'jsonwebtoken';
-import { jwtToken } from './jwt.util';
 
-export function auth(request: any) {
-    const token = request.get('x-access-token');
-    const secret = jwtToken.secret;
+export function auth(req: any) {
+    const token = req.get('x-access-token');
+    const secret = req.app.locals.secret;
     let auth = jwt.verify(token, secret); // decoded
 
     return auth;

@@ -1,7 +1,5 @@
 import * as jwt from 'jsonwebtoken'
 import * as express from 'express'
-import { jwtToken } from '../utils/jwt.util'
-
 
 /**
  * middleWare: header에서 token 을 받아 검증
@@ -19,7 +17,7 @@ export async function verify(req: express.Request, res: express.Response, next: 
         })
     }
     try {
-        await verifyUser(token);
+        await verifyUser(req, token);
         return next();
     } catch (err) {
         res.status(403).json({
@@ -31,9 +29,9 @@ export async function verify(req: express.Request, res: express.Response, next: 
 };
 
 
-async function verifyUser(token: any): Promise<any> {
+async function verifyUser(req, token: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
-        await jwt.verify(token, jwtToken.secret, (err, decoded) => {
+        await jwt.verify(token, req.app.locals.secret, (err, decoded) => {
             if (err) {
                 return reject(err);
             }
