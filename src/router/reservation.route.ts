@@ -9,7 +9,45 @@ class ReservationRoute {
         this.reservationRouter.post('/reservation/officeIndex/:officeIndex', reserveHospital); // 병원 예약하기
         this.reservationRouter.get('/reservation', getReservation); // 예약 현황 보기
         this.reservationRouter.get('/reservation/history', getReservationLog) // 지난 예약 내역 보기
-        this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', cancelReservation); // 예약 취소하기
+        this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', cancelReservation); // (사용자 본인이) 예약 취소하기
+        this.reservationRouter.patch('/reservation/reservationIndex/:reservationIndex', acceptReservation); // 병원 측에서 예약 수락 시 status 업데이트 (PENDING -> ACCEPTED)
+        this.reservationRouter.patch('/reservation/reservationIndex/:reservationIndex', refuseReservation); // 병원 측에서 예약 거절 시 status 업데이트 (PENDING -> REFUSED)
+    }
+}
+
+async function refuseReservation(req, res) {
+    try {
+        const reply = 'refuse';
+        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
+        res.send({
+            success: true,
+            result,
+            message: 'updateReservationStatus: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'updateReservationStatus: 500'
+        });
+    }
+}
+
+async function acceptReservation(req, res) {
+    try {
+        const reply = 'accept';
+        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
+        res.send({
+            success: true,
+            result,
+            message: 'updateReservationStatus: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'updateReservationStatus: 500'
+        });
     }
 }
 
@@ -49,7 +87,6 @@ async function reserveHospital(req, res) {
             });
         }
     } catch (err) {
-        console.error(err);
         res.send({
             success: false,
             result: err,
@@ -95,6 +132,11 @@ async function getReservationLog(req, res) {
     }
 }
 
+/**
+ * 예약 취소
+ * @param req 
+ * @param res 
+ */
 async function cancelReservation(req, res) {
     const reservationIndex = req.params.reservationIndex;
     const { tokenIndex: userIndex } = auth(req);

@@ -5,7 +5,6 @@ import User from "./User.model";
 import HospitalOffice from "./HospitalOffice.model";
 import Review from "./Review.model";
 import Reservation from "./Reservation.model";
-import ReservationLog from "./ReservationLog.model";
 import HospitalSubscriber from "./HospitalSubscriber.model";
 
 @Table
@@ -26,9 +25,6 @@ export default class Hospital extends Model<Hospital> {
 
   @HasMany(() => Reservation)
   reservation: Reservation[];
-
-  @HasMany(() => ReservationLog)
-  reservationLog: ReservationLog[];
 
   @BelongsToMany(() => User, {
     through: {

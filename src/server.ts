@@ -12,7 +12,7 @@ AWS.config.update({ region: 'ap-northeast-2' });
 
     // Request
     // 정보를 얻고싶은 parameter 이름
-    const params: any = {
+    const params = {
       Name: 'config',
       WithDecryption: false
     };

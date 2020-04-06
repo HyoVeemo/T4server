@@ -6,6 +6,7 @@ import { hospitalRoute } from "./router/hospital.route";
 import { reviewRoute } from './router/review.route';
 import { reservationRoute } from './router/reservation.route';
 import { hospitalSubscriberRoute } from './router/hospitalSubscriber.route';
+import { hospitalOfficeRoute } from './router/hospitalOffice.route';
 import { verify } from './middleware/auth.middleware';
 import Db from './db';
 
@@ -42,6 +43,7 @@ export class Server {
   private setRouter() {
     this.app.use(signRoute.signRouter);
     this.app.use(hospitalRoute.hospitalRouter);
+    this.app.use(hospitalOfficeRoute.hospitalOfficeRouter);
 
     //로그인 후 사용 가능한 기능    
     this.app.use(verify);
