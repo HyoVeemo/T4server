@@ -1,12 +1,13 @@
 import * as express from 'express';
 import { hospitalOfficeService } from '../service/hospitalOffice.service';
+import { verifyHospital } from '../middleware/auth.middleware';
 
 class HospitalOfficeRoute {
     public hospitalOfficeRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalOfficeRouter.post('/office/hpid/:hpid', registerHospitalOffice); // 진료실 등록.
-        this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', updateHospitalOffice); // 진료실 정보 변경.
-        this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', deleteHospitalOffice); // 진료실 삭제.
+        this.hospitalOfficeRouter.post('/office/hpid/:hpid', verifyHospital, registerHospitalOffice); // 진료실 등록.
+        this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', verifyHospital, updateHospitalOffice); // 진료실 정보 변경.
+        this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', verifyHospital, deleteHospitalOffice); // 진료실 삭제.
     }
 }
 

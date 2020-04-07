@@ -7,6 +7,7 @@ import User from '../models/User.model';
 interface ICreateUserData { // 회원가입용
     userId: string;
     userPw: string;
+    role: string;
     userName: string;
     userNickName: string;
     age?: number;

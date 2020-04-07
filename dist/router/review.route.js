@@ -20,6 +20,7 @@ const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const multer_1 = __importDefault(require("multer"));
 const multer_s3_1 = __importDefault(require("multer-s3"));
 const path_1 = __importDefault(require("path"));
+const auth_middleware_1 = require("../middleware/auth.middleware");
 class ReviewRoute {
     constructor() {
         this.reviewRouter = express_1.default.Router();
@@ -33,14 +34,14 @@ class ReviewRoute {
             }),
             limits: { fileSize: 5 * 1024 * 1024 },
         });
-        this.reviewRouter.post('/img', this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
+        this.reviewRouter.post('/img', auth_middleware_1.verifyUser, this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer_1.default();
-        this.reviewRouter.post('/review/hpid/:hpid', this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
-        this.reviewRouter.get('/review/hpid/:hpid', getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
-        this.reviewRouter.get('/review', getMyReview); // 리뷰 모아보기
-        this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
-        this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', this.upload2.none(), updateReview); // 리뷰 수정 라우터
-        this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', deleteReview); // 리뷰 삭제 라우터
+        this.reviewRouter.post('/review/hpid/:hpid', auth_middleware_1.verifyUser, this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
+        this.reviewRouter.get('/review/hpid/:hpid', auth_middleware_1.verifyUser, getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
+        this.reviewRouter.get('/review', auth_middleware_1.verifyUser, getMyReview); // 리뷰 모아보기
+        this.reviewRouter.get('/review/userNickName/:userNickName', auth_middleware_1.verifyUser, getReviewByUserNickName);
+        this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', auth_middleware_1.verifyUser, this.upload2.none(), updateReview); // 리뷰 수정 라우터
+        this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', auth_middleware_1.verifyUser, deleteReview); // 리뷰 삭제 라우터
         this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
         this.reviewRouter.get('/review/ratings', getRatings); // 모든 병원 평점 가져오기
     }

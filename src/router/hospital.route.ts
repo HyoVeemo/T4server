@@ -1,6 +1,5 @@
 import * as express from 'express'
 import { hospitalService } from '../service/hospital.service'
-import Treatment from '../models/Treatment.model';
 
 class HospitalRoute {
     public hospitalRouter: express.Router = express.Router();

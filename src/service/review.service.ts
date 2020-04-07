@@ -39,7 +39,6 @@ class ReviewService {
     }
 
     async getUserReview(userIndex) {
-        console.log(userIndex);
         const option = {
             where: {
                 userIndex: userIndex
@@ -58,7 +57,7 @@ class ReviewService {
             }
         }
         const result = await Review.update(change, option);
-        console.log(result, typeof result[0]);
+
         if (result[0] === 0) {
             return '해당 리뷰가 존재하지 않아 변화 없음.';
         } else {

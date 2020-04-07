@@ -1,12 +1,12 @@
 import * as express from 'express';
 import { hospitalSubscriberService } from '../service/hospitalSubscriber.service';
 import { auth } from '../utils/auth.util'
-
+import { verifyUser } from '../middleware/auth.middleware';
 
 class HospitalSubscriberRoute {
     public hospitalSubscriberRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', updateHospitalSubscriber);
+        this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', verifyUser, updateHospitalSubscriber);
     }
 }
 
