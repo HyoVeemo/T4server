@@ -1,20 +1,17 @@
 import Reservation from '../models/Reservation.model';
-import ReservationLog from '../models/ReservationLog.model';
 import Hospital from '../models/Hospital.model';
 import HospitalOffice from '../models/HospitalOffice.model';
 import User from '../models/User.model';
-import { Sequelize } from 'sequelize/types';
+import { Op } from 'sequelize';
 
 interface IReservationCreateData {
     userIndex: number;
-    officeIndex: number;
     hpid: string;
+    officeIndex: number;
+    treatmentIndex: number;
+    treatmentName: string;
     reservationDate: string;
     reservationTime: string;
-    alterUserName?: string;
-    alterAge?: string;
-    alterTel?: string;
-    alterEmail?: string;
 }
 
 class ReservationService {
@@ -29,13 +26,13 @@ class ReservationService {
         let resultCount;
         /** 
          * 입력받은(요청 통해서 넘어온) 예약날짜와 진료실 번호, 그리고 예약시간과 예약시간 + 15분 사이에 예약 돼있는 모든 로우 count하는 쿼리. 
-         * 즉 기존 예약 정보와 시간이 겹치는 부분이 있으면 count++함.
+         * 즉 기존 예약 정보와 시간이 겹치는 부분이 있으면 count함.
         */
         let query = "SELECT COUNT(*) FROM Reservations WHERE reservationDate = DATE(:reservationDate)"; // reservationDate -> 예약날짜
         query += " AND officeIndex = :officeIndex"; // officeIndex -> 진료실 번호
         query += " AND ( TIME_FORMAT(reservationTime, '%T') BETWEEN TIME_FORMAT(:reservationTime, '%T')"; // reservationTime -> 예약시간
-        query += " AND ADDTIME(TIME_FORMAT(:reservationTime, '%T'), '00:15:00')"; // 15분 = 한 사람 진료하는 데 걸리는 시간이라 가정. 
-        query += " OR ADDTIME(TIME_FORMAT(reservationTime, '%T'), '00:15:00') BETWEEN TIME_FORMAT(:reservationTime, '%T') AND ADDTIME(:reservationTime, '00:15:00') )"; // 진료 종료 시간
+        query += " AND ADDTIME(TIME_FORMAT(:reservationTime, '%T'), '00:30:00')"; // 30분 = 두 사람 진료하는 데 걸리는 시간이라 가정. 
+        query += " OR ADDTIME(TIME_FORMAT(reservationTime, '%T'), '00:30:00') BETWEEN TIME_FORMAT(:reservationTime, '%T') AND ADDTIME(:reservationTime, '00:30:00') )"; // 진료 종료 시간
 
         const values = {
             officeIndex: reservationData.officeIndex,
@@ -43,7 +40,6 @@ class ReservationService {
             reservationTime: reservationData.reservationTime
         };
 
-        //console.log(reservationData);
         await sequelize.query(query, { replacements: values })
             .spread(function (results, metadata) {
                 resultCount = results[0];
@@ -68,7 +64,15 @@ class ReservationService {
     async getReservation(userIndex) {
         const option = {
             where: {
-                userIndex: userIndex
+                userIndex: userIndex,
+                [Op.or]: [ // 응답대기중, 예약됨.
+                    {
+                        status: 'PENDING'
+                    },
+                    {
+                        status: 'ACCEPTED'
+                    }
+                ]
             },
             include: [{
                 model: Hospital,
@@ -89,7 +93,15 @@ class ReservationService {
     async getReservationLog(userIndex) {
         const option = {
             where: {
-                userIndex: userIndex
+                userIndex: userIndex,
+                [Op.or]: [ // 거절됨, 타임아웃됨.
+                    {
+                        status: 'REFUSED'
+                    },
+                    {
+                        status: 'TIMEOUT'
+                    }
+                ]
             },
             include: [{
                 model: Hospital,
@@ -102,9 +114,31 @@ class ReservationService {
                 attributes: ['userName', 'age', 'tel', 'email']
             }]
         }
-        const result = await ReservationLog.findAndCountAll(option);
+        const result = await Reservation.findAndCountAll(option);
 
         return result;
+    }
+
+    /**
+     * 병원 측에서 예약 요청 수락 또는 거절 시 상태 변경.
+     * @param reservationIndex 
+     */
+    async updateReservationStatus(reservationIndex, reply) {
+        let change;
+
+        if (reply === 'accept') {
+            change = { status: 'ACCEPTED' }; // 수락
+        } else {
+            change = { status: 'REFUSED' }; // 거절
+        }
+
+        const option = {
+            where: {
+                reservationIndex: reservationIndex
+            }
+        }
+        const result = await Reservation.update(change, option);
+        console.log(result);
     }
 
     /**

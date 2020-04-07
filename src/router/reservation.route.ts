@@ -2,6 +2,7 @@ import express from 'express';
 import { auth } from '../utils/auth.util'
 import { reservationService } from '../service/reservation.service';
 import { hospitalService } from '../service/hospital.service';
+import { hospitalOfficeService } from '../service/hospitalOffice.service';
 
 class ReservationRoute {
     public reservationRouter: express.Router = express.Router();
@@ -9,28 +10,68 @@ class ReservationRoute {
         this.reservationRouter.post('/reservation/officeIndex/:officeIndex', reserveHospital); // 병원 예약하기
         this.reservationRouter.get('/reservation', getReservation); // 예약 현황 보기
         this.reservationRouter.get('/reservation/history', getReservationLog) // 지난 예약 내역 보기
-        this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', cancelReservation); // 예약 취소하기
+        this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', cancelReservation); // (사용자 본인이) 예약 취소하기
+        this.reservationRouter.patch('/accept/reservationIndex/:reservationIndex', acceptReservation); // 병원 측에서 예약 수락 시 status 업데이트 (PENDING -> ACCEPTED)
+        this.reservationRouter.patch('/refuse/reservationIndex/:reservationIndex', refuseReservation); // 병원 측에서 예약 거절 시 status 업데이트 (PENDING -> REFUSED)
+    }
+}
+
+async function acceptReservation(req, res) {
+    try {
+        const reply = 'accept';
+        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
+        res.send({
+            success: true,
+            result,
+            message: 'acceptReservation: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'acceptReservation: 500'
+        });
+    }
+}
+
+async function refuseReservation(req, res) {
+    try {
+        const reply = 'refuse';
+        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
+        res.send({
+            success: true,
+            result,
+            message: 'refuseReservation: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'refuseReservation: 500'
+        });
     }
 }
 
 async function reserveHospital(req, res) {
+    console.log('실행됨');
+    console.log(req.body);
     const sequelize = req.app.locals.sequelize;
     const { tokenIndex: userIndex } = auth(req);
+    const officeIndex = req.params.officeIndex;
+    const treatmentName = req.body.treatmentName;
     try {
-        const office = await hospitalService.getHpidByOfficeIndex(req.params.officeIndex);
+        const hpid = await hospitalService.getHpidByOfficeIndex(req.params.officeIndex);
+        const treatmentIndex = await hospitalOfficeService.getTreatmentIndexByOfficeIndexAndTreatmentName(officeIndex, treatmentName);
 
         const reservationData = {
             userIndex: userIndex,
+            hpid: hpid,
             officeIndex: req.params.officeIndex, // 진료실
-            hpid: office['dataValues']['hpid'],
+            treatmentIndex: treatmentIndex,
+            treatmentName: treatmentName,
             reservationDate: req.body.reservationDate,
-            reservationTime: req.body.reservationTime,
-            alterUserName: req.body.alterUserName || null,
-            alterAge: req.body.alterAge || null,
-            alterTel: req.body.alterTel || null,
-            alterEmail: req.body.alterEmail || null
+            reservationTime: req.body.reservationTime
         };
-
         const countRow = await reservationService.getDuplicated(sequelize, reservationData);
 
         if (countRow['COUNT(*)'] === 2) { // 예약이 이미 2자리 차있으면
@@ -49,7 +90,6 @@ async function reserveHospital(req, res) {
             });
         }
     } catch (err) {
-        console.error(err);
         res.send({
             success: false,
             result: err,
@@ -95,6 +135,11 @@ async function getReservationLog(req, res) {
     }
 }
 
+/**
+ * 예약 취소
+ * @param req 
+ * @param res 
+ */
 async function cancelReservation(req, res) {
     const reservationIndex = req.params.reservationIndex;
     const { tokenIndex: userIndex } = auth(req);

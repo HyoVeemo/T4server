@@ -2,7 +2,6 @@ import { Table, Column, Model, IsEmail, CreatedAt, UpdatedAt, BelongsToMany, Has
 import Review from "./Review.model";
 import Hospital from "./Hospital.model";
 import Reservation from "./Reservation.model";
-import ReservationLog from "./ReservationLog.model";
 
 @Table({
   tableName: "User",
@@ -35,9 +34,6 @@ export default class User extends Model<User> {
 
   @HasMany(() => Reservation)
   reservation: Reservation[];
-
-  @HasMany(() => Reservation)
-  reservationLog: ReservationLog[];
 
   @PrimaryKey
   @AutoIncrement

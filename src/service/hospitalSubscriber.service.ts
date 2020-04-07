@@ -51,4 +51,4 @@ export class HospitalSubscriberService {
     }
 }
 
-export const hospitalSubscriberService: HospitalSubscriberService = new HospitalSubscriberService();
+export const hospitalSubscriberService = new HospitalSubscriberService();

@@ -3,8 +3,8 @@ import HospitalCategory from '../models/HospitalCategory.model';
 import Category from '../models/Category.model';
 import Review from '../models/Review.model';
 import HospitalOffice from '../models/HospitalOffice.model';
+import { hospitalOfficeService } from '../service/hospitalOffice.service';
 import { Op, QueryTypes } from 'sequelize';
-
 
 interface IHospitalCreateData {
     hpid: string,
@@ -86,8 +86,10 @@ export class HospitalService {
             raw: true
         });
 
-        let categories: Array<string>; // 병원 각각의 카테고리 넣을 배열.
-
+        /**
+         * 카테고리, 진료실/진료항목 찾아 넣어주기.
+         */
+        let categories: Array<string>; // 각 병원의 카테고리 넣을 배열.
         for (const hospital of resultHospital) {
             /** 각 병원의 카테고리를 찾는다 */
             let hpid = hospital["hpid"];
@@ -109,7 +111,27 @@ export class HospitalService {
                 categories.push(i.category.hospitalCategoryName);
             }
             hospital["category"] = categories;
+
+            /* 각 병원의 진료실과 진료항목을 찾는다 */
+            let hospitalOffices = await hospitalOfficeService.getOfficeNameAndTreatmentByHpid(hpid);
+            let offices = [];
+            let treatments;
+            for (const office of hospitalOffices) {
+                let treatmentNames = [];
+                let obj;
+                treatments = office.getDataValue('treatment');
+                for (const treatment of treatments) {
+                    treatmentNames.push(treatment.getDataValue('treatmentName'));
+                    obj = {
+                        officeName: office.getDataValue('officeName'),
+                        treatment: treatmentNames
+                    }
+                }
+                offices.push(obj);
+            }
+            hospital["office"] = offices;
         }
+
         /** 결과 리턴 */
         return resultHospital;
     }
@@ -161,12 +183,12 @@ export class HospitalService {
     }
 
     async getHpidByOfficeIndex(officeIndex: number): Promise<any> {
-        let resultHospitalOffice: HospitalOffice = await HospitalOffice.findOne({
+        let resultHospitalOffice = await HospitalOffice.findOne({
             where: {
                 officeIndex: officeIndex
             }
         });
-        return resultHospitalOffice;
+        return resultHospitalOffice['dataValues']['hpid'];
     }
 }
 

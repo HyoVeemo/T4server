@@ -17,6 +17,7 @@ const HospitalCategory_model_1 = __importDefault(require("../models/HospitalCate
 const Category_model_1 = __importDefault(require("../models/Category.model"));
 const Review_model_1 = __importDefault(require("../models/Review.model"));
 const HospitalOffice_model_1 = __importDefault(require("../models/HospitalOffice.model"));
+const hospitalOffice_service_1 = require("../service/hospitalOffice.service");
 const sequelize_1 = require("sequelize");
 class HospitalService {
     constructor() {
@@ -75,7 +76,10 @@ class HospitalService {
                 type: sequelize_1.QueryTypes.SELECT,
                 raw: true
             });
-            let categories; // 병원 각각의 카테고리 넣을 배열.
+            /**
+             * 카테고리, 진료실/진료항목 찾아 넣어주기.
+             */
+            let categories; // 각 병원의 카테고리 넣을 배열.
             for (const hospital of resultHospital) {
                 /** 각 병원의 카테고리를 찾는다 */
                 let hpid = hospital["hpid"];
@@ -97,6 +101,24 @@ class HospitalService {
                     categories.push(i.category.hospitalCategoryName);
                 }
                 hospital["category"] = categories;
+                /* 각 병원의 진료실과 진료항목을 찾는다 */
+                let hospitalOffices = yield hospitalOffice_service_1.hospitalOfficeService.getOfficeNameAndTreatmentByHpid(hpid);
+                let offices = [];
+                let treatments;
+                for (const office of hospitalOffices) {
+                    let treatmentNames = [];
+                    let obj;
+                    treatments = office.getDataValue('treatment');
+                    for (const treatment of treatments) {
+                        treatmentNames.push(treatment.getDataValue('treatmentName'));
+                        obj = {
+                            officeName: office.getDataValue('officeName'),
+                            treatment: treatmentNames
+                        };
+                    }
+                    offices.push(obj);
+                }
+                hospital["office"] = offices;
             }
             /** 결과 리턴 */
             return resultHospital;
@@ -156,7 +178,7 @@ class HospitalService {
                     officeIndex: officeIndex
                 }
             });
-            return resultHospitalOffice;
+            return resultHospitalOffice['dataValues']['hpid'];
         });
     }
 }

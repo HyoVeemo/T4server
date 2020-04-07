@@ -1,5 +1,6 @@
-import { Model, Table, Column, Comment, BelongsTo, PrimaryKey, AllowNull, ForeignKey } from "sequelize-typescript";
-import Category from "./Category.model";
+import { Model, Table, Column, Comment, BelongsTo, PrimaryKey, AllowNull, ForeignKey, AutoIncrement, HasMany } from "sequelize-typescript";
+import HospitalOffice from "./HospitalOffice.model";
+import Reservation from "./Reservation.model";
 
 /**
  * Table: 진료항목
@@ -9,17 +10,27 @@ import Category from "./Category.model";
   timestamps: false
 })
 export default class Treatment extends Model<Treatment> {
-  @BelongsTo(() => Category)
-  category: Category;
+  @BelongsTo(() => HospitalOffice)
+  office: HospitalOffice;
+
+  @HasMany(() => Reservation)
+  reservation: Reservation[];
 
   @PrimaryKey
-  @ForeignKey(() => Category)
+  @AutoIncrement
   @Column
-  dgid: number;
+  treatmentIndex: number;
 
-  @PrimaryKey
+  @ForeignKey(() => HospitalOffice)
+  @Column({
+    unique: 'Treatment_officeIndex_treatmentName_unique'
+  })
+  officeIndex: number;
+
   @AllowNull
-  @Comment("진료과목명")
-  @Column
+  @Comment("진료항목명")
+  @Column({
+    unique: 'Treatment_officeIndex_treatmentName_unique'
+  })
   treatmentName: string;
 }

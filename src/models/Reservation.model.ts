@@ -2,7 +2,7 @@ import { Model, Default, ForeignKey, Table, Column, IsDate, BelongsTo, Comment, 
 import User from "./User.model";
 import Hospital from "./Hospital.model";
 import HospitalOffice from './HospitalOffice.model';
-import { any } from "bluebird";
+import Treatment from "./Treatment.model";
 
 /**
  * Table: 병원 예약
@@ -17,6 +17,9 @@ export default class Reservation extends Model<Reservation>{
 
     @BelongsTo(() => HospitalOffice)
     hospitalOffice: HospitalOffice;
+
+    @BelongsTo(() => Treatment)
+    treatment: Treatment;
 
     @PrimaryKey
     @AutoIncrement
@@ -35,6 +38,13 @@ export default class Reservation extends Model<Reservation>{
     @Column
     officeIndex: number;
 
+    @ForeignKey(() => Treatment)
+    @Column
+    treatmentIndex: number;
+
+    @Column
+    treatmentName: string;
+
     @IsDate
     @AllowNull(false)
     @Column(DataType.STRING)
@@ -44,22 +54,14 @@ export default class Reservation extends Model<Reservation>{
     @Column(DataType.STRING)
     reservationTime: string;
 
-    @Comment('예약현황: PENDING -> (병원에서 예약 확인 후) ACTIVE, (reservationTime이 지나거나, 예약 캔슬되면 INACTIVE -> Log로 이동')
+    @Comment('선생님께 하고 싶은 말')
+    @Column
+    comment: string;
+
+    @Comment('예약현황: PENDING -> (병원에서 예약 수락 후) ACCEPTED, 거절하면 REFUSED, 예약 시간이 지나면 TIMEOUT')
     @Default('PENDING')
     @Column
     status: string;
-
-    @Column
-    alterUserName: string;
-
-    @Column
-    alterAge: string;
-
-    @Column
-    alterTel: string;
-
-    @Column
-    alterEmail: string;
 
     @CreatedAt
     createdAt: Date;
