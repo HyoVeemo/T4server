@@ -1,5 +1,6 @@
-import { Model, Table, Column, Comment, BelongsTo, PrimaryKey, AllowNull, ForeignKey, AutoIncrement } from "sequelize-typescript";
+import { Model, Table, Column, Comment, BelongsTo, PrimaryKey, AllowNull, ForeignKey, AutoIncrement, HasMany } from "sequelize-typescript";
 import HospitalOffice from "./HospitalOffice.model";
+import Reservation from "./Reservation.model";
 
 /**
  * Table: 진료항목
@@ -11,6 +12,9 @@ import HospitalOffice from "./HospitalOffice.model";
 export default class Treatment extends Model<Treatment> {
   @BelongsTo(() => HospitalOffice)
   office: HospitalOffice;
+
+  @HasMany(() => Reservation)
+  reservation: Reservation[];
 
   @PrimaryKey
   @AutoIncrement

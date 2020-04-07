@@ -178,7 +178,7 @@ class HospitalService {
                     officeIndex: officeIndex
                 }
             });
-            return resultHospitalOffice;
+            return resultHospitalOffice['dataValues']['hpid'];
         });
     }
 }

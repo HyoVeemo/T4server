@@ -2,11 +2,14 @@ import Reservation from '../models/Reservation.model';
 import Hospital from '../models/Hospital.model';
 import HospitalOffice from '../models/HospitalOffice.model';
 import User from '../models/User.model';
+import { Op } from 'sequelize';
 
 interface IReservationCreateData {
     userIndex: number;
-    officeIndex: number;
     hpid: string;
+    officeIndex: number;
+    treatmentIndex: number;
+    treatmentName: string;
     reservationDate: string;
     reservationTime: string;
 }
@@ -37,7 +40,6 @@ class ReservationService {
             reservationTime: reservationData.reservationTime
         };
 
-        //console.log(reservationData);
         await sequelize.query(query, { replacements: values })
             .spread(function (results, metadata) {
                 resultCount = results[0];
@@ -62,7 +64,15 @@ class ReservationService {
     async getReservation(userIndex) {
         const option = {
             where: {
-                userIndex: userIndex
+                userIndex: userIndex,
+                [Op.or]: [ // 응답대기중, 예약됨.
+                    {
+                        status: 'PENDING'
+                    },
+                    {
+                        status: 'ACCEPTED'
+                    }
+                ]
             },
             include: [{
                 model: Hospital,
@@ -84,7 +94,14 @@ class ReservationService {
         const option = {
             where: {
                 userIndex: userIndex,
-                status: 'ACCEPTED' || 'REFUSED'
+                [Op.or]: [ // 거절됨, 타임아웃됨.
+                    {
+                        status: 'REFUSED'
+                    },
+                    {
+                        status: 'TIMEOUT'
+                    }
+                ]
             },
             include: [{
                 model: Hospital,

@@ -2,6 +2,7 @@ import { Model, Default, ForeignKey, Table, Column, IsDate, BelongsTo, Comment, 
 import User from "./User.model";
 import Hospital from "./Hospital.model";
 import HospitalOffice from './HospitalOffice.model';
+import Treatment from "./Treatment.model";
 
 /**
  * Table: 병원 예약
@@ -16,6 +17,9 @@ export default class Reservation extends Model<Reservation>{
 
     @BelongsTo(() => HospitalOffice)
     hospitalOffice: HospitalOffice;
+
+    @BelongsTo(() => Treatment)
+    treatment: Treatment;
 
     @PrimaryKey
     @AutoIncrement
@@ -33,6 +37,13 @@ export default class Reservation extends Model<Reservation>{
     @ForeignKey(() => HospitalOffice)
     @Column
     officeIndex: number;
+
+    @ForeignKey(() => Treatment)
+    @Column
+    treatmentIndex: number;
+
+    @Column
+    treatmentName: string;
 
     @IsDate
     @AllowNull(false)
