@@ -1,12 +1,12 @@
 import * as express from 'express';
 import { hospitalSubscriberService } from '../service/hospitalSubscriber.service';
 import { auth } from '../utils/auth.util'
-
+import { verifyUser } from '../middleware/auth.middleware';
 
 class HospitalSubscriberRoute {
     public hospitalSubscriberRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', updateHospitalSubscriber);
+        this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', verifyUser, updateHospitalSubscriber);
     }
 }
 
@@ -15,7 +15,6 @@ async function updateHospitalSubscriber(req, res): Promise<any> {
         const hpid = req.params.hpid;
         let { tokenIndex: userIndex } = auth(req);
         let result = await hospitalSubscriberService.getHospitalSubscriber(userIndex, hpid);
-
 
         //구독 정보가 있는 경우
         if (!result) {

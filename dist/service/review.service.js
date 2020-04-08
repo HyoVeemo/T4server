@@ -46,7 +46,6 @@ class ReviewService {
     }
     getUserReview(userIndex) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(userIndex);
             const option = {
                 where: {
                     userIndex: userIndex
@@ -66,7 +65,6 @@ class ReviewService {
                 }
             };
             const result = yield Review_model_1.default.update(change, option);
-            console.log(result, typeof result[0]);
             if (result[0] === 0) {
                 return '해당 리뷰가 존재하지 않아 변화 없음.';
             }

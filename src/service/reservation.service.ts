@@ -23,33 +23,50 @@ class ReservationService {
      * @param reservationData 
      */
     async getDuplicated(sequelize, reservationData) {
-        let resultCount;
-        /** 
-         * 입력받은(요청 통해서 넘어온) 예약날짜와 진료실 번호, 그리고 예약시간과 예약시간 + 15분 사이에 예약 돼있는 모든 로우 count하는 쿼리. 
-         * 즉 기존 예약 정보와 시간이 겹치는 부분이 있으면 count함.
-        */
-        let query = "SELECT COUNT(*) FROM Reservations WHERE reservationDate = DATE(:reservationDate)"; // reservationDate -> 예약날짜
-        query += " AND officeIndex = :officeIndex"; // officeIndex -> 진료실 번호
-        query += " AND ( TIME_FORMAT(reservationTime, '%T') BETWEEN TIME_FORMAT(:reservationTime, '%T')"; // reservationTime -> 예약시간
-        query += " AND ADDTIME(TIME_FORMAT(:reservationTime, '%T'), '00:30:00')"; // 30분 = 두 사람 진료하는 데 걸리는 시간이라 가정. 
-        query += " OR ADDTIME(TIME_FORMAT(reservationTime, '%T'), '00:30:00') BETWEEN TIME_FORMAT(:reservationTime, '%T') AND ADDTIME(:reservationTime, '00:30:00') )"; // 진료 종료 시간
+        const option = {
+            where: {
+                officeIndex: reservationData.officeIndex,
+                reservationDate: reservationData.reservationDate,
+                reservationTime: reservationData.reservationTime,
+                userIndex: reservationData.userIndex
+            }
+        }
+        const data = await Reservation.findOne(option); // 그 시간에 예약한 게 없으면
+        if (!data) {
+            let resultCount;
+            /** 
+             * 입력받은(요청 통해서 넘어온) 예약날짜와 진료실 번호, 그리고 예약시간과 예약시간 + 15분 사이에 예약 돼있는 모든 로우 count하는 쿼리. 
+             * 즉 기존 예약 정보와 시간이 겹치는 부분이 있으면 count함.
+            */
+            let query = "SELECT COUNT(*) FROM Reservations WHERE ( officeIndex = :officeIndex"; // reservationDate -> 예약날짜
+            query += " AND reservationDate = :reservationDate"; // officeIndex -> 진료실 번호
+            query += " AND reservationTime = :reservationTime"; // reservationTime -> 예약시간
+            query += " AND status = :status )"; // ACCEPTED 상태인 예약이 두 개면 안 됨.
 
-        const values = {
-            officeIndex: reservationData.officeIndex,
-            reservationDate: reservationData.reservationDate,
-            reservationTime: reservationData.reservationTime
-        };
+            const values = {
+                officeIndex: reservationData.officeIndex,
+                reservationDate: reservationData.reservationDate,
+                reservationTime: reservationData.reservationTime,
+                status: 'ACCEPTED'
+            };
 
-        await sequelize.query(query, { replacements: values })
-            .spread(function (results, metadata) {
-                resultCount = results[0];
-            }, function (err) {
-                console.error(err);
-            });
-        /**
-         * resultCount = 해당 진료실 / 예약날짜 / 예약시간의 예약 수
-         */
-        return resultCount;
+            await sequelize.query(query, { replacements: values })
+                .spread(function (results, metadata) {
+                    resultCount = results[0];
+                    console.log(resultCount);
+                }, function (err) {
+                    console.error(err);
+                });
+            /**
+             * resultCount = 해당 진료실 / 예약날짜 / 예약시간의 예약 수
+             */
+            return resultCount;
+
+        } else {
+            const result = '중복 예약 불가';
+            return result;
+        }
+
     };
 
     /**
@@ -138,7 +155,6 @@ class ReservationService {
             }
         }
         const result = await Reservation.update(change, option);
-        console.log(result);
     }
 
     /**

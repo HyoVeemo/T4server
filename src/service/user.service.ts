@@ -23,7 +23,7 @@ export class UserService {
 	async getUser(userArg: string): Promise<User> {
 		let resultUser: User = await User.findOne({
 			where: {
-				[Op.or]: [{ userId: userArg }, { userNickName: userArg }]
+				[Op.or]: [{ email: userArg }, { userNickName: userArg }]
 			}
 		})
 		return resultUser;
@@ -34,7 +34,7 @@ export class UserService {
 	 */
 	async validateUser(userData: any): Promise<any> {
 		//유저 조회 
-		let resultUser = await this.getUser(userData.userId); // DB에서 일치하는 userData 가져옴.
+		let resultUser = await this.getUser(userData.email); // DB에서 일치하는 userData 가져옴.
 		if (!resultUser) {
 			throw new Error('user id does not exist');
 		}

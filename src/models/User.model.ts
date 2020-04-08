@@ -8,14 +8,14 @@ import Reservation from "./Reservation.model";
   defaultScope: {
     attributes: [
       "userIndex",
-      "userId",
+      "email",
       "userPw",
+      "role",
       "userName",
       "userNickName",
       "age",
       "gender",
       "tel",
-      "email",
       "avartar"
     ]
   }
@@ -41,13 +41,19 @@ export default class User extends Model<User> {
   userIndex: number;
 
   @AllowNull(false)
-  @Unique(true)
+  @IsEmail
+  @Unique
   @Column(DataType.STRING)
-  userId: string;
+  email: string;
 
   @AllowNull(false)
   @Column(DataType.STRING)
   userPw: string;
+
+  @Comment('권한')
+  @AllowNull(false)
+  @Column
+  role: string;
 
   @Comment('실명')
   @AllowNull(false)
@@ -68,11 +74,6 @@ export default class User extends Model<User> {
   @Unique
   @Column(DataType.STRING)
   tel: string;
-
-  @IsEmail
-  @Unique
-  @Column(DataType.STRING)
-  email: string;
 
   @Column(DataType.STRING)
   avartar: string;

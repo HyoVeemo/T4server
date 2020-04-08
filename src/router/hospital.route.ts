@@ -1,6 +1,5 @@
 import * as express from 'express'
 import { hospitalService } from '../service/hospital.service'
-import Treatment from '../models/Treatment.model';
 
 class HospitalRoute {
     public hospitalRouter: express.Router = express.Router();
@@ -18,14 +17,14 @@ async function listHospital(req, res): Promise<any> {
         const result = await hospitalService.listHospital(filter);
         res.send({
             success: true,
+            result,
             statusCode: 200,
-            result: result,
             message: 'listHospital'
         })
     } catch (err) {
-        console.log(err);
         res.send({
             success: false,
+            result: err,
             statusCode: 500,
             message: 'listHospital: 500'
         })
@@ -37,13 +36,13 @@ async function getHospital(req, res): Promise<any> {
     const sequelize = req.app.locals.sequelize;
     try {
         const result = await hospitalService.getHospital(hpid, sequelize);
+
         res.send({
             success: true,
-            statusCode: 200,
-            result: result
+            result,
+            statusCode: 200
         })
     } catch (err) {
-        console.log(err);
         res.send({
             success: false,
             statusCode: 500,
@@ -52,6 +51,4 @@ async function getHospital(req, res): Promise<any> {
     }
 }
 
-
-
-export const hospitalRoute: HospitalRoute = new HospitalRoute();
+export const hospitalRoute = new HospitalRoute();

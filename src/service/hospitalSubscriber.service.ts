@@ -24,8 +24,6 @@ export class HospitalSubscriberService {
                 hpid: hpid
             }
         });
-        console.log(resultHospitalSubscriber);
-        //return resultHospitalSubscriber.toJSON();
         return resultHospitalSubscriber;
     }
 

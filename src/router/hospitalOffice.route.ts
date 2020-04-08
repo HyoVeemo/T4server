@@ -1,12 +1,13 @@
 import * as express from 'express';
 import { hospitalOfficeService } from '../service/hospitalOffice.service';
+import { verifyHospital } from '../middleware/auth.middleware';
 
 class HospitalOfficeRoute {
     public hospitalOfficeRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalOfficeRouter.post('/office/hpid/:hpid', registerHospitalOffice); // 진료실 등록.
-        this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', updateHospitalOffice); // 진료실 정보 변경.
-        this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', deleteHospitalOffice); // 진료실 삭제.
+        this.hospitalOfficeRouter.post('/office/hpid/:hpid', verifyHospital, registerHospitalOffice); // 진료실 등록.
+        this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', verifyHospital, updateHospitalOffice); // 진료실 정보 변경.
+        this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', verifyHospital, deleteHospitalOffice); // 진료실 삭제.
     }
 }
 
@@ -41,6 +42,10 @@ async function registerHospitalOffice(req, res) { // 입력 데이터: officeNam
                 message: 'registerHospitalOffice: 200'
             });
         }
+        res.send({
+            success: true,
+            message: 'registerHospitalOffice: 200'
+        });
     } catch (err) {
         res.send({
             success: false,
@@ -54,9 +59,11 @@ async function updateHospitalOffice(req, res) {
     const officeIndex: number = req.params.officeIndex;
     const alterOfficeName: string = req.body.alterOfficeName;
     const alterTreatmentNameArr: Array<string[]> = req.body.alterTreatmentName; // 바꿀 진료항목 이름 -> 이차원 배열로 받기. [['변경전이름', '변경후이름']]
+    const newTreatmentNameArr: Array<string[]> = req.body.newTreatmentNameArr; // 새로 추가되는 진료항목 이름.
     const alterOfficeData = {
         officeName: alterOfficeName,
-        treatmentNameArr: alterTreatmentNameArr
+        treatmentNameArr: alterTreatmentNameArr,
+        newTreatmentNameArr: newTreatmentNameArr
     };
 
     try {
