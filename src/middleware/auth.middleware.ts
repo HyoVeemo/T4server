@@ -19,7 +19,7 @@ export async function verifyUser(req: express.Request, res: express.Response, ne
     }
     try {
         const userData = await verify(req, token);
-        const result = await userService.getUser(userData.tokenId);
+        const result = await userService.getUser(userData.tokenEmail);
 
         if (result.getDataValue("role") === 'User') {
             return next();
@@ -50,7 +50,7 @@ export async function verifyHospital(req: express.Request, res: express.Response
     }
     try {
         const userData = await verify(req, token);
-        const result = await userService.getUser(userData.tokenId);
+        const result = await userService.getUser(userData.tokenEmail);
 
         if (result.getDataValue("role") === 'Hospital') {
             return next();

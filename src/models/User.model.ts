@@ -8,7 +8,7 @@ import Reservation from "./Reservation.model";
   defaultScope: {
     attributes: [
       "userIndex",
-      "userId",
+      "email",
       "userPw",
       "role",
       "userName",
@@ -16,7 +16,6 @@ import Reservation from "./Reservation.model";
       "age",
       "gender",
       "tel",
-      "email",
       "avartar"
     ]
   }
@@ -42,9 +41,10 @@ export default class User extends Model<User> {
   userIndex: number;
 
   @AllowNull(false)
-  @Unique(true)
+  @IsEmail
+  @Unique
   @Column(DataType.STRING)
-  userId: string;
+  email: string;
 
   @AllowNull(false)
   @Column(DataType.STRING)
@@ -74,11 +74,6 @@ export default class User extends Model<User> {
   @Unique
   @Column(DataType.STRING)
   tel: string;
-
-  @IsEmail
-  @Unique
-  @Column(DataType.STRING)
-  email: string;
 
   @Column(DataType.STRING)
   avartar: string;

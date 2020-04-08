@@ -16,7 +16,6 @@ async function updateHospitalSubscriber(req, res): Promise<any> {
         let { tokenIndex: userIndex } = auth(req);
         let result = await hospitalSubscriberService.getHospitalSubscriber(userIndex, hpid);
 
-
         //구독 정보가 있는 경우
         if (!result) {
             await hospitalSubscriberService.createHospitalSubscriber({

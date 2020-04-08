@@ -5,7 +5,7 @@ import { hashSync, compareSync } from 'bcryptjs';
 import User from '../models/User.model';
 
 interface ICreateUserData { // 회원가입용
-    userId: string;
+    email: string;
     userPw: string;
     role: string;
     userName: string;
@@ -13,12 +13,11 @@ interface ICreateUserData { // 회원가입용
     age?: number;
     gender?: string;
     tel: string;
-    email: string;
     avatar?: string;
 }
 
 interface ILoginData { // 로그인용
-    userId: string;
+    email: string;
     userPw: string;
 }
 
@@ -31,7 +30,7 @@ export class AuthService {
      */
     async signUp(userData: ICreateUserData): Promise<any> {
         //아이디 중복 검사
-        const result = await userService.getUser(userData.userId);
+        const result = await userService.getUser(userData.email);
         if (result) return { error: true, status: 409, message: 'Duplicated Id' };
 
         const createAccount = await userService.createUser(userData);
@@ -45,11 +44,11 @@ export class AuthService {
     async signIn(req): Promise<any> {
         let userData: ILoginData = req.body;
         //데이터 없음
-        if (userData.userId === undefined || userData.userPw === undefined) {
+        if (userData.email === undefined || userData.userPw === undefined) {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultUser = await userService.getUser(userData.userId);
+        let resultUser = await userService.getUser(userData.email);
 
         //일치하는 유저 없음
         if (!resultUser) {
@@ -68,14 +67,13 @@ export class AuthService {
             // Token 생성. 
             const token = jwt.sign({
                 tokenIndex: resultUser.userIndex,
-                tokenId: resultUser.userId,
+                tokenEmail: resultUser.email,
                 tokenName: resultUser.userName,
                 tokenNickName: resultUser.userNickName,
                 tokenAvartar: resultUser.avartar,
                 tokenAge: resultUser.age,
                 tokenGender: resultUser.gender,
-                tokenTel: resultUser.tel,
-                tokenEmail: resultUser.email
+                tokenTel: resultUser.tel
             }, req.app.locals.secret);
             delete resultUser.userPw;
             // 로그인한 사용자에게 token 제공. User 인증이 필요한 API 요청 시(글쓰기, 마이페이지 등) Request header에 토큰을 넣어 보낸다
