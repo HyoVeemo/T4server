@@ -4,6 +4,7 @@ import HospitalOffice from '../models/HospitalOffice.model';
 interface IUpdateOfficeData { // 진료실 정보 수정용
     officeName?: string;
     treatmentNameArr?: Array<string[]>;
+    newTreatmentNameArr?: Array<string[]>;
 }
 
 class HospitalOfficeService {
@@ -32,19 +33,24 @@ class HospitalOfficeService {
      */
     async updateHospitalOffice(officeIndex, alterOfficeData: IUpdateOfficeData) {
         if (alterOfficeData.officeName) {
-            console.log(alterOfficeData.officeName, '실행됨');
             const change = { officeName: alterOfficeData.officeName };
             const option = { where: { officeIndex: officeIndex } };
             await HospitalOffice.update(change, option);
         }
 
         if (alterOfficeData.treatmentNameArr) {
-            console.log(alterOfficeData.treatmentNameArr, '실행됨');
             for (const treatmentName of alterOfficeData.treatmentNameArr) {
                 let treatmentIndex = await hospitalOfficeService.getTreatmentIndexByOfficeIndexAndTreatmentName(officeIndex, treatmentName[0]);
                 let change = { treatmentName: treatmentName[1] };
                 let option = { where: { treatmentIndex: treatmentIndex } };
                 await Treatment.update(change, option);
+            }
+        }
+
+        if (alterOfficeData.newTreatmentNameArr) {
+            for (const treatmentName of alterOfficeData.newTreatmentNameArr) {
+                const data = { officeIndex: officeIndex, treatmentName: treatmentName };
+                await Treatment.create(data);
             }
         }
     }
@@ -62,12 +68,12 @@ class HospitalOfficeService {
             where: {
                 hpid: hpid
             },
-            attributes: ['officeName'],
+            attributes: ['officeIndex', 'officeName'],
             include: [
                 {
                     model: Treatment,
                     as: 'treatment',
-                    required: true
+                    required: false
                 }
             ]
         }

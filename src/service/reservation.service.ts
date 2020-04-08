@@ -155,7 +155,6 @@ class ReservationService {
             }
         }
         const result = await Reservation.update(change, option);
-        console.log(result);
     }
 
     /**

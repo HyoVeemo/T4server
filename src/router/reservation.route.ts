@@ -17,42 +17,6 @@ class ReservationRoute {
     }
 }
 
-async function acceptReservation(req, res) {
-    try {
-        const reply = 'accept';
-        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
-        res.send({
-            success: true,
-            result,
-            message: 'acceptReservation: 200'
-        });
-    } catch (err) {
-        res.send({
-            success: false,
-            result: err,
-            message: 'acceptReservation: 500'
-        });
-    }
-}
-
-async function refuseReservation(req, res) {
-    try {
-        const reply = 'refuse';
-        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
-        res.send({
-            success: true,
-            result,
-            message: 'refuseReservation: 200'
-        });
-    } catch (err) {
-        res.send({
-            success: false,
-            result: err,
-            message: 'refuseReservation: 500'
-        });
-    }
-}
-
 async function reserveHospital(req, res) {
     const sequelize = req.app.locals.sequelize;
     const { tokenIndex: userIndex } = auth(req);
@@ -161,6 +125,42 @@ async function cancelReservation(req, res) {
             success: false,
             result: err,
             message: 'cancelReservation: 500'
+        });
+    }
+}
+
+async function acceptReservation(req, res) {
+    try {
+        const reply = 'accept';
+        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
+        res.send({
+            success: true,
+            result,
+            message: 'acceptReservation: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'acceptReservation: 500'
+        });
+    }
+}
+
+async function refuseReservation(req, res) {
+    try {
+        const reply = 'refuse';
+        const result = await reservationService.updateReservationStatus(req.params.reservationIndex, reply);
+        res.send({
+            success: true,
+            result,
+            message: 'refuseReservation: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'refuseReservation: 500'
         });
     }
 }

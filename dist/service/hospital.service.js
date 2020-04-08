@@ -111,11 +111,12 @@ class HospitalService {
                     treatments = office.getDataValue('treatment');
                     for (const treatment of treatments) {
                         treatmentNames.push(treatment.getDataValue('treatmentName'));
-                        obj = {
-                            officeName: office.getDataValue('officeName'),
-                            treatment: treatmentNames
-                        };
                     }
+                    obj = {
+                        officeIndex: office.getDataValue('officeIndex'),
+                        officeName: office.getDataValue('officeName'),
+                        treatment: treatmentNames
+                    };
                     offices.push(obj);
                 }
                 hospital["office"] = offices;
@@ -182,6 +183,5 @@ class HospitalService {
         });
     }
 }
-exports.HospitalService = HospitalService;
 exports.hospitalService = new HospitalService();
 //# sourceMappingURL=hospital.service.js.map

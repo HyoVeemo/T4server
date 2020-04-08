@@ -24,7 +24,7 @@ interface IHospitalCreateData {
     dutyInf?: string,
 }
 
-export class HospitalService {
+class HospitalService {
     constructor() {
 
     }
@@ -122,10 +122,11 @@ export class HospitalService {
                 treatments = office.getDataValue('treatment');
                 for (const treatment of treatments) {
                     treatmentNames.push(treatment.getDataValue('treatmentName'));
-                    obj = {
-                        officeName: office.getDataValue('officeName'),
-                        treatment: treatmentNames
-                    }
+                }
+                obj = {
+                    officeIndex: office.getDataValue('officeIndex'),
+                    officeName: office.getDataValue('officeName'),
+                    treatment: treatmentNames
                 }
                 offices.push(obj);
             }
@@ -192,4 +193,4 @@ export class HospitalService {
     }
 }
 
-export const hospitalService: any = new HospitalService();
+export const hospitalService = new HospitalService();
