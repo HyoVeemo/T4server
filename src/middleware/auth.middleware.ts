@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import * as express from 'express';
 import { userService } from "../service/user.service";
-
+import { hospitalUserService } from "../service/hospitalUser.service";
 /**
  * middleWare: header에서 token 을 받아 검증
  * @param req 
@@ -21,7 +21,7 @@ export async function verifyUser(req: express.Request, res: express.Response, ne
         const userData = await verify(req, token);
         const result = await userService.getUser(userData.tokenEmail);
 
-        if (result.getDataValue("role") === 'User') {
+        if (result) {
             return next();
         } else {
             res.status(403).json({
@@ -49,10 +49,10 @@ export async function verifyHospital(req: express.Request, res: express.Response
         })
     }
     try {
-        const userData = await verify(req, token);
-        const result = await userService.getUser(userData.tokenEmail);
+        const hospitalUserData = await verify(req, token);
+        const result = await hospitalUserService.getHospitalUser(hospitalUserData.tokenEmail);
 
-        if (result.getDataValue("role") === 'Hospital') {
+        if (result) {
             return next();
         } else {
             res.status(403).json({

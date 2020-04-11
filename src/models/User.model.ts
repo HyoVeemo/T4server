@@ -10,7 +10,6 @@ import Reservation from "./Reservation.model";
       "userIndex",
       "email",
       "userPw",
-      "role",
       "userName",
       "userNickName",
       "age",

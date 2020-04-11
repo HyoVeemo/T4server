@@ -29,8 +29,10 @@ class SignRoute {
         this.signRouter = express.Router();
         //정의된 라우터 REST API 정의
         // .MATHOD("{path}", function )
-        this.signRouter.post("/signUp", signUp);
-        this.signRouter.post("/signIn", signIn);
+        this.signRouter.post("/user/signUp", userSignUp);
+        this.signRouter.post("/user/signIn", userSignIn);
+        this.signRouter.post("/hospital/signUp", hospitalSignUp);
+        this.signRouter.post("/hospital/signIn", hospitalSignIn);
     }
 }
 /**
@@ -39,10 +41,63 @@ class SignRoute {
  * @param res
  * @returns {Promise<any>}
  */
-function signUp(req, res) {
+function hospitalSignUp(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield auth_service_1.authService.signUp(req.body);
+            const result = yield auth_service_1.authService.hospitalSignUp(req.body);
+            res.send({
+                success: true,
+                result: result,
+                message: 'getHospitalUser: 200'
+            });
+        }
+        catch (err) {
+            console.log(err);
+            res.send({
+                success: false,
+                statusCode: 500,
+                result: err,
+                message: 'createHospitalUser: 500'
+            });
+        }
+    });
+}
+/**
+ * route: 로그인
+ * @param req
+ * @param res
+ * @returns {Promise<any>}
+ */
+function hospitalSignIn(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield auth_service_1.authService.hospitalSignIn(req);
+            res.send({
+                success: true,
+                result: result,
+                message: 'getHospitalUser: 200'
+            });
+        }
+        catch (err) {
+            console.log(err);
+            res.send({
+                success: false,
+                statusCode: 500,
+                message: 'getHospitalUser: 500'
+            });
+        }
+    });
+}
+/**
+ * route: 회원가입
+ * @param req
+ * @param res
+ * @returns {Promise<any>}
+ */
+function userSignUp(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield auth_service_1.authService.userSignUp(req.body);
             res.send({
                 success: true,
                 result: result,
@@ -66,10 +121,10 @@ function signUp(req, res) {
  * @param res
  * @returns {Promise<any>}
  */
-function signIn(req, res) {
+function userSignIn(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield auth_service_1.authService.signIn(req);
+            const result = yield auth_service_1.authService.userSignIn(req);
             res.send({
                 success: true,
                 result: result,

@@ -8,6 +8,26 @@ class HospitalOfficeRoute {
         this.hospitalOfficeRouter.post('/office/hpid/:hpid', verifyHospital, registerHospitalOffice); // 진료실 등록.
         this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', verifyHospital, updateHospitalOffice); // 진료실 정보 변경.
         this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', verifyHospital, deleteHospitalOffice); // 진료실 삭제.
+        this.hospitalOfficeRouter.get('/office/hpid/:hpid', verifyHospital, getHospitalOffices);
+    }
+}
+
+async function getHospitalOffices(req, res) {
+    const hpid: string = req.params.hpid;
+    try {
+        const result = await hospitalOfficeService.getOffices(hpid);
+
+        res.send({
+            success: true,
+            result,
+            message: 'getHospitalOffices: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'getHospitalOffices: 500'
+        });
     }
 }
 

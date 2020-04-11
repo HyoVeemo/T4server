@@ -2,7 +2,7 @@ import User from '../models/User.model';
 import { hashSync, compareSync } from 'bcryptjs';
 import { Op } from 'sequelize';
 
-export class UserService {
+class UserService {
 	constructor() {
 	}
 
