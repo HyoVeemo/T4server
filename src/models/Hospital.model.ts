@@ -1,4 +1,4 @@
-import { Model, Table, Column, Comment, BelongsToMany, PrimaryKey, DataType, AllowNull, HasMany } from "sequelize-typescript";
+import { Model, Table, Column, Comment, BelongsToMany, PrimaryKey, DataType, AllowNull, HasMany, HasOne } from "sequelize-typescript";
 import Category from "./Category.model";
 import HospitalCategory from "./HospitalCategory.model";
 import User from "./User.model";
@@ -6,9 +6,16 @@ import HospitalOffice from "./HospitalOffice.model";
 import Review from "./Review.model";
 import Reservation from "./Reservation.model";
 import HospitalSubscriber from "./HospitalSubscriber.model";
+import HospitalUser from "./HospitalUser.model";
 
 @Table
 export default class Hospital extends Model<Hospital> {
+  @HasOne(() => HospitalUser)
+  hospitalUser: HospitalUser
+
+  @HasMany(() => HospitalSubscriber)
+  hospitalSubscriber: HospitalSubscriber[]
+
   @BelongsToMany(
     () => Category,
     () => HospitalCategory,

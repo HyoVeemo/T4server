@@ -50,11 +50,6 @@ export default class User extends Model<User> {
   @Column(DataType.STRING)
   userPw: string;
 
-  @Comment('권한')
-  @AllowNull(false)
-  @Column
-  role: string;
-
   @Comment('실명')
   @AllowNull(false)
   @Column
