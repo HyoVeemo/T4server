@@ -9,6 +9,18 @@ interface IUpdateOfficeData { // 진료실 정보 수정용
 
 class HospitalOfficeService {
     constructor() { }
+    async getOffices(hpid: string) {
+        const option = {
+            where: { hpid: hpid },
+            include: [
+                {
+                    model: Treatment,
+                    required: false
+                }
+            ]
+        }
+        return await HospitalOffice.findAll(option);
+    }
 
     /**
      * 진료실 등록

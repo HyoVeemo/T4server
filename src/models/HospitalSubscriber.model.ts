@@ -1,4 +1,4 @@
-import { Model, ForeignKey, Table, Column, HasMany, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany } from "sequelize-typescript";
+import { Model, ForeignKey, Table, Column, HasMany, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, BelongsTo } from "sequelize-typescript";
 import User from "./User.model";
 import Hospital from "./Hospital.model";
 
@@ -7,6 +7,9 @@ import Hospital from "./Hospital.model";
  */
 @Table
 export default class HospitalSubscriber extends Model<HospitalSubscriber>{
+    @BelongsTo(() => Hospital)
+    hospital: Hospital
+
     @PrimaryKey
     @AutoIncrement
     @Column
@@ -24,7 +27,7 @@ export default class HospitalSubscriber extends Model<HospitalSubscriber>{
     isScrap: number;
 
     @CreatedAt
-    CreatedAt: Date;
+    createdAt: Date;
 
     @UpdatedAt
     updatedAt: Date;

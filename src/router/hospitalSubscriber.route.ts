@@ -7,6 +7,25 @@ class HospitalSubscriberRoute {
     public hospitalSubscriberRouter: express.Router = express.Router();
     constructor() {
         this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', verifyUser, updateHospitalSubscriber);
+        this.hospitalSubscriberRouter.get('/hospitalSubscriber/userIndex/:userIndex', verifyUser, getAllHospitalSubscribers);
+    }
+}
+
+async function getAllHospitalSubscribers(req, res) {
+    try {
+        const result = await hospitalSubscriberService.getAllHospitals(req.params.userIndex);
+        res.send({
+            success: true,
+            result,
+            message: 'getAllHospitalSubscribers: 200'
+        })
+    } catch (err) {
+        res.send({
+            success: false,
+            statusCode: 500,
+            err,
+            message: 'getAllHospitalSubscribers: 500'
+        })
     }
 }
 
@@ -36,7 +55,6 @@ async function updateHospitalSubscriber(req, res): Promise<any> {
         })
 
     } catch (err) {
-        console.log(err);
         res.send({
             success: false,
             statusCode: 500,

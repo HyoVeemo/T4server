@@ -1,6 +1,7 @@
 import HospitalSubscriber from '../models/HospitalSubscriber.model';
+import Hospital from '../models/Hospital.model';
 
-export class HospitalSubscriberService {
+class HospitalSubscriberService {
     constructor() {
     }
 
@@ -45,6 +46,18 @@ export class HospitalSubscriberService {
                 hpid: hpid,
                 userIndex: userIndex
             }
+        })
+    }
+
+    async getAllHospitals(userIndex: number) {
+        return await HospitalSubscriber.findAndCountAll({
+            where: { userIndex: userIndex },
+            include: [
+                {
+                    model: Hospital,
+                    required: false
+                }
+            ]
         })
     }
 }

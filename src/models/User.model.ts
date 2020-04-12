@@ -10,7 +10,6 @@ import Reservation from "./Reservation.model";
       "userIndex",
       "email",
       "userPw",
-      "role",
       "userName",
       "userNickName",
       "age",
@@ -49,11 +48,6 @@ export default class User extends Model<User> {
   @AllowNull(false)
   @Column(DataType.STRING)
   userPw: string;
-
-  @Comment('권한')
-  @AllowNull(false)
-  @Column
-  role: string;
 
   @Comment('실명')
   @AllowNull(false)
