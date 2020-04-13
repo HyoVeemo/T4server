@@ -36,7 +36,6 @@ async function getHospital(req: express.Request, res: express.Response) {
     const sequelize = req.app.locals.sequelize;
     try {
         const result = await hospitalService.getHospital(hpid, sequelize);
-
         res.send({
             success: true,
             result,
