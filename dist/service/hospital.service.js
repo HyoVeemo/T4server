@@ -41,7 +41,6 @@ class HospitalService {
         return __awaiter(this, void 0, void 0, function* () {
             const lon = filter.lon;
             const lat = filter.lat;
-            console.log(lon, lat);
             const query = `SELECT 
         t1.hpid, 
         t1.dutyName, 

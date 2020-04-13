@@ -1,38 +1,39 @@
 import * as express from 'express';
 import { hospitalOfficeService } from '../service/hospitalOffice.service';
 import { verifyHospital } from '../middleware/auth.middleware';
+import { auth } from '../utils/auth.util'
 
 class HospitalOfficeRoute {
     public hospitalOfficeRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalOfficeRouter.post('/office/hpid/:hpid', verifyHospital, registerHospitalOffice); // 진료실 등록.
+        this.hospitalOfficeRouter.post('/office', verifyHospital, registerHospitalOffice); // 진료실 등록.
         this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', verifyHospital, updateHospitalOffice); // 진료실 정보 변경.
         this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', verifyHospital, deleteHospitalOffice); // 진료실 삭제.
-        this.hospitalOfficeRouter.get('/office/hpid/:hpid', verifyHospital, getHospitalOffices);
+        this.hospitalOfficeRouter.get('/office', verifyHospital, getMyHospitalOffices); //
     }
 }
 
-async function getHospitalOffices(req, res) {
-    const hpid: string = req.params.hpid;
+async function getMyHospitalOffices(req, res) {
+    const { tokenHpid: hpid } = auth(req);
     try {
         const result = await hospitalOfficeService.getOffices(hpid);
 
         res.send({
             success: true,
             result,
-            message: 'getHospitalOffices: 200'
+            message: 'getMyHospitalOffices: 200'
         });
     } catch (err) {
         res.send({
             success: false,
             result: err,
-            message: 'getHospitalOffices: 500'
+            message: 'getMyHospitalOffices: 500'
         });
     }
 }
 
 async function registerHospitalOffice(req, res) { // 입력 데이터: officeName, treatmentName
-    const hpid: string = req.params.hpid;
+    const { tokenHpid: hpid } = auth(req);
     const officeName: string = req.body.officeName; // 예: 김똑닥 선생님 - 내과
     let treatmentNameArr: Array<string>;
     const registerOfficeData = {

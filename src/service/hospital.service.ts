@@ -32,11 +32,10 @@ class HospitalService {
     /**
      * service: 병원 생성
      */
-    async createHospital(hospitalData: IHospitalCreateData): Promise<any> {
+    async createHospital(hospitalData: IHospitalCreateData) {
         let resultHospital = await Hospital.create(hospitalData);
         return resultHospital;
     }
-
 
     /**
      * service: 병원 목록 조회
@@ -44,11 +43,9 @@ class HospitalService {
      * @param order 
      * @param pn 
      */
-    async listHospital(filter?: any): Promise<any> {
+    async listHospital(filter?: any) {
         const lon = filter.lon;
         const lat = filter.lat;
-        console.log(lon, lat)
-
         const query = `SELECT 
         t1.hpid, 
         t1.dutyName, 
@@ -141,7 +138,7 @@ class HospitalService {
      * 병원 개별 조회
      * @param hpid 
      */
-    async getHospital(hpid: string, sequelize): Promise<any> {
+    async getHospital(hpid: string, sequelize) {
         let resultHospital = await Hospital.findAll({
             where: {
                 hpid: hpid
