@@ -76,11 +76,11 @@ export class AuthService {
         }
 
         resultHospitalUser = resultHospitalUser.toJSON() as HospitalUser;
-
         if (resultHospitalUser) {
             // Token 생성. 
             const token = jwt.sign({
                 tokenIndex: resultHospitalUser.hospitalUserIndex,
+                tokenHpid: resultHospitalUser.hpid,
                 tokenEmail: resultHospitalUser.email,
                 tokenTel: resultHospitalUser.tel
             }, req.app.locals.secret);
