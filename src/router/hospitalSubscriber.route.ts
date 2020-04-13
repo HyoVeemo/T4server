@@ -7,13 +7,14 @@ class HospitalSubscriberRoute {
     public hospitalSubscriberRouter: express.Router = express.Router();
     constructor() {
         this.hospitalSubscriberRouter.put('/hospitalSubscriber/hpid/:hpid', verifyUser, updateHospitalSubscriber);
-        this.hospitalSubscriberRouter.get('/hospitalSubscriber/userIndex/:userIndex', verifyUser, getAllHospitalSubscribers);
+        this.hospitalSubscriberRouter.get('/allHospitalSubscriber', verifyUser, getAllHospitalSubscribers);
     }
 }
 
 async function getAllHospitalSubscribers(req, res) {
     try {
-        const result = await hospitalSubscriberService.getAllHospitals(req.params.userIndex);
+        const { tokenIndex: userIndex } = auth(req);
+        const result = await hospitalSubscriberService.getAllHospitals(userIndex);
         res.send({
             success: true,
             result,
