@@ -9,7 +9,7 @@ class HospitalRoute {
     }
 }
 
-async function listHospital(req, res): Promise<any> {
+async function listHospital(req: express.Request, res: express.Response) {
     try {
         let { filter } = req.query; // { lon:127.026,lat:37.5872 }
         filter = JSON.parse(filter);
@@ -31,7 +31,7 @@ async function listHospital(req, res): Promise<any> {
     }
 }
 
-async function getHospital(req, res): Promise<any> {
+async function getHospital(req: express.Request, res: express.Response) {
     let hpid = req.params.hpid;
     const sequelize = req.app.locals.sequelize;
     try {
