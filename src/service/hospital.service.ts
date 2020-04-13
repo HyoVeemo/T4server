@@ -5,6 +5,7 @@ import Review from '../models/Review.model';
 import HospitalOffice from '../models/HospitalOffice.model';
 import { hospitalOfficeService } from '../service/hospitalOffice.service';
 import { Op, QueryTypes } from 'sequelize';
+import { reservationService } from './reservation.service';
 
 interface IHospitalCreateData {
     hpid: string,
@@ -138,46 +139,94 @@ class HospitalService {
      * 병원 개별 조회
      * @param hpid 
      */
-    async getHospital(hpid: string, sequelize) {
-        let resultHospital = await Hospital.findAll({
-            where: {
-                hpid: hpid
-            },
-            attributes: [
-                'hpid',
-                'dutyName',
-                'dutyAddr',
-                'dutyMapimg',
-                'wgs84Lon',
-                'wgs84Lat',
-                'dutyTime1',
-                'dutyTime2',
-                'dutyTime3',
-                'dutyTime4',
-                'dutyTime5',
-                'dutyTime6',
-                'dutyTime7',
-                'dutyTime8',
-                'dutyTel',
-                'dutyInf',
-                [sequelize.fn('AVG', sequelize.col('review.rating')), 'ratingAvg']
-            ],
-            include: [
-                {
-                    model: Review,
-                    as: 'review',
-                    attributes: [],
-                    required: false
+    async getHospital(inputHpid: string, sequelize) {
+        try {
+            let resultHospital = await Hospital.findAll({
+                where: {
+                    hpid: inputHpid
                 },
-                {
-                    model: Category,
-                    as: 'category',
-                    required: true
+                attributes: [
+                    'hpid',
+                    'dutyName',
+                    'dutyAddr',
+                    'dutyMapimg',
+                    'wgs84Lon',
+                    'wgs84Lat',
+                    'dutyTime1',
+                    'dutyTime2',
+                    'dutyTime3',
+                    'dutyTime4',
+                    'dutyTime5',
+                    'dutyTime6',
+                    'dutyTime7',
+                    'dutyTime8',
+                    'dutyTel',
+                    'dutyInf',
+                    [sequelize.fn('AVG', sequelize.col('review.rating')), 'ratingAvg']
+                ],
+                include: [
+                    {
+                        model: Review,
+                        as: 'review',
+                        attributes: [],
+                        required: false
+                    }
+                ],
+                group: ['hpid']
+            });
+
+            const hospital = resultHospital[0]['dataValues'];
+            /**
+            * 카테고리, 진료실/진료항목 찾아 넣어주기.
+            */
+            let categories: Array<string>; // 각 병원의 카테고리 넣을 배열.
+            /** 각 병원의 카테고리를 찾는다 */
+            let hpid = hospital["hpid"];
+            let resultCategory = await HospitalCategory.findAll({
+                where: {
+                    hpid: hpid
                 },
-            ],
-            group: ['hpid', 'category.dgid']
-        });
-        return resultHospital;
+                include: [
+                    {
+                        model: Category,
+                        as: 'category',
+                        required: true
+                    }
+                ],
+            });
+            /** 카테고리 배열에 찾은 카테고리들을 넣어준다. */
+            categories = [];
+            for (const i of resultCategory) {
+                categories.push(i.category.hospitalCategoryName);
+            }
+            hospital["category"] = categories;
+
+            /* 각 병원의 진료실과 진료항목을 찾는다 */
+            let hospitalOffices = await hospitalOfficeService.getOfficeNameAndTreatmentByHpid(hpid);
+            let offices = [];
+            let treatments;
+            for (const office of hospitalOffices) {
+                let treatmentNames = [];
+                let obj;
+                treatments = office.getDataValue('treatment');
+                for (const treatment of treatments) {
+                    treatmentNames.push(treatment.getDataValue('treatmentName'));
+                }
+                obj = {
+                    officeIndex: office.getDataValue('officeIndex'),
+                    officeName: office.getDataValue('officeName'),
+                    treatment: treatmentNames
+                }
+                offices.push(obj);
+            }
+            hospital["office"] = offices;
+
+            return hospital;
+
+        } catch (err) {
+            console.error(err);
+        }
+
     }
 
     async getHpidByOfficeIndex(officeIndex: number): Promise<any> {

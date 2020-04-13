@@ -78,7 +78,7 @@ class ReservationService {
         return resultReservation;
     }
 
-    async getReservation(userIndex) {
+    async getMyReservation(userIndex) {
         const option = {
             where: {
                 userIndex: userIndex,
@@ -107,22 +107,25 @@ class ReservationService {
         return result;
     }
 
-    async getReservationLog(userIndex) {
+    async getMyReservationLog(userIndex) {
         const option = {
             where: {
                 userIndex: userIndex,
-                [Op.or]: [ // 거절됨, 타임아웃됨.
+                [Op.or]: [ // 거절됨, 타임아웃, 취소됨.
                     {
                         status: 'REFUSED'
                     },
                     {
                         status: 'TIMEOUT'
+                    },
+                    {
+                        status: 'CANCELED'
                     }
                 ]
             },
             include: [{
                 model: Hospital,
-                attributes: ['dutyName']
+                attributes: ['dutyName', 'dutyTel']
             }, {
                 model: HospitalOffice,
                 attributes: ['officeName']
@@ -154,11 +157,22 @@ class ReservationService {
                 reservationIndex: reservationIndex
             }
         }
-        const result = await Reservation.update(change, option);
+        await Reservation.update(change, option);
+    }
+
+    async cancelReservation(reservationIndex: number, userIndex: number) {
+        const change = { status: 'CANCELED' };
+        const option = {
+            where: {
+                reservationIndex: reservationIndex,
+                userIndex: userIndex
+            }
+        }
+        await Reservation.update(change, option);
     }
 
     /**
-     * service: 예약 취소
+     * service: 예약 삭제
      * @param reservationIndex 
      * @param userIndex 
      */
