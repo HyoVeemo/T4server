@@ -34,19 +34,21 @@ async function updateHospitalSubscriber(req, res): Promise<any> {
     try {
         const hpid = req.params.hpid;
         let { tokenIndex: userIndex } = auth(req);
-        let result = await hospitalSubscriberService.getHospitalSubscriber(userIndex, hpid);
+        let resultHopitalSubscriber = await hospitalSubscriberService.getHospitalSubscriber(userIndex, hpid);
+        let result;
 
         //구독 정보가 있는 경우
-        if (!result) {
-            await hospitalSubscriberService.createHospitalSubscriber({
+        if (!resultHopitalSubscriber) {
+            result = await hospitalSubscriberService.createHospitalSubscriber({
                 hpid: hpid,
                 userIndex: userIndex,
                 isScrap: 1
             })
         } else {
-            await hospitalSubscriberService.deleteHospitalSubscriber(hpid, userIndex);
+            result = await hospitalSubscriberService.deleteHospitalSubscriber(hpid, userIndex);
         }
 
+        
         //delete result[0].userIndex;
         res.send({
             success: true,
