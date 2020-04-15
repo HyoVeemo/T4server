@@ -14,17 +14,20 @@ class HospitalSubscriberRoute {
 async function getAllHospitalSubscribers(req, res) {
     try {
         const { tokenIndex: userIndex } = auth(req);
-        const result = await hospitalSubscriberService.getAllHospitals(userIndex);
+        let { location } = req.query;
+        location = JSON.parse(location);
+        //console.log(location.lat);
+        const result = await hospitalSubscriberService.getAllHospitals(userIndex,location);
         res.send({
             success: true,
             result,
             message: 'getAllHospitalSubscribers: 200'
         })
     } catch (err) {
+        console.log(err);
         res.send({
             success: false,
             statusCode: 500,
-            err,
             message: 'getAllHospitalSubscribers: 500'
         })
     }

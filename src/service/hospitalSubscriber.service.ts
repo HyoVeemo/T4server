@@ -1,6 +1,6 @@
 import HospitalSubscriber from '../models/HospitalSubscriber.model';
 import Hospital from '../models/Hospital.model';
-
+import Sequelize from 'sequelize'
 class HospitalSubscriberService {
     constructor() {
     }
@@ -28,6 +28,32 @@ class HospitalSubscriberService {
         return resultHospitalSubscriber;
     }
 
+    async getAllHospitals(userIndex: number, location:any) {
+        // location = {lon, lat}
+        console.log(location.lon, location.lat);
+        const resultHospitals = await HospitalSubscriber.findAndCountAll({
+            where: { userIndex: userIndex },
+            attributes:[
+                [Sequelize.literal("(6371*acos(cos(radians("+location.lat+"))*cos(radians(`hospital`.`wgs84lat`))*cos(radians("+location.lon+") - radians(`hospital`.`wgs84lon`))+ sin(radians("+location.lat+"))*sin(radians(`hospital`.`wgs84lat`))))"),'distance']
+            ],
+            include: [
+                {
+                    model: Hospital,
+                    required: true
+                }
+            ]
+        });
+//'FROM `HospitalSubscribers` AS `HospitalSubscriber` INNER JOIN `Hospitals` AS `ho
+        let results = [];
+        for (const row of resultHospitals.rows){
+            results.push(row.toJSON());
+        }
+
+        
+        return results;
+
+    }
+
 
     async updateHospitalSubscriber(hpid: string, userIndex: number, hospitalSubscriberData: any): Promise<any> {
         const result = await HospitalSubscriber.update(hospitalSubscriberData, {
@@ -49,17 +75,7 @@ class HospitalSubscriberService {
         })
     }
 
-    async getAllHospitals(userIndex: number) {
-        return await HospitalSubscriber.findAndCountAll({
-            where: { userIndex: userIndex },
-            include: [
-                {
-                    model: Hospital,
-                    required: false
-                }
-            ]
-        })
-    }
+
 }
 
 export const hospitalSubscriberService = new HospitalSubscriberService();
