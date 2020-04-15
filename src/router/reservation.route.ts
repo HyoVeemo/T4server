@@ -11,9 +11,11 @@ class ReservationRoute {
         this.reservationRouter.post('/reservation/officeIndex/:officeIndex', verifyUser, reserveHospital); // 병원 예약하기
         this.reservationRouter.get('/reservation', verifyUser, getReservation); // 예약 현황 보기
         this.reservationRouter.get('/reservation/history', verifyUser, getReservationLog) // 지난 예약 내역 보기
-        this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', verifyUser, cancelReservation); // (사용자 본인이) 예약 취소하기
+        this.reservationRouter.patch('/cancel/reservationIndex/:reservationIndex', verifyUser, cancelReservation); // (사용자 본인이) 예약 취소하기
+        this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', verifyUser, deleteReservation); // (사용자 본인이) 예약 삭제하기
         this.reservationRouter.patch('/accept/reservationIndex/:reservationIndex', verifyHospital, acceptReservation); // 병원 측에서 예약 수락 시 status 업데이트 (PENDING -> ACCEPTED)
         this.reservationRouter.patch('/refuse/reservationIndex/:reservationIndex', verifyHospital, refuseReservation); // 병원 측에서 예약 거절 시 status 업데이트 (PENDING -> REFUSED)
+        //this.reservationRouter.get('/allReservations', verifyHospital, getAllReservations); // 병원 측에서 모든 예약 조회.
     }
 }
 
@@ -71,7 +73,7 @@ async function reserveHospital(req, res) {
 async function getReservation(req, res) {
     const { tokenIndex: userIndex } = auth(req);
     try {
-        const result = await reservationService.getReservation(userIndex);
+        const result = await reservationService.getMyReservation(userIndex);
         res.send({
             success: true,
             result,
@@ -89,7 +91,7 @@ async function getReservation(req, res) {
 async function getReservationLog(req, res) {
     const { tokenIndex: userIndex } = auth(req);
     try {
-        const result = await reservationService.getReservationLog(userIndex);
+        const result = await reservationService.getMyReservationLog(userIndex);
         res.send({
             success: true,
             result,
@@ -104,12 +106,30 @@ async function getReservationLog(req, res) {
     }
 }
 
+async function cancelReservation(req, res) {
+    const reservationIndex = req.params.reservationIndex;
+    const { tokenIndex: userIndex } = auth(req);
+    try {
+        await reservationService.cancelReservation(reservationIndex, userIndex);
+        res.send({
+            success: true,
+            message: 'cancelReservation: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'cancelReservation: 500'
+        });
+    }
+}
+
 /**
- * 예약 취소
+ * 진료 내역 삭제
  * @param req 
  * @param res 
  */
-async function cancelReservation(req, res) {
+async function deleteReservation(req, res) {
     const reservationIndex = req.params.reservationIndex;
     const { tokenIndex: userIndex } = auth(req);
     try {
@@ -117,14 +137,13 @@ async function cancelReservation(req, res) {
         res.send({
             success: true,
             result,
-            message: 'cancelReservation: 200'
+            message: 'deleteReservation: 200'
         });
     } catch (err) {
-        console.error(err);
         res.send({
             success: false,
             result: err,
-            message: 'cancelReservation: 500'
+            message: 'deleteReservation: 500'
         });
     }
 }
