@@ -24,10 +24,20 @@ const auth_middleware_1 = require("../middleware/auth.middleware");
 class ReviewRoute {
     constructor() {
         this.reviewRouter = express_1.default.Router();
+        const fileFilter = (req, file, cb) => {
+            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+                cb(null, true);
+            }
+            else {
+                cb(new Error('Invalid Mime Type, only JPEG and PNG'), false);
+            }
+        };
         this.upload = multer_1.default({
+            fileFilter,
             storage: multer_s3_1.default({
                 s3: new aws_sdk_1.default.S3(),
                 bucket: 't4bucket0',
+                acl: 'public-read',
                 key(req, file, cb) {
                     cb(null, `original/${+new Date()}${path_1.default.basename(file.originalname)}`);
                 }
@@ -66,7 +76,7 @@ function getAllReview(req, res) {
 }
 function uploadImg(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        // console.log(req.file);
+        console.log(req.file);
         res.json({ url: req.file.location });
     });
 }
