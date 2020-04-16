@@ -12,11 +12,22 @@ class ReviewRoute {
     public reviewRouter: express.Router = express.Router();
     private upload;
     private upload2;
+
     constructor() {
+        const fileFilter = (req, file, cb) => {
+            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+                cb(null, true);
+            } else {
+                cb(new Error('Invalid Mime Type, only JPEG and PNG'), false);
+            }
+        };
+
         this.upload = multer({
+            fileFilter,
             storage: multerS3({
                 s3: new AWS.S3(),
                 bucket: 't4bucket0',
+                acl: 'public-read',
                 key(req, file, cb) { // S3 t4bucket0에 있는 original 폴더에 업로드 할 것임.
                     cb(null, `original/${+new Date()}${path.basename(file.originalname)}`);
                 }
@@ -55,7 +66,7 @@ async function getAllReview(req, res) {
 }
 
 async function uploadImg(req, res) {
-    // console.log(req.file);
+    console.log(req.file);
     res.json({ url: req.file.location });
 }
 
