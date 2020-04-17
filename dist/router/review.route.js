@@ -76,7 +76,6 @@ function getAllReview(req, res) {
 }
 function uploadImg(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(req.file);
         res.json({ url: req.file.location });
     });
 }

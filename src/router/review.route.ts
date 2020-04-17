@@ -66,7 +66,6 @@ async function getAllReview(req, res) {
 }
 
 async function uploadImg(req, res) {
-    console.log(req.file);
     res.json({ url: req.file.location });
 }
 
