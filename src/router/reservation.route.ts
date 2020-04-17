@@ -10,6 +10,7 @@ class ReservationRoute {
     constructor() {
         this.reservationRouter.post('/reservation/officeIndex/:officeIndex', verifyUser, reserveHospital); // 병원 예약하기
         this.reservationRouter.get('/reservation', verifyUser, getReservation); // 예약 현황 보기
+        this.reservationRouter.get('/reservation/reservationIndex/:reservationIndex', verifyUser, loadReservation); // 새로고침용(?)
         this.reservationRouter.get('/reservation/history', verifyUser, getReservationLog) // 지난 예약 내역 보기
         this.reservationRouter.patch('/cancel/reservationIndex/:reservationIndex', verifyUser, cancelReservation); // (사용자 본인이) 예약 취소하기
         this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', verifyUser, deleteReservation); // (사용자 본인이) 예약 삭제하기
@@ -19,6 +20,24 @@ class ReservationRoute {
     }
 }
 
+async function loadReservation(req, res) {
+    try {
+        const reservationIndex = req.params.reservationIndex;
+        const result = await reservationService.getOneReservation(reservationIndex);
+        res.send({
+            success: true,
+            result,
+            message: 'createReservation: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'createReservation: 500'
+        });
+    }
+
+}
 async function reserveHospital(req, res) {
     const sequelize = req.app.locals.sequelize;
     const { tokenIndex: userIndex } = auth(req);

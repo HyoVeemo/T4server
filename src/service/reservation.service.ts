@@ -107,6 +107,12 @@ class ReservationService {
         return result;
     }
 
+    async getOneReservation(reservationIndex: number) {
+        return await Reservation.findOne({
+            where: { reservationIndex: reservationIndex }
+        });
+    }
+
     async getMyReservationLog(userIndex) {
         const option = {
             where: {
