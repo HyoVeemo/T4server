@@ -1,5 +1,5 @@
 import { Server } from "./app";
-//import { hospitalAPI } from './utils/hospitalApi.util'
+import { hospitalAPI } from './utils/hospitalApi.util'
 import AWS from "aws-sdk";
 AWS.config.update({ region: 'ap-northeast-2' });
 
@@ -19,11 +19,9 @@ AWS.config.update({ region: 'ap-northeast-2' });
 
     const data: AWS.SSM.GetParameterResult = await ssm.getParameter(params).promise();
     const configInfo = JSON.parse(data.Parameter.Value);
-    //console.log({ configInfo });
     const port = Number(configInfo.PORT);
-    const secret = configInfo.secret;
 
-    const app = new Server(configInfo, secret).app;
+    const app = new Server(configInfo).app;
     await app.set("port", port);
     app
       .listen(app.get("port"), async () => {

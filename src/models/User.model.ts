@@ -1,21 +1,20 @@
-import { Table, Column, Model, IsEmail, CreatedAt, UpdatedAt, BelongsToMany, HasMany, Comment, Unique, AllowNull, PrimaryKey, AutoIncrement, DataType } from "sequelize-typescript";
+import { Table, Column, Model, IsEmail, Default, CreatedAt, UpdatedAt, BelongsToMany, HasMany, Comment, Unique, AllowNull, PrimaryKey, AutoIncrement, DataType } from "sequelize-typescript";
 import Review from "./Review.model";
 import Hospital from "./Hospital.model";
 import Reservation from "./Reservation.model";
 
 @Table({
-  tableName: "User",
   defaultScope: {
     attributes: [
       "userIndex",
       "email",
+      "emailVerified",
       "userPw",
       "userName",
       "userNickName",
       "age",
       "gender",
-      "tel",
-      "avartar"
+      "tel"
     ]
   }
 })
@@ -45,6 +44,14 @@ export default class User extends Model<User> {
   @Column(DataType.STRING)
   email: string;
 
+  @Default(false)
+  @Column
+  emailVerified: boolean;
+
+  @AllowNull(false)
+  @Column
+  keyForVerify: string;
+
   @AllowNull(false)
   @Column(DataType.STRING)
   userPw: string;
@@ -68,9 +75,6 @@ export default class User extends Model<User> {
   @Unique
   @Column(DataType.STRING)
   tel: string;
-
-  @Column(DataType.STRING)
-  avartar: string;
 
   @CreatedAt
   createdAt: Date;

@@ -4,8 +4,7 @@ import Category from '../models/Category.model';
 import Review from '../models/Review.model';
 import HospitalOffice from '../models/HospitalOffice.model';
 import { hospitalOfficeService } from '../service/hospitalOffice.service';
-import { Op, QueryTypes } from 'sequelize';
-import { reservationService } from './reservation.service';
+import { QueryTypes } from 'sequelize';
 
 interface IHospitalCreateData {
     hpid: string,
@@ -22,7 +21,7 @@ interface IHospitalCreateData {
     dutyTime7?: string,
     dutyTime8?: string,
     dutyTel?: string,
-    dutyInf?: string,
+    dutyInf?: string
 }
 
 class HospitalService {

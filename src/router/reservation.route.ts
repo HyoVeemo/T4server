@@ -16,28 +16,9 @@ class ReservationRoute {
         this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', verifyUser, deleteReservation); // (사용자 본인이) 예약 삭제하기
         this.reservationRouter.patch('/accept/reservationIndex/:reservationIndex', verifyHospital, acceptReservation); // 병원 측에서 예약 수락 시 status 업데이트 (PENDING -> ACCEPTED)
         this.reservationRouter.patch('/refuse/reservationIndex/:reservationIndex', verifyHospital, refuseReservation); // 병원 측에서 예약 거절 시 status 업데이트 (PENDING -> REFUSED)
-        //this.reservationRouter.get('/allReservations', verifyHospital, getAllReservations); // 병원 측에서 모든 예약 조회.
     }
 }
 
-async function loadReservation(req, res) {
-    try {
-        const reservationIndex = req.params.reservationIndex;
-        const result = await reservationService.getOneReservation(reservationIndex);
-        res.send({
-            success: true,
-            result,
-            message: 'createReservation: 200'
-        });
-    } catch (err) {
-        res.send({
-            success: false,
-            result: err,
-            message: 'createReservation: 500'
-        });
-    }
-
-}
 async function reserveHospital(req, res) {
     const sequelize = req.app.locals.sequelize;
     const { tokenIndex: userIndex } = auth(req);
@@ -80,6 +61,24 @@ async function reserveHospital(req, res) {
                 message: 'createReservation: 200'
             });
         }
+    } catch (err) {
+        console.error(err);
+        res.send({
+            success: false,
+            message: 'createReservation: 500'
+        });
+    }
+}
+
+async function loadReservation(req, res) {
+    try {
+        const reservationIndex = req.params.reservationIndex;
+        const result = await reservationService.getOneReservation(reservationIndex);
+        res.send({
+            success: true,
+            result,
+            message: 'createReservation: 200'
+        });
     } catch (err) {
         res.send({
             success: false,

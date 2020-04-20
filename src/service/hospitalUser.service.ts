@@ -31,7 +31,7 @@ class HospitalUserService {
 	/**
 	 * service: 로그인 정보 인증
 	 */
-    async validateHospitalUser(hospitalUserData): Promise<any> {
+    async validateHospitalUser(hospitalUserData) {
         //유저 조회 
         let resultHospitalUser = await this.getHospitalUser(hospitalUserData.email); // DB에서 일치하는 userData 가져옴.
         if (!resultHospitalUser) {
@@ -49,7 +49,7 @@ class HospitalUserService {
 	/**
 	 * service: 유저 정보 업데이트
 	 */
-    async updateHospitalUser(hospitalUserIndex: number, hospitalUserData: any): Promise<any> {
+    async updateHospitalUser(hospitalUserIndex: number, hospitalUserData: any) {
         if (hospitalUserData.hospitalUserPw) {
             const hashedPassword = hashSync(hospitalUserData.hospitalUserPw, 8);
             hospitalUserData.hospitalUserPw = hashedPassword;
@@ -66,7 +66,7 @@ class HospitalUserService {
 	/**
 	 * service: 유저 삭제
 	 */
-    async deleteHositalUser(hospitalUserIndex: number): Promise<any> {
+    async deleteHositalUser(hospitalUserIndex: number) {
         await HospitalUser.destroy({
             where: {
                 hospitalUserIndex: hospitalUserIndex

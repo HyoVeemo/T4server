@@ -11,7 +11,7 @@ class SignRoute {
   public signRouter: express.Router = express.Router();
   constructor() {
     //정의된 라우터 REST API 정의
-    // .MATHOD("{path}", function )
+    this.signRouter.get('/verifyEmail', verifyEmail);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.post("/hospital/signUp", hospitalSignUp)
@@ -19,13 +19,82 @@ class SignRoute {
   }
 }
 
+async function verifyEmail(req: express.Request, res: express.Response) {
+  try {
+    const result = await authService.updateEmailVerify(req.query);
+    res.send({
+      success: true,
+      result,
+      message: 'verifyEmail: 200'
+    });
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: false,
+      statusCode: 500,
+      message: 'verifyEmail: 500'
+    });
+  }
+}
+
 /**
  * route: 회원가입
  * @param req 
  * @param res 
- * @returns {Promise<any>}
+ * @returns {Promise<void>}
  */
-async function hospitalSignUp(req, res): Promise<any> {
+async function userSignUp(req: express.Request, res: express.Response) {
+  try {
+    const result = await authService.userSignUp(req);
+
+    res.send({
+      success: true,
+      result,
+      message: 'getUser: 200'
+    });
+  } catch (error) {
+    console.error(error);
+    res.send({
+      success: false,
+      statusCode: 500,
+      message: 'createUser: 500'
+    });
+  }
+}
+
+/**
+ * route: 로그인
+ * @param req 
+ * @param res 
+ * @returns {Promise<void>}
+ */
+async function userSignIn(req, res) {
+  try {
+    const result = await authService.userSignIn(req);
+
+    res.send({
+      success: true,
+      result,
+      message: 'getUser: 200'
+    });
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: false,
+      statusCode: 500,
+      message: 'getUser: 500'
+    })
+  }
+}
+
+
+/**
+ * route: 회원가입
+ * @param req 
+ * @param res 
+ * @returns {Promise<void>}
+ */
+async function hospitalSignUp(req, res) {
   try {
     const result = await authService.hospitalSignUp(req.body);
     res.send({
@@ -48,9 +117,9 @@ async function hospitalSignUp(req, res): Promise<any> {
  * route: 로그인
  * @param req 
  * @param res 
- * @returns {Promise<any>}
+ * @returns {Promise<void>}
  */
-async function hospitalSignIn(req, res): Promise<any> {
+async function hospitalSignIn(req, res) {
   try {
     const result = await authService.hospitalSignIn(req);
 
@@ -69,54 +138,4 @@ async function hospitalSignIn(req, res): Promise<any> {
   }
 }
 
-/**
- * route: 회원가입
- * @param req 
- * @param res 
- * @returns {Promise<any>}
- */
-async function userSignUp(req, res): Promise<any> {
-  try {
-    const result = await authService.userSignUp(req.body);
-    res.send({
-      success: true,
-      result: result,
-      message: 'getUser: 200'
-    });
-  } catch (err) {
-    console.log(err);
-    res.send({
-      success: false,
-      statusCode: 500,
-      result: err,
-      message: 'createUser: 500'
-    });
-  }
-}
-
-/**
- * route: 로그인
- * @param req 
- * @param res 
- * @returns {Promise<any>}
- */
-async function userSignIn(req, res): Promise<any> {
-  try {
-    const result = await authService.userSignIn(req);
-
-    res.send({
-      success: true,
-      result: result,
-      message: 'getUser: 200'
-    });
-  } catch (err) {
-    console.log(err);
-    res.send({
-      success: false,
-      statusCode: 500,
-      message: 'getUser: 500'
-    })
-  }
-}
-
-export const signRoute: SignRoute = new SignRoute();
+export const signRoute = new SignRoute();

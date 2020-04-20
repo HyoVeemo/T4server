@@ -5,7 +5,6 @@ import Hospital from "../models/Hospital.model";
 import Category from "../models/Category.model";
 
 export async function hospitalAPI() {
-  console.log("called");
   try {
     const host1: string = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire'; // 모든 병원 데이터 가져옴
     const host2: string = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlBassInfoInqire'; // 한 병원 데이터 가져옴
@@ -14,7 +13,7 @@ export async function hospitalAPI() {
       "서울특별시"
     )}&Q1=${encodeURIComponent(
       "성북구"
-    )}&pageNo=1&numOfRows=1000&ServiceKey=${SERVICE_KEY}`;
+    )}&pageNo=1&numOfRows=5&ServiceKey=${SERVICE_KEY}`;
     const requestUrl1: string = host1 + queryString1;
     const result1 = await request.get(requestUrl1); // <- 요청 보냄
     const xmlToJson = convert.xml2json(result1, {
@@ -25,7 +24,7 @@ export async function hospitalAPI() {
     const hospitalArr = jsonObj.response.body.items.item;
     const keys = Object.keys(hospitalArr); // 병원 개수
     let hospitalList;
-    let time;
+    let count = 0;
     for (const key in keys) {
       const queryString2: string = `?HPID=${hospitalArr[key].hpid._text}&ServiceKey=${SERVICE_KEY}`;
       const requestUrl2: string = host2 + queryString2;
@@ -35,7 +34,6 @@ export async function hospitalAPI() {
         spaces: 4
       });
       const jsonObj2 = JSON.parse(xmlToJson2);
-
       const hspiInf = jsonObj2.response.body.items.item;
       const hspi_keys = Object.keys(hspiInf); // 병원 상세 정보 키들
       let hspiCategory = []; // 병원 각각의 카테고리(mysql에 저장돼있는 카테고리들 한정)

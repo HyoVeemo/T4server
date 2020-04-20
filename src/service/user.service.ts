@@ -9,7 +9,7 @@ class UserService {
 	/**
 	 * service: 유저 생성
 	 */
-	async createUser(userData: any): Promise<any> {
+	async createUser(userData: any) {
 		const hashedPassword = hashSync(userData.userPw, 8);
 		userData.userPw = hashedPassword;
 
@@ -20,7 +20,7 @@ class UserService {
 	/**
 	 * service: 유저 조회
 	 */
-	async getUser(userArg: string): Promise<User> {
+	async getUser(userArg: string) {
 		let resultUser: User = await User.findOne({
 			where: {
 				[Op.or]: [{ email: userArg }, { userNickName: userArg }]
@@ -32,7 +32,7 @@ class UserService {
 	/**
 	 * service: 로그인 정보 인증
 	 */
-	async validateUser(userData: any): Promise<any> {
+	async validateUser(userData: any) {
 		//유저 조회 
 		let resultUser = await this.getUser(userData.email); // DB에서 일치하는 userData 가져옴.
 		if (!resultUser) {
@@ -50,7 +50,7 @@ class UserService {
 	/**
 	 * service: 유저 정보 업데이트
 	 */
-	async updateUser(userIndex: number, userData: any): Promise<any> {
+	async updateUser(userIndex: number, userData: any) {
 		if (userData.userPw) {
 			const hashedPassword = hashSync(userData.userPw, 8);
 			userData.userPw = hashedPassword;
@@ -67,7 +67,7 @@ class UserService {
 	/**
 	 * service: 유저 삭제
 	 */
-	async deleteUser(userIndex: number): Promise<any> {
+	async deleteUser(userIndex: number) {
 		await User.destroy({
 			where: {
 				userIndex: userIndex

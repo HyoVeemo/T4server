@@ -16,11 +16,13 @@ export class Server {
   public env: boolean;
   public db: Db;
 
-  constructor(configInfo, secret) {
+  constructor(configInfo) {
     this.app = express();
     this.db = new Db(configInfo);
     this.app.locals.sequelize = this.db.sequelize;
-    this.app.locals.secret = secret;
+    this.app.locals.secret = configInfo.secret;
+    this.app.locals.senderEmail = configInfo.senderEmail;
+    this.app.locals.senderPw = configInfo.senderPw;
 
     /**
     *  데이터베이스 연결 ( 설정 주의 )

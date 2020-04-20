@@ -28,13 +28,12 @@ class HospitalSubscriberService {
         return resultHospitalSubscriber;
     }
 
-    async getAllHospitals(userIndex: number, location:any) {
+    async getAllHospitals(userIndex: number, location: any) {
         // location = {lon, lat}
-        console.log(location.lon, location.lat);
         const resultHospitals = await HospitalSubscriber.findAndCountAll({
             where: { userIndex: userIndex },
-            attributes:[
-                [Sequelize.literal("(6371*acos(cos(radians("+location.lat+"))*cos(radians(`hospital`.`wgs84lat`))*cos(radians("+location.lon+") - radians(`hospital`.`wgs84lon`))+ sin(radians("+location.lat+"))*sin(radians(`hospital`.`wgs84lat`))))"),'distance']
+            attributes: [
+                [Sequelize.literal("(6371*acos(cos(radians(" + location.lat + "))*cos(radians(`hospital`.`wgs84lat`))*cos(radians(" + location.lon + ") - radians(`hospital`.`wgs84lon`))+ sin(radians(" + location.lat + "))*sin(radians(`hospital`.`wgs84lat`))))"), 'distance']
             ],
             include: [
                 {
@@ -43,31 +42,28 @@ class HospitalSubscriberService {
                 }
             ]
         });
-//'FROM `HospitalSubscribers` AS `HospitalSubscriber` INNER JOIN `Hospitals` AS `ho
+        //'FROM `HospitalSubscribers` AS `HospitalSubscriber` INNER JOIN `Hospitals` AS `ho
         let results = [];
-        for (const row of resultHospitals.rows){
+        for (const row of resultHospitals.rows) {
             results.push(row.toJSON());
         }
 
-        
-        return results;
 
+        return results;
     }
 
 
     async updateHospitalSubscriber(hpid: string, userIndex: number, hospitalSubscriberData: any): Promise<any> {
-        const result = await HospitalSubscriber.update(hospitalSubscriberData, {
+        return await HospitalSubscriber.update(hospitalSubscriberData, {
             where: {
                 hpid: hpid,
                 userIndex: userIndex
             }
         });
-        return result;
-
     }
 
     async deleteHospitalSubscriber(hpid: string, userIndex: number): Promise<any> {
-        const result = await HospitalSubscriber.destroy({
+        await HospitalSubscriber.destroy({
             where: {
                 hpid: hpid,
                 userIndex: userIndex

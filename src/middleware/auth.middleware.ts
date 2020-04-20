@@ -31,6 +31,7 @@ export async function verifyUser(req: express.Request, res: express.Response, ne
             })
         }
     } catch (err) {
+        console.error(err);
         res.status(403).json({
             success: false,
             statusCode: 403,

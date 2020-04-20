@@ -56,24 +56,6 @@ class ReviewRoute {
         this.reviewRouter.get('/review/ratings', getRatings); // 모든 병원 평점 가져오기
     }
 }
-function getAllReview(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const result = yield review_service_1.reviewService.getAllReview(req.params.hpid);
-            res.send({
-                success: true,
-                result,
-                message: 'getAllReview: 200'
-            });
-        }
-        catch (err) {
-            res.send({
-                success: false,
-                message: 'getAllReview: 500'
-            });
-        }
-    });
-}
 function uploadImg(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         res.json({ url: req.file.location });
@@ -111,25 +93,20 @@ function postReview(req, res) {
         ;
     });
 }
-function updateReview(req, res) {
+function getAllReview(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const reviewIndex = req.params.reviewIndex;
-        const { tokenIndex: userIndex } = auth_util_1.auth(req);
-        const contents = req.body.contents;
-        const imgUrl = req.body.url || null;
         try {
-            const resultReview = yield review_service_1.reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
+            const result = yield review_service_1.reviewService.getAllReview(req.params.hpid);
             res.send({
                 success: true,
-                result: resultReview,
-                message: 'updateReview: 200'
+                result,
+                message: 'getAllReview: 200'
             });
         }
         catch (err) {
-            console.error(err);
             res.send({
                 success: false,
-                message: 'updateReview: 500'
+                message: 'getAllReview: 500'
             });
         }
     });
@@ -170,6 +147,29 @@ function getReviewByUserNickName(req, res) {
             res.send({
                 success: false,
                 message: 'getReviewByUserNickName: 500'
+            });
+        }
+    });
+}
+function updateReview(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const reviewIndex = req.params.reviewIndex;
+        const { tokenIndex: userIndex } = auth_util_1.auth(req);
+        const contents = req.body.contents;
+        const imgUrl = req.body.url || null;
+        try {
+            const resultReview = yield review_service_1.reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
+            res.send({
+                success: true,
+                result: resultReview,
+                message: 'updateReview: 200'
+            });
+        }
+        catch (err) {
+            console.error(err);
+            res.send({
+                success: false,
+                message: 'updateReview: 500'
             });
         }
     });
