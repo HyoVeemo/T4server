@@ -140,9 +140,7 @@ class ReservationService {
                 attributes: ['userName', 'age', 'tel', 'email']
             }]
         }
-        const result = await Reservation.findAndCountAll(option);
-
-        return result;
+        return await Reservation.findAndCountAll(option);
     }
 
     /**
@@ -151,7 +149,6 @@ class ReservationService {
      */
     async updateReservationStatus(reservationIndex, reply) {
         let change;
-
         if (reply === 'accept') {
             change = { status: 'ACCEPTED' }; // 수락
         } else {
@@ -163,6 +160,7 @@ class ReservationService {
                 reservationIndex: reservationIndex
             }
         }
+
         await Reservation.update(change, option);
     }
 
@@ -174,6 +172,7 @@ class ReservationService {
                 userIndex: userIndex
             }
         }
+
         await Reservation.update(change, option);
     }
 
@@ -189,6 +188,7 @@ class ReservationService {
                 userIndex: userIndex
             }
         }
+
         const result = await Reservation.destroy(option);
         if (result === 0) {
             return '해당 예약이 존재하지 않아 변화 없음.';

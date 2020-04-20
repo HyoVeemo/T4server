@@ -4,8 +4,8 @@ import { hospitalService } from '../service/hospital.service'
 class HospitalRoute {
     public hospitalRouter: express.Router = express.Router();
     constructor() {
-        this.hospitalRouter.get('/hospital/:hpid', getHospital);
         this.hospitalRouter.get('/hospital', listHospital);
+        this.hospitalRouter.get('/hospital/:hpid', getHospital);
     }
 }
 

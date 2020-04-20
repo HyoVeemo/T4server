@@ -7,28 +7,9 @@ class HospitalOfficeRoute {
     public hospitalOfficeRouter: express.Router = express.Router();
     constructor() {
         this.hospitalOfficeRouter.post('/office', verifyHospital, registerHospitalOffice); // 진료실 등록.
+        this.hospitalOfficeRouter.get('/office', verifyHospital, getMyHospitalOffices); // 진료실 조회
         this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', verifyHospital, updateHospitalOffice); // 진료실 정보 변경.
         this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', verifyHospital, deleteHospitalOffice); // 진료실 삭제.
-        this.hospitalOfficeRouter.get('/office', verifyHospital, getMyHospitalOffices); //
-    }
-}
-
-async function getMyHospitalOffices(req, res) {
-    const { tokenHpid: hpid } = auth(req);
-    try {
-        const result = await hospitalOfficeService.getOffices(hpid);
-
-        res.send({
-            success: true,
-            result,
-            message: 'getMyHospitalOffices: 200'
-        });
-    } catch (err) {
-        res.send({
-            success: false,
-            result: err,
-            message: 'getMyHospitalOffices: 500'
-        });
     }
 }
 
@@ -72,6 +53,25 @@ async function registerHospitalOffice(req, res) { // 입력 데이터: officeNam
             success: false,
             result: err,
             message: 'registerHospitalOffice: 500'
+        });
+    }
+}
+
+async function getMyHospitalOffices(req, res) {
+    const { tokenHpid: hpid } = auth(req);
+    try {
+        const result = await hospitalOfficeService.getOffices(hpid);
+
+        res.send({
+            success: true,
+            result,
+            message: 'getMyHospitalOffices: 200'
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            result: err,
+            message: 'getMyHospitalOffices: 500'
         });
     }
 }

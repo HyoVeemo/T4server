@@ -16,8 +16,8 @@ async function getAllHospitalSubscribers(req, res) {
         const { tokenIndex: userIndex } = auth(req);
         let { location } = req.query;
         location = JSON.parse(location);
-        //console.log(location.lat);
-        const result = await hospitalSubscriberService.getAllHospitals(userIndex,location);
+
+        const result = await hospitalSubscriberService.getAllHospitals(userIndex, location);
         res.send({
             success: true,
             result,
@@ -51,12 +51,10 @@ async function updateHospitalSubscriber(req, res): Promise<any> {
             result = await hospitalSubscriberService.deleteHospitalSubscriber(hpid, userIndex);
         }
 
-        
-        //delete result[0].userIndex;
         res.send({
             success: true,
             statusCode: 200,
-            result: result,
+            result,
             message: 'putHospitalSubscriber: 200'
         })
 
@@ -69,4 +67,4 @@ async function updateHospitalSubscriber(req, res): Promise<any> {
     }
 }
 
-export const hospitalSubscriberRoute: HospitalSubscriberRoute = new HospitalSubscriberRoute();
+export const hospitalSubscriberRoute = new HospitalSubscriberRoute();

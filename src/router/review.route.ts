@@ -49,22 +49,6 @@ class ReviewRoute {
     }
 }
 
-async function getAllReview(req, res) {
-    try {
-        const result = await reviewService.getAllReview(req.params.hpid);
-        res.send({
-            success: true,
-            result,
-            message: 'getAllReview: 200'
-        });
-    } catch (err) {
-        res.send({
-            success: false,
-            message: 'getAllReview: 500'
-        });
-    }
-}
-
 async function uploadImg(req, res) {
     res.json({ url: req.file.location });
 }
@@ -101,26 +85,22 @@ async function postReview(req, res) {
     };
 }
 
-async function updateReview(req, res) {
-    const reviewIndex = req.params.reviewIndex;
-    const { tokenIndex: userIndex } = auth(req);
-    const contents = req.body.contents;
-    const imgUrl = req.body.url || null;
+async function getAllReview(req, res) {
     try {
-        const resultReview = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
+        const result = await reviewService.getAllReview(req.params.hpid);
         res.send({
             success: true,
-            result: resultReview,
-            message: 'updateReview: 200'
+            result,
+            message: 'getAllReview: 200'
         });
     } catch (err) {
-        console.error(err);
         res.send({
             success: false,
-            message: 'updateReview: 500'
+            message: 'getAllReview: 500'
         });
     }
 }
+
 
 async function getMyReview(req, res) {
     const { tokenIndex: userIndex } = auth(req);
@@ -154,6 +134,27 @@ async function getReviewByUserNickName(req, res) {
         res.send({
             success: false,
             message: 'getReviewByUserNickName: 500'
+        });
+    }
+}
+
+async function updateReview(req, res) {
+    const reviewIndex = req.params.reviewIndex;
+    const { tokenIndex: userIndex } = auth(req);
+    const contents = req.body.contents;
+    const imgUrl = req.body.url || null;
+    try {
+        const resultReview = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
+        res.send({
+            success: true,
+            result: resultReview,
+            message: 'updateReview: 200'
+        });
+    } catch (err) {
+        console.error(err);
+        res.send({
+            success: false,
+            message: 'updateReview: 500'
         });
     }
 }
@@ -214,4 +215,5 @@ async function getRatings(req, res) { // 병원별 별점
         });
     }
 }
+
 export const reviewRoute = new ReviewRoute();
