@@ -2,47 +2,22 @@ import express from 'express';
 import { reviewService } from '../service/review.service'
 import { userService } from '../service/user.service'
 import { auth } from '../utils/auth.util'
-import AWS from 'aws-sdk';
 import multer from 'multer';
-import multerS3 from 'multer-s3';
-import path from 'path';
 import { verifyUser } from '../middleware/auth.middleware';
+import { S3Upload } from "../utils/imageUpload.util";
 
 class ReviewRoute {
     public reviewRouter: express.Router = express.Router();
     private upload;
-    private upload2;
 
     constructor() {
-        const fileFilter = (req, file, cb) => {
-            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-                cb(null, true);
-            } else {
-                cb(new Error('Invalid Mime Type, only JPEG and PNG'), false);
-            }
-        };
-
-        this.upload = multer({
-            fileFilter,
-            storage: multerS3({
-                s3: new AWS.S3(),
-                bucket: 't4bucket0',
-                acl: 'public-read',
-                key(req, file, cb) { // S3 t4bucket0에 있는 original 폴더에 업로드 할 것임.
-                    cb(null, `original/${+new Date()}${path.basename(file.originalname)}`);
-                }
-            }),
-            limits: { fileSize: 5 * 1024 * 1024 },
-        });
-
-
-        this.reviewRouter.post('/img', verifyUser, this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
-        this.upload2 = multer();
-        this.reviewRouter.post('/review/hpid/:hpid', verifyUser, this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
+        this.upload = multer();
+        this.reviewRouter.post('/review/img', verifyUser, S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
+        this.reviewRouter.post('/review/hpid/:hpid', verifyUser, this.upload.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
         this.reviewRouter.get('/review/hpid/:hpid', verifyUser, getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
         this.reviewRouter.get('/review', verifyUser, getMyReview); // 리뷰 모아보기
         this.reviewRouter.get('/review/userNickName/:userNickName', verifyUser, getReviewByUserNickName);
-        this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', verifyUser, this.upload2.none(), updateReview); // 리뷰 수정 라우터
+        this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', verifyUser, this.upload.none(), updateReview); // 리뷰 수정 라우터
         this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', verifyUser, deleteReview); // 리뷰 삭제 라우터
         this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
         this.reviewRouter.get('/review/ratings', getRatings); // 모든 병원 평점 가져오기
@@ -50,7 +25,15 @@ class ReviewRoute {
 }
 
 async function uploadImg(req, res) {
-    res.json({ url: req.file.location });
+    try {
+        res.json({ url: req.file.location });
+    } catch (err) {
+        console.error(err);
+        res.send({
+            success: false,
+            message: 'uploadImg: 500'
+        });
+    }
 }
 
 async function postReview(req, res) {
