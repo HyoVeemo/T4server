@@ -38,13 +38,7 @@ class ReviewService {
         const option = {
             where: {
                 userIndex: userIndex
-            },
-            include: [
-                {
-                    model: User,
-                    attributes: ['userNickName']
-                }
-            ]
+            }
         }
         const result = await Review.findAndCountAll(option);
 
