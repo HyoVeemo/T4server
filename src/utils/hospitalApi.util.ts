@@ -1,5 +1,4 @@
 import * as convert from 'xml-js'
-
 import request from "request-promise-native";
 import Hospital from "../models/Hospital.model";
 import Category from "../models/Category.model";

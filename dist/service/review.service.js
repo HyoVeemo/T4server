@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const User_model_1 = __importDefault(require("../models/User.model"));
 const Review_model_1 = __importDefault(require("../models/Review.model"));
 class ReviewService {
     constructor() {
@@ -27,7 +28,13 @@ class ReviewService {
             const option = {
                 where: {
                     hpid: hpid
-                }
+                },
+                include: [
+                    {
+                        model: User_model_1.default,
+                        attributes: ['userNickName']
+                    }
+                ]
             };
             const result = yield Review_model_1.default.findAndCountAll(option);
             return result;
@@ -38,7 +45,13 @@ class ReviewService {
             const option = {
                 where: {
                     userIndex: userIndex
-                }
+                },
+                include: [
+                    {
+                        model: User_model_1.default,
+                        attributes: ['userNickName']
+                    }
+                ]
             };
             const result = yield Review_model_1.default.findAndCountAll(option);
             return result;
@@ -49,7 +62,13 @@ class ReviewService {
             const option = {
                 where: {
                     userIndex: userIndex
-                }
+                },
+                include: [
+                    {
+                        model: User_model_1.default,
+                        attributes: ['userNickName']
+                    }
+                ]
             };
             const result = yield Review_model_1.default.findAndCountAll(option);
             return result;

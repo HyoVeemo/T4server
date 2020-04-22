@@ -1,3 +1,4 @@
+import User from '../models/User.model';
 import Review from '../models/Review.model';
 
 interface ICreateReview {
@@ -20,7 +21,13 @@ class ReviewService {
         const option = {
             where: {
                 hpid: hpid
-            }
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: ['userNickName']
+                }
+            ]
         }
         const result = await Review.findAndCountAll(option);
 
@@ -43,7 +50,13 @@ class ReviewService {
         const option = {
             where: {
                 userIndex: userIndex
-            }
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: ['userNickName']
+                }
+            ]
         }
         const result = await Review.findAndCountAll(option);
         return result;
