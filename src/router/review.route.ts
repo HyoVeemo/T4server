@@ -39,9 +39,9 @@ class ReviewRoute {
         this.reviewRouter.post('/img', verifyUser, this.upload.single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.upload2 = multer();
         this.reviewRouter.post('/review/hpid/:hpid', verifyUser, this.upload2.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
-        this.reviewRouter.get('/review/hpid/:hpid', verifyUser, getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
+        this.reviewRouter.get('/review/hpid/:hpid', getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
         this.reviewRouter.get('/review', verifyUser, getMyReview); // 리뷰 모아보기
-        this.reviewRouter.get('/review/userNickName/:userNickName', verifyUser, getReviewByUserNickName);
+        this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
         this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', verifyUser, this.upload2.none(), updateReview); // 리뷰 수정 라우터
         this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', verifyUser, deleteReview); // 리뷰 삭제 라우터
         this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
