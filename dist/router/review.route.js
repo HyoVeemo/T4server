@@ -23,7 +23,7 @@ class ReviewRoute {
     constructor() {
         this.reviewRouter = express_1.default.Router();
         this.upload = multer_1.default();
-        this.reviewRouter.post('/img', auth_middleware_1.verifyUser, imageUpload_util_1.S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
+        this.reviewRouter.post('/review/img', auth_middleware_1.verifyUser, imageUpload_util_1.S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.reviewRouter.post('/review/hpid/:hpid', auth_middleware_1.verifyUser, this.upload.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
         this.reviewRouter.get('/review/hpid/:hpid', getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
         this.reviewRouter.get('/review', auth_middleware_1.verifyUser, getMyReview); // 리뷰 모아보기

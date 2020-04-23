@@ -45,13 +45,7 @@ class ReviewService {
             const option = {
                 where: {
                     userIndex: userIndex
-                },
-                include: [
-                    {
-                        model: User_model_1.default,
-                        attributes: ['userNickName']
-                    }
-                ]
+                }
             };
             const result = yield Review_model_1.default.findAndCountAll(option);
             return result;
