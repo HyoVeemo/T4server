@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_model_1 = __importDefault(require("../models/User.model"));
 const Review_model_1 = __importDefault(require("../models/Review.model"));
+const Reservation_model_1 = __importDefault(require("../models/Reservation.model"));
 class ReviewService {
     constructor() {
     }
@@ -117,6 +118,22 @@ class ReviewService {
                 group: 'hpid',
                 order: [[sequelize.fn('AVG', sequelize.col('rating')), 'DESC']]
             });
+        });
+    }
+    validateQualificationForWritingReview(userIndex, hpid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let query = "SELECT count(*) FROM Reservations";
+            query += " WHERE userIndex = :userIndex";
+            query += " AND hpid = :hpid";
+            query += " AND status = :status";
+            query += " AND DATE(reservationDate) BETWEEN NOW() - INTERVAL 7 day AND NOW()";
+            const values = {
+                userIndex: userIndex,
+                hpid: hpid,
+                status: 'TIMEOUT'
+            };
+            const result = yield Reservation_model_1.default.sequelize.query(query, { replacements: values });
+            return result[0][0]['count(*)'];
         });
     }
 }

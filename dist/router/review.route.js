@@ -56,19 +56,30 @@ function postReview(req, res) {
         const imgUrl = req.body.url; // 이미지 주소
         const rating = req.body.rating; // 별점
         try {
-            const reviewData = {
-                hpid: hpid,
-                userIndex: userIndex,
-                contents: contents,
-                img: imgUrl,
-                rating: rating
-            };
-            const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
-            res.send({
-                success: true,
-                result,
-                message: 'createReview: 200'
-            });
+            /* 7일 이내 예약 정보 개수*/
+            const count = yield review_service_1.reviewService.validateQualificationForWritingReview(userIndex, hpid);
+            if (count) {
+                const reviewData = {
+                    hpid: hpid,
+                    userIndex: userIndex,
+                    contents: contents,
+                    img: imgUrl,
+                    rating: rating
+                };
+                const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
+                res.send({
+                    success: true,
+                    result,
+                    message: 'createReview: 200'
+                });
+            }
+            else {
+                res.send({
+                    success: false,
+                    result: '예약 후 병원을 방문해야 리뷰 작성이 가능합니다.',
+                    message: 'createReview: 500'
+                });
+            }
         }
         catch (err) {
             console.error(err);
