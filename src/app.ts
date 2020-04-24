@@ -8,6 +8,8 @@ import { reservationRoute } from './router/reservation.route';
 import { hospitalSubscriberRoute } from './router/hospitalSubscriber.route';
 import { hospitalOfficeRoute } from './router/hospitalOffice.route';
 import Db from './db';
+import { searchRoute } from './router/search.route';
+import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
 
 
 export class Server {
@@ -15,6 +17,7 @@ export class Server {
   public port: string | number;
   public env: boolean;
   public db: Db;
+  public client;
 
   constructor(configInfo) {
     this.app = express();
@@ -23,6 +26,9 @@ export class Server {
     this.app.locals.secret = configInfo.secret;
     this.app.locals.senderEmail = configInfo.senderEmail;
     this.app.locals.senderPw = configInfo.senderPw;
+
+    this.client = new Client({ node: 'http://localhost:9200' });
+    this.app.locals.client = this.client;
 
     /**
     *  데이터베이스 연결 ( 설정 주의 )
@@ -48,5 +54,6 @@ export class Server {
     this.app.use(reviewRoute.reviewRouter);
     this.app.use(reservationRoute.reservationRouter);
     this.app.use(hospitalSubscriberRoute.hospitalSubscriberRouter);
+    this.app.use(searchRoute.searchRouter);
   }
 }

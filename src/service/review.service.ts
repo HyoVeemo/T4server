@@ -1,7 +1,6 @@
 import User from '../models/User.model';
 import Review from '../models/Review.model';
 import Reservation from '../models/Reservation.model';
-import { Op, Sequelize } from 'sequelize';
 
 interface ICreateReview {
     hpid: string,

@@ -183,17 +183,6 @@ class ReservationService {
      * @param userIndex 
      */
     async deleteReservation(reservationIndex, userIndex) {
-        // const option = {
-        //     where: {
-        //         reservationIndex: reservationIndex,
-        //         userIndex: userIndex
-        //     }
-        // }
-
-        // const result = await Reservation.destroy(option);
-        // if (result === 0) {
-        //     return '해당 예약이 존재하지 않아 변화 없음.';
-        // }
         const change = { deleted: true };
         const option = {
             where: {
