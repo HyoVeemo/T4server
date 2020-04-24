@@ -1,5 +1,7 @@
 import User from '../models/User.model';
 import Review from '../models/Review.model';
+import Reservation from '../models/Reservation.model';
+import { Op, Sequelize } from 'sequelize';
 
 interface ICreateReview {
     hpid: string,
@@ -107,6 +109,24 @@ class ReviewService {
             group: 'hpid',
             order: [[sequelize.fn('AVG', sequelize.col('rating')), 'DESC']]
         });
+    }
+
+    async validateQualificationForWritingReview(userIndex: number, hpid: string) {
+        let query = "SELECT count(*) FROM Reservations";
+        query += " WHERE userIndex = :userIndex";
+        query += " AND hpid = :hpid";
+        query += " AND status = :status";
+        query += " AND DATE(reservationDate) BETWEEN NOW() - INTERVAL 7 day AND NOW()";
+
+        const values = {
+            userIndex: userIndex,
+            hpid: hpid,
+            status: 'TIMEOUT'
+        }
+
+        const result = await Reservation.sequelize.query(query, { replacements: values });
+
+        return result[0][0]['count(*)'];
     }
 }
 

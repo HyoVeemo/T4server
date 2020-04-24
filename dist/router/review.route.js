@@ -23,7 +23,7 @@ class ReviewRoute {
     constructor() {
         this.reviewRouter = express_1.default.Router();
         this.upload = multer_1.default();
-        this.reviewRouter.post('/img', auth_middleware_1.verifyUser, imageUpload_util_1.S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
+        this.reviewRouter.post('/review/img', auth_middleware_1.verifyUser, imageUpload_util_1.S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.reviewRouter.post('/review/hpid/:hpid', auth_middleware_1.verifyUser, this.upload.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
         this.reviewRouter.get('/review/hpid/:hpid', getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
         this.reviewRouter.get('/review', auth_middleware_1.verifyUser, getMyReview); // 리뷰 모아보기
@@ -56,19 +56,30 @@ function postReview(req, res) {
         const imgUrl = req.body.url; // 이미지 주소
         const rating = req.body.rating; // 별점
         try {
-            const reviewData = {
-                hpid: hpid,
-                userIndex: userIndex,
-                contents: contents,
-                img: imgUrl,
-                rating: rating
-            };
-            const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
-            res.send({
-                success: true,
-                result,
-                message: 'createReview: 200'
-            });
+            /* 7일 이내 예약 정보 개수*/
+            const count = yield review_service_1.reviewService.validateQualificationForWritingReview(userIndex, hpid);
+            if (count) {
+                const reviewData = {
+                    hpid: hpid,
+                    userIndex: userIndex,
+                    contents: contents,
+                    img: imgUrl,
+                    rating: rating
+                };
+                const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
+                res.send({
+                    success: true,
+                    result,
+                    message: 'createReview: 200'
+                });
+            }
+            else {
+                res.send({
+                    success: false,
+                    result: '예약 후 병원을 방문해야 리뷰 작성이 가능합니다.',
+                    message: 'createReview: 500'
+                });
+            }
         }
         catch (err) {
             console.error(err);
