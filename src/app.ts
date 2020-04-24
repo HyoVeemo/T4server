@@ -27,7 +27,7 @@ export class Server {
     this.app.locals.senderEmail = configInfo.senderEmail;
     this.app.locals.senderPw = configInfo.senderPw;
 
-    this.client = new Client({ node: 'http://localhost:9200' });
+    this.client = new Client({ node: configInfo.ELASTIC_CLIENT });
     this.app.locals.client = this.client;
 
     /**
