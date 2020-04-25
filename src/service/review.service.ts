@@ -1,6 +1,7 @@
 import User from '../models/User.model';
 import Review from '../models/Review.model';
 import Reservation from '../models/Reservation.model';
+import { Sequelize } from 'sequelize'
 
 interface ICreateReview {
     hpid: string,
@@ -19,20 +20,25 @@ class ReviewService {
     }
 
     async getAllReview(hpid: string) {
-        const option = {
-            where: {
-                hpid: hpid
-            },
-            include: [
-                {
-                    model: User,
-                    attributes: ['userNickName']
-                }
-            ]
-        }
-        const result = await Review.findAndCountAll(option);
+        try {
+            const option = {
+                where: {
+                    hpid: hpid
+                },
+                order: [Sequelize.literal('createdAt DESC')],
+                include: [
+                    {
+                        model: User,
+                        attributes: ['userNickName']
+                    }
+                ]
+            }
+            const result = await Review.findAndCountAll(option);
 
-        return result;
+            return result;
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     async getMyReview(userIndex: number) {

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const User_model_1 = __importDefault(require("../models/User.model"));
 const Review_model_1 = __importDefault(require("../models/Review.model"));
 const Reservation_model_1 = __importDefault(require("../models/Reservation.model"));
+const sequelize_1 = require("sequelize");
 class ReviewService {
     constructor() {
     }
@@ -26,19 +27,25 @@ class ReviewService {
     }
     getAllReview(hpid) {
         return __awaiter(this, void 0, void 0, function* () {
-            const option = {
-                where: {
-                    hpid: hpid
-                },
-                include: [
-                    {
-                        model: User_model_1.default,
-                        attributes: ['userNickName']
-                    }
-                ]
-            };
-            const result = yield Review_model_1.default.findAndCountAll(option);
-            return result;
+            try {
+                const option = {
+                    where: {
+                        hpid: hpid
+                    },
+                    order: [sequelize_1.Sequelize.literal('createdAt DESC')],
+                    include: [
+                        {
+                            model: User_model_1.default,
+                            attributes: ['userNickName']
+                        }
+                    ]
+                };
+                const result = yield Review_model_1.default.findAndCountAll(option);
+                return result;
+            }
+            catch (err) {
+                console.error(err);
+            }
         });
     }
     getMyReview(userIndex) {
