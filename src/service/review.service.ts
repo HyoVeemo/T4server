@@ -71,8 +71,8 @@ class ReviewService {
         return result;
     }
 
-    async updateReview(reviewIndex, userIndex, contents, imgUrl) {
-        const change = { contents: contents, img: imgUrl };
+    async updateReview(reviewIndex, userIndex, updateData) {
+        const change = { contents: updateData.contents, rating: updateData.rating, img: updateData.imgUrl };
         const option = {
             where: {
                 reviewIndex: reviewIndex,

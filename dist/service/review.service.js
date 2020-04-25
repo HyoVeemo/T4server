@@ -78,9 +78,9 @@ class ReviewService {
             return result;
         });
     }
-    updateReview(reviewIndex, userIndex, contents, imgUrl) {
+    updateReview(reviewIndex, userIndex, updateData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const change = { contents: contents, img: imgUrl };
+            const change = { contents: updateData.contents, rating: updateData.rating, img: updateData.imgUrl };
             const option = {
                 where: {
                     reviewIndex: reviewIndex,

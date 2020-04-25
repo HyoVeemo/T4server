@@ -133,10 +133,13 @@ async function getReviewByUserNickName(req, res) {
 async function updateReview(req, res) {
     const reviewIndex = req.params.reviewIndex;
     const { tokenIndex: userIndex } = auth(req);
-    const contents = req.body.contents;
-    const imgUrl = req.body.url || null;
+    const updateData = {
+        contents: req.body.contents,
+        rating: req.body.rating,
+        imgUrl: req.body.url
+    };
     try {
-        const resultReview = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl);
+        const resultReview = await reviewService.updateReview(reviewIndex, userIndex, updateData);
         res.send({
             success: true,
             result: resultReview,
