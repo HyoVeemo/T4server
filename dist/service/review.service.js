@@ -53,7 +53,8 @@ class ReviewService {
             const option = {
                 where: {
                     userIndex: userIndex
-                }
+                },
+                order: [sequelize_1.Sequelize.literal('createdAt DESC')]
             };
             const result = yield Review_model_1.default.findAndCountAll(option);
             return result;
@@ -65,6 +66,7 @@ class ReviewService {
                 where: {
                     userIndex: userIndex
                 },
+                order: [sequelize_1.Sequelize.literal('createdAt DESC')],
                 include: [
                     {
                         model: User_model_1.default,

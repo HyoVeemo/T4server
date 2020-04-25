@@ -45,7 +45,8 @@ class ReviewService {
         const option = {
             where: {
                 userIndex: userIndex
-            }
+            },
+            order: [Sequelize.literal('createdAt DESC')]
         }
         const result = await Review.findAndCountAll(option);
 
@@ -58,6 +59,7 @@ class ReviewService {
             where: {
                 userIndex: userIndex
             },
+            order: [Sequelize.literal('createdAt DESC')],
             include: [
                 {
                     model: User,
