@@ -23,7 +23,6 @@ export async function hospitalAPI() {
     const hospitalArr = jsonObj.response.body.items.item;
     const keys = Object.keys(hospitalArr); // 병원 개수
     let hospitalList;
-    let count = 0;
     for (const key in keys) {
       const queryString2: string = `?HPID=${hospitalArr[key].hpid._text}&ServiceKey=${SERVICE_KEY}`;
       const requestUrl2: string = host2 + queryString2;
