@@ -1,6 +1,7 @@
 import User from '../models/User.model';
 import Review from '../models/Review.model';
 import Reservation from '../models/Reservation.model';
+import { Sequelize } from 'sequelize'
 
 interface ICreateReview {
     hpid: string,
@@ -19,27 +20,33 @@ class ReviewService {
     }
 
     async getAllReview(hpid: string) {
-        const option = {
-            where: {
-                hpid: hpid
-            },
-            include: [
-                {
-                    model: User,
-                    attributes: ['userNickName']
-                }
-            ]
-        }
-        const result = await Review.findAndCountAll(option);
+        try {
+            const option = {
+                where: {
+                    hpid: hpid
+                },
+                order: [Sequelize.literal('createdAt DESC')],
+                include: [
+                    {
+                        model: User,
+                        attributes: ['userNickName']
+                    }
+                ]
+            }
+            const result = await Review.findAndCountAll(option);
 
-        return result;
+            return result;
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     async getMyReview(userIndex: number) {
         const option = {
             where: {
                 userIndex: userIndex
-            }
+            },
+            order: [Sequelize.literal('createdAt DESC')]
         }
         const result = await Review.findAndCountAll(option);
 
@@ -52,6 +59,7 @@ class ReviewService {
             where: {
                 userIndex: userIndex
             },
+            order: [Sequelize.literal('createdAt DESC')],
             include: [
                 {
                     model: User,
@@ -63,8 +71,8 @@ class ReviewService {
         return result;
     }
 
-    async updateReview(reviewIndex, userIndex, contents, imgUrl) {
-        const change = { contents: contents, img: imgUrl };
+    async updateReview(reviewIndex, userIndex, updateData) {
+        const change = { contents: updateData.contents, rating: updateData.rating, img: updateData.imgUrl };
         const option = {
             where: {
                 reviewIndex: reviewIndex,
