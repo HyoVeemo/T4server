@@ -153,16 +153,12 @@ function updateReview(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const reviewIndex = req.params.reviewIndex;
         const { tokenIndex: userIndex } = auth_util_1.auth(req);
-        // const contents = req.body.contents;
-        // const rating = req.body.rating;
-        // const imgUrl = req.body.url || null;
         const updateData = {
             contents: req.body.contents,
             rating: req.body.rating,
             imgUrl: req.body.url
         };
         try {
-            // const resultReview = await reviewService.updateReview(reviewIndex, userIndex, contents, imgUrl, rating);
             const resultReview = yield review_service_1.reviewService.updateReview(reviewIndex, userIndex, updateData);
             res.send({
                 success: true,

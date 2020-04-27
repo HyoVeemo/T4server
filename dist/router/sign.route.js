@@ -18,6 +18,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = __importStar(require("express"));
 const auth_service_1 = require("../service/auth.service");
+const user_service_1 = require("../service/user.service");
+const auth_util_1 = require("../utils/auth.util");
 /**
  *  sign 라우트 클래스 생성 (계정 관련)
  */
@@ -31,6 +33,7 @@ class SignRoute {
         this.signRouter.get('/verifyEmail', verifyEmail);
         this.signRouter.post("/user/signUp", userSignUp);
         this.signRouter.post("/user/signIn", userSignIn);
+        this.signRouter.patch("/user", updateUserInfo); // 회원 정보 수정
         this.signRouter.post("/hospital/signUp", hospitalSignUp);
         this.signRouter.post("/hospital/signIn", hospitalSignIn);
     }
@@ -103,6 +106,31 @@ function userSignIn(req, res) {
                 success: false,
                 statusCode: 500,
                 message: 'getUser: 500'
+            });
+        }
+    });
+}
+function updateUserInfo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { tokenIndex: userIndex } = auth_util_1.auth(req);
+        const updateData = {
+            userPw: req.body.userPw,
+            userNickName: req.body.userNickName,
+            tel: req.body.tel
+        };
+        try {
+            const result = yield user_service_1.userService.updateUser(userIndex, updateData);
+            res.send({
+                success: true,
+                result,
+                message: 'updateUserInfo: 200'
+            });
+        }
+        catch (err) {
+            console.error(err);
+            res.send({
+                success: false,
+                message: 'updateUserInfo: 500'
             });
         }
     });
