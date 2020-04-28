@@ -63,6 +63,10 @@ export default class Reservation extends Model<Reservation>{
     @Column
     status: string;
 
+    @Default(false)
+    @Column
+    deleted: boolean;
+
     @CreatedAt
     createdAt: Date;
 

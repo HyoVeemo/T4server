@@ -117,6 +117,7 @@ class ReservationService {
         const option = {
             where: {
                 userIndex: userIndex,
+                deleted: false,
                 [Op.or]: [ // 거절됨, 타임아웃, 취소됨.
                     {
                         status: 'REFUSED'
@@ -182,6 +183,7 @@ class ReservationService {
      * @param userIndex 
      */
     async deleteReservation(reservationIndex, userIndex) {
+        const change = { deleted: true };
         const option = {
             where: {
                 reservationIndex: reservationIndex,
@@ -189,8 +191,8 @@ class ReservationService {
             }
         }
 
-        const result = await Reservation.destroy(option);
-        if (result === 0) {
+        const result = await Reservation.update(change, option);
+        if (result[0] === 0) {
             return '해당 예약이 존재하지 않아 변화 없음.';
         }
     }
