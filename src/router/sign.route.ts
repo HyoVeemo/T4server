@@ -1,5 +1,13 @@
 import * as express from "express";
-import { authService } from "../service/auth.service"
+import { authService } from "../service/auth.service";
+import { userService } from "../service/user.service";
+import { auth } from '../utils/auth.util';
+
+interface IUpdateUser {
+  userPw?: string;
+  userNickName?: string;
+  tel?: string;
+}
 
 /**
  *  sign 라우트 클래스 생성 (계정 관련)
@@ -14,6 +22,7 @@ class SignRoute {
     this.signRouter.get('/verifyEmail', verifyEmail);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
+    this.signRouter.patch("/user", updateUserInfo); // 회원 정보 수정
     this.signRouter.post("/hospital/signUp", hospitalSignUp)
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
   }
@@ -87,6 +96,28 @@ async function userSignIn(req, res) {
   }
 }
 
+async function updateUserInfo(req: express.Request, res: express.Response) {
+  const { tokenIndex: userIndex } = auth(req);
+  const updateData: IUpdateUser = {
+    userPw: req.body.userPw,
+    userNickName: req.body.userNickName,
+    tel: req.body.tel
+  };
+  try {
+    const result = await userService.updateUser(userIndex, updateData);
+    res.send({
+      success: true,
+      result,
+      message: 'updateUserInfo: 200'
+    });
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: false,
+      message: 'updateUserInfo: 500'
+    });
+  }
+}
 
 /**
  * route: 회원가입
