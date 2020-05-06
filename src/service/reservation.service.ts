@@ -2,7 +2,7 @@ import Reservation from '../models/Reservation.model';
 import Hospital from '../models/Hospital.model';
 import HospitalOffice from '../models/HospitalOffice.model';
 import User from '../models/User.model';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 
 interface IReservationCreateData {
     userIndex: number;
@@ -91,6 +91,7 @@ class ReservationService {
                     }
                 ]
             },
+            order: [Sequelize.literal('createdAt DESC')],
             include: [{
                 model: Hospital,
                 attributes: ['dutyName']
@@ -130,6 +131,7 @@ class ReservationService {
                     }
                 ]
             },
+            order: [Sequelize.literal(`STR_TO_DATE(CONCAT(reservationDate, ' ', reservationTime), '%Y-%m-%d %H:%i:%s') DESC`)],
             include: [{
                 model: Hospital,
                 attributes: ['dutyName', 'dutyTel']
