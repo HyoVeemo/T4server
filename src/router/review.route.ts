@@ -2,9 +2,9 @@ import express from 'express';
 import { reviewService } from '../service/review.service'
 import { userService } from '../service/user.service'
 import { auth } from '../utils/auth.util'
-import multer from 'multer';
 import { verifyUser } from '../middleware/auth.middleware';
-import { S3Upload } from "../utils/imageUpload.util";
+import multer from 'multer';
+import { S3Upload, uploadImg } from "../utils/imageUpload.util";
 
 class ReviewRoute {
     public reviewRouter: express.Router = express.Router();
@@ -24,17 +24,17 @@ class ReviewRoute {
     }
 }
 
-async function uploadImg(req, res) {
-    try {
-        res.json({ url: req.file.location });
-    } catch (err) {
-        console.error(err);
-        res.send({
-            success: false,
-            message: 'uploadImg: 500'
-        });
-    }
-}
+// async function uploadImg(req, res) {
+//     try {
+//         res.json({ url: req.file.location });
+//     } catch (err) {
+//         console.error(err);
+//         res.send({
+//             success: false,
+//             message: 'uploadImg: 500'
+//         });
+//     }
+// }
 
 async function postReview(req, res) {
     const hpid = req.params.hpid;

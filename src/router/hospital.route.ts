@@ -1,9 +1,16 @@
 import * as express from 'express'
 import { hospitalService } from '../service/hospital.service'
+import { verifyHospital } from '../middleware/auth.middleware';
+import multer from 'multer';
+import { S3Upload, uploadImg } from "../utils/imageUpload.util";
 
 class HospitalRoute {
     public hospitalRouter: express.Router = express.Router();
+    private upload;
+
     constructor() {
+        this.upload = multer();
+        this.hospitalRouter.post('/review/img', verifyHospital, S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.hospitalRouter.get('/hospital', listHospital);
         this.hospitalRouter.get('/hospital/:hpid', getHospital);
     }

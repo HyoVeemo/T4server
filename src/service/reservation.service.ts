@@ -34,10 +34,6 @@ class ReservationService {
         const data = await Reservation.findOne(option); // 그 시간에 예약한 게 없으면
         if (!data) {
             let resultCount;
-            /** 
-             * 입력받은(요청 통해서 넘어온) 예약날짜와 진료실 번호, 그리고 예약시간과 예약시간 + 15분 사이에 예약 돼있는 모든 로우 count하는 쿼리. 
-             * 즉 기존 예약 정보와 시간이 겹치는 부분이 있으면 count함.
-            */
             let query = "SELECT COUNT(*) FROM Reservations WHERE ( officeIndex = :officeIndex"; // reservationDate -> 예약날짜
             query += " AND reservationDate = :reservationDate"; // officeIndex -> 진료실 번호
             query += " AND reservationTime = :reservationTime"; // reservationTime -> 예약시간

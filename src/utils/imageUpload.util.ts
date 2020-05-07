@@ -23,3 +23,15 @@ export const S3Upload = (folder) => multer({
     }),
     limits: { fileSize: 5 * 1024 * 1024 },
 });
+
+export const uploadImg = async (req, res) => {
+    try {
+        res.json({ url: req.file.location });
+    } catch (err) {
+        console.error(err);
+        res.send({
+            success: false,
+            message: 'uploadImg: 500'
+        });
+    }
+}
