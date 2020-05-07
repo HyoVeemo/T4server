@@ -42,7 +42,7 @@ class HospitalSubscriberService {
                 }
             ]
         });
-        //'FROM `HospitalSubscribers` AS `HospitalSubscriber` INNER JOIN `Hospitals` AS `ho
+
         let results = [];
         for (const row of resultHospitals.rows) {
             results.push(row.toJSON());

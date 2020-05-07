@@ -31,13 +31,13 @@ class ReservationService {
                 userIndex: reservationData.userIndex
             }
         }
-        const data = await Reservation.findOne(option); // 그 시간에 예약한 게 없으면
+        const data = await Reservation.findOne(option);
         if (!data) {
             let resultCount;
-            let query = "SELECT COUNT(*) FROM Reservations WHERE ( officeIndex = :officeIndex"; // reservationDate -> 예약날짜
-            query += " AND reservationDate = :reservationDate"; // officeIndex -> 진료실 번호
-            query += " AND reservationTime = :reservationTime"; // reservationTime -> 예약시간
-            query += " AND status = :status )"; // ACCEPTED 상태인 예약이 두 개면 안 됨.
+            let query = "SELECT COUNT(*) FROM Reservations WHERE ( officeIndex = :officeIndex";
+            query += " AND reservationDate = :reservationDate";
+            query += " AND reservationTime = :reservationTime";
+            query += " AND status = :status )";
 
             const values = {
                 officeIndex: reservationData.officeIndex,
@@ -78,7 +78,7 @@ class ReservationService {
         const option = {
             where: {
                 userIndex: userIndex,
-                [Op.or]: [ // 응답대기중, 예약됨.
+                [Op.or]: [
                     {
                         status: 'PENDING'
                     },
@@ -115,7 +115,7 @@ class ReservationService {
             where: {
                 userIndex: userIndex,
                 deleted: false,
-                [Op.or]: [ // 거절됨, 타임아웃, 취소됨.
+                [Op.or]: [
                     {
                         status: 'REFUSED'
                     },
@@ -142,10 +142,7 @@ class ReservationService {
         return await Reservation.findAndCountAll(option);
     }
 
-    /**
-     * 병원 측에서 예약 요청 수락 또는 거절 시 상태 변경.
-     * @param reservationIndex 
-     */
+    /* 병원 측에서 예약 요청 수락 또는 거절 시 상태 변경 */
     async updateReservationStatus(reservationIndex, reply) {
         let change;
         if (reply === 'accept') {
