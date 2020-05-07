@@ -2,9 +2,9 @@ import express from 'express';
 import { reviewService } from '../service/review.service'
 import { userService } from '../service/user.service'
 import { auth } from '../utils/auth.util'
-import multer from 'multer';
 import { verifyUser } from '../middleware/auth.middleware';
-import { S3Upload } from "../utils/imageUpload.util";
+import multer from 'multer';
+import { S3Upload, uploadImg } from "../utils/imageUpload.util";
 
 class ReviewRoute {
     public reviewRouter: express.Router = express.Router();
@@ -24,18 +24,6 @@ class ReviewRoute {
     }
 }
 
-async function uploadImg(req, res) {
-    try {
-        res.json({ url: req.file.location });
-    } catch (err) {
-        console.error(err);
-        res.send({
-            success: false,
-            message: 'uploadImg: 500'
-        });
-    }
-}
-
 async function postReview(req, res) {
     const hpid = req.params.hpid;
     const { tokenIndex: userIndex } = auth(req);
@@ -48,11 +36,11 @@ async function postReview(req, res) {
         const count = await reviewService.validateQualificationForWritingReview(userIndex, hpid);
         if (count) {
             const reviewData = {
-                hpid: hpid,
-                userIndex: userIndex,
-                contents: contents,
+                hpid,
+                userIndex,
+                contents,
                 img: imgUrl,
-                rating: rating
+                rating
             };
 
             const result = await reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.

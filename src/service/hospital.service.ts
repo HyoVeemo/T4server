@@ -21,7 +21,8 @@ interface IHospitalCreateData {
     dutyTime7?: string,
     dutyTime8?: string,
     dutyTel?: string,
-    dutyInf?: string
+    dutyInf?: string,
+    img?: string
 }
 
 class HospitalService {
@@ -39,9 +40,6 @@ class HospitalService {
 
     /**
      * service: 병원 목록 조회
-     * @param filter 
-     * @param order 
-     * @param pn 
      */
     async listHospital(filter?: any) {
         const lon = filter.lon;
@@ -63,6 +61,7 @@ class HospitalService {
         t1.dutyTime8, 
         t1.dutyTel, 
         t1.dutyInf, 
+        t1.img,
         (6371*acos(cos(radians(:lat))*cos(radians(t1.wgs84Lat))*cos(radians(t1.wgs84Lon)-radians(:lon)) 
         +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance, 
         AVG(review.rating) AS ratingAvg
@@ -161,6 +160,7 @@ class HospitalService {
                     'dutyTime8',
                     'dutyTel',
                     'dutyInf',
+                    'img',
                     [sequelize.fn('AVG', sequelize.col('review.rating')), 'ratingAvg']
                 ],
                 include: [
@@ -228,13 +228,24 @@ class HospitalService {
 
     }
 
-    async getHpidByOfficeIndex(officeIndex: number): Promise<any> {
+    async getHpidByOfficeIndex(officeIndex: number) {
         let resultHospitalOffice = await HospitalOffice.findOne({
             where: {
                 officeIndex: officeIndex
             }
         });
         return resultHospitalOffice['dataValues']['hpid'];
+    }
+
+    /* 병원 프로필 등록 */
+    async postHospitalImg(hpid: string, imgUrl: string) {
+        const change = { img: imgUrl };
+        const option = {
+            where: {
+                hpid
+            }
+        }
+        await Hospital.update(change, option);
     }
 }
 

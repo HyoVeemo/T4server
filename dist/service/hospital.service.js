@@ -33,9 +33,6 @@ class HospitalService {
     }
     /**
      * service: 병원 목록 조회
-     * @param filter
-     * @param order
-     * @param pn
      */
     listHospital(filter) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -58,6 +55,7 @@ class HospitalService {
         t1.dutyTime8, 
         t1.dutyTel, 
         t1.dutyInf, 
+        t1.img,
         (6371*acos(cos(radians(:lat))*cos(radians(t1.wgs84Lat))*cos(radians(t1.wgs84Lon)-radians(:lon)) 
         +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance, 
         AVG(review.rating) AS ratingAvg
@@ -152,6 +150,7 @@ class HospitalService {
                         'dutyTime8',
                         'dutyTel',
                         'dutyInf',
+                        'img',
                         [sequelize.fn('AVG', sequelize.col('review.rating')), 'ratingAvg']
                     ],
                     include: [
@@ -223,6 +222,18 @@ class HospitalService {
                 }
             });
             return resultHospitalOffice['dataValues']['hpid'];
+        });
+    }
+    /* 병원 프로필 등록 */
+    postHospitalImg(hpid, imgUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const change = { img: imgUrl };
+            const option = {
+                where: {
+                    hpid
+                }
+            };
+            yield Hospital_model_1.default.update(change, option);
         });
     }
 }

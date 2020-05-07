@@ -13,7 +13,6 @@ class ReservationRoute {
         this.reservationRouter.get('/reservation/reservationIndex/:reservationIndex', verifyUser, loadReservation); // 새로고침용(?)
         this.reservationRouter.get('/reservation/history', verifyUser, getReservationLog) // 지난 예약 내역 보기
         this.reservationRouter.patch('/cancel/reservationIndex/:reservationIndex', verifyUser, cancelReservation); // (사용자 본인이) 예약 취소하기
-        //this.reservationRouter.delete('/reservation/reservationIndex/:reservationIndex', verifyUser, deleteReservation); // (사용자 본인이) 예약 삭제하기
         this.reservationRouter.patch('/delete/reservationIndex/:reservationIndex', verifyUser, deleteReservation); // (사용자 본인이) 예약 삭제하기
         this.reservationRouter.patch('/accept/reservationIndex/:reservationIndex', verifyHospital, acceptReservation); // 병원 측에서 예약 수락 시 status 업데이트 (PENDING -> ACCEPTED)
         this.reservationRouter.patch('/refuse/reservationIndex/:reservationIndex', verifyHospital, refuseReservation); // 병원 측에서 예약 거절 시 status 업데이트 (PENDING -> REFUSED)
