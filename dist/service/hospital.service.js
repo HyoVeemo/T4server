@@ -55,6 +55,7 @@ class HospitalService {
         t1.dutyTime8, 
         t1.dutyTel, 
         t1.dutyInf, 
+        t1.img,
         (6371*acos(cos(radians(:lat))*cos(radians(t1.wgs84Lat))*cos(radians(t1.wgs84Lon)-radians(:lon)) 
         +sin(radians(:lat))*sin(radians(t1.wgs84Lat)))) AS distance, 
         AVG(review.rating) AS ratingAvg
@@ -149,6 +150,7 @@ class HospitalService {
                         'dutyTime8',
                         'dutyTel',
                         'dutyInf',
+                        'img',
                         [sequelize.fn('AVG', sequelize.col('review.rating')), 'ratingAvg']
                     ],
                     include: [
