@@ -1,5 +1,5 @@
 import { Server } from "./app";
-import { hospitalAPI } from './utils/hospitalApi.util'
+//import { hospitalAPI } from './utils/hospitalApi.util'
 import AWS from "aws-sdk";
 AWS.config.update({ region: 'ap-northeast-2' });
 

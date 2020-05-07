@@ -16,14 +16,14 @@ const express_1 = __importDefault(require("express"));
 const review_service_1 = require("../service/review.service");
 const user_service_1 = require("../service/user.service");
 const auth_util_1 = require("../utils/auth.util");
-const multer_1 = __importDefault(require("multer"));
 const auth_middleware_1 = require("../middleware/auth.middleware");
+const multer_1 = __importDefault(require("multer"));
 const imageUpload_util_1 = require("../utils/imageUpload.util");
 class ReviewRoute {
     constructor() {
         this.reviewRouter = express_1.default.Router();
         this.upload = multer_1.default();
-        this.reviewRouter.post('/review/img', auth_middleware_1.verifyUser, imageUpload_util_1.S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
+        this.reviewRouter.post('/review/img', auth_middleware_1.verifyUser, imageUpload_util_1.S3Upload('reviewImage').single('img'), imageUpload_util_1.uploadImg); // S3에 이미지 업로드하는 라우터
         this.reviewRouter.post('/review/hpid/:hpid', auth_middleware_1.verifyUser, this.upload.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
         this.reviewRouter.get('/review/hpid/:hpid', getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
         this.reviewRouter.get('/review', auth_middleware_1.verifyUser, getMyReview); // 리뷰 모아보기
@@ -33,20 +33,6 @@ class ReviewRoute {
         this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
         this.reviewRouter.get('/review/ratings', getRatings); // 모든 병원 평점 가져오기
     }
-}
-function uploadImg(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            res.json({ url: req.file.location });
-        }
-        catch (err) {
-            console.error(err);
-            res.send({
-                success: false,
-                message: 'uploadImg: 500'
-            });
-        }
-    });
 }
 function postReview(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -60,11 +46,11 @@ function postReview(req, res) {
             const count = yield review_service_1.reviewService.validateQualificationForWritingReview(userIndex, hpid);
             if (count) {
                 const reviewData = {
-                    hpid: hpid,
-                    userIndex: userIndex,
-                    contents: contents,
+                    hpid,
+                    userIndex,
+                    contents,
                     img: imgUrl,
-                    rating: rating
+                    rating
                 };
                 const result = yield review_service_1.reviewService.createReview(reviewData); // JSON 포맷 형식인 resultReview 반환받음.
                 res.send({

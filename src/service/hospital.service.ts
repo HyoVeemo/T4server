@@ -39,9 +39,6 @@ class HospitalService {
 
     /**
      * service: 병원 목록 조회
-     * @param filter 
-     * @param order 
-     * @param pn 
      */
     async listHospital(filter?: any) {
         const lon = filter.lon;
@@ -228,13 +225,24 @@ class HospitalService {
 
     }
 
-    async getHpidByOfficeIndex(officeIndex: number): Promise<any> {
+    async getHpidByOfficeIndex(officeIndex: number) {
         let resultHospitalOffice = await HospitalOffice.findOne({
             where: {
                 officeIndex: officeIndex
             }
         });
         return resultHospitalOffice['dataValues']['hpid'];
+    }
+
+    /* 병원 프로필 등록 */
+    async postHospitalImg(hpid: string, imgUrl: string) {
+        const change = { img: imgUrl };
+        const option = {
+            where: {
+                hpid
+            }
+        }
+        await Hospital.update(change, option);
     }
 }
 

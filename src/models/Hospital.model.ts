@@ -106,4 +106,8 @@ export default class Hospital extends Model<Hospital> {
   @Comment("기관설명상세")
   @Column
   dutyInf: string;
+
+  @AllowNull(true)
+  @Column
+  img: string;
 }

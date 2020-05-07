@@ -33,9 +33,6 @@ class HospitalService {
     }
     /**
      * service: 병원 목록 조회
-     * @param filter
-     * @param order
-     * @param pn
      */
     listHospital(filter) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -223,6 +220,18 @@ class HospitalService {
                 }
             });
             return resultHospitalOffice['dataValues']['hpid'];
+        });
+    }
+    /* 병원 프로필 등록 */
+    postHospitalImg(hpid, imgUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const change = { img: imgUrl };
+            const option = {
+                where: {
+                    hpid
+                }
+            };
+            yield Hospital_model_1.default.update(change, option);
         });
     }
 }

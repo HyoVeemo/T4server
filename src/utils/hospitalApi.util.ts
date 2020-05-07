@@ -12,7 +12,7 @@ export async function hospitalAPI() {
       "서울특별시"
     )}&Q1=${encodeURIComponent(
       "성북구"
-    )}&pageNo=1&numOfRows=5&ServiceKey=${SERVICE_KEY}`;
+    )}&pageNo=1&numOfRows=1000&ServiceKey=${SERVICE_KEY}`;
     const requestUrl1: string = host1 + queryString1;
     const result1 = await request.get(requestUrl1); // <- 요청 보냄
     const xmlToJson = convert.xml2json(result1, {
