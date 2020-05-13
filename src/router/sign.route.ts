@@ -48,9 +48,6 @@ async function verifyEmail(req: express.Request, res: express.Response) {
 
 /**
  * route: 회원가입
- * @param req 
- * @param res 
- * @returns {Promise<void>}
  */
 async function userSignUp(req: express.Request, res: express.Response) {
   try {
@@ -73,9 +70,6 @@ async function userSignUp(req: express.Request, res: express.Response) {
 
 /**
  * route: 로그인
- * @param req 
- * @param res 
- * @returns {Promise<void>}
  */
 async function userSignIn(req, res) {
   try {
@@ -121,20 +115,16 @@ async function updateUserInfo(req: express.Request, res: express.Response) {
 
 /**
  * route: 회원가입
- * @param req 
- * @param res 
- * @returns {Promise<void>}
  */
 async function hospitalSignUp(req, res) {
   try {
     const result = await authService.hospitalSignUp(req.body);
     res.send({
       success: true,
-      result: result,
+      result,
       message: 'getHospitalUser: 200'
     });
   } catch (err) {
-    console.log(err);
     res.send({
       success: false,
       statusCode: 500,
@@ -160,7 +150,6 @@ async function hospitalSignIn(req, res) {
       message: 'getHospitalUser: 200'
     });
   } catch (err) {
-    console.log(err);
     res.send({
       success: false,
       statusCode: 500,
