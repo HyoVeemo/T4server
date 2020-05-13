@@ -14,7 +14,7 @@ export async function hospitalAPI() {
       "성북구"
     )}&pageNo=1&numOfRows=1000&ServiceKey=${SERVICE_KEY}`;
     const requestUrl1: string = host1 + queryString1;
-    const result1 = await request.get(requestUrl1); // <- 요청 보냄
+    const result1 = await request.get(requestUrl1);
     const xmlToJson = convert.xml2json(result1, {
       compact: true,
       spaces: 4
@@ -134,7 +134,6 @@ export async function hospitalAPI() {
       }
 
       hospitalList = await Hospital.create({
-        // <- Hospital 테이블에 로우 생성
         hpid: hospitalArr[key].hpid._text,
         dutyName: hospitalArr[key].dutyName._text,
         dutyAddr: hospitalArr[key].dutyAddr._text,
