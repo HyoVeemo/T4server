@@ -88,7 +88,6 @@ class HospitalOfficeService {
         return await HospitalOffice.findAll(option);
     }
 
-    /* 진료실 번호와 진료 항목 이름으로 진료 항목 번호 찾기 */
     async getTreatmentIndexByOfficeIndexAndTreatmentName(officeIndex, treatmentName) {
         const result = await Treatment.findOne({
             where: { officeIndex: officeIndex, treatmentName: treatmentName }

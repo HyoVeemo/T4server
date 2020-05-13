@@ -147,12 +147,11 @@ function hospitalSignUp(req, res) {
             const result = yield auth_service_1.authService.hospitalSignUp(req.body);
             res.send({
                 success: true,
-                result: result,
+                result,
                 message: 'getHospitalUser: 200'
             });
         }
         catch (err) {
-            console.log(err);
             res.send({
                 success: false,
                 statusCode: 500,
@@ -179,7 +178,6 @@ function hospitalSignIn(req, res) {
             });
         }
         catch (err) {
-            console.log(err);
             res.send({
                 success: false,
                 statusCode: 500,
