@@ -1,5 +1,5 @@
 import express from 'express';
-import { auth } from '../utils/auth.util'
+import { auth } from '../utils/auth.util';
 import { reservationService } from '../service/reservation.service';
 import { hospitalService } from '../service/hospital.service';
 import { hospitalOfficeService } from '../service/hospitalOffice.service';

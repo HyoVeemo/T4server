@@ -1,5 +1,6 @@
 import HospitalUser from '../models/HospitalUser.model';
 import { hashSync, compareSync } from 'bcryptjs';
+import { Op } from 'sequelize';
 
 class HospitalUserService {
     constructor() {
@@ -19,10 +20,11 @@ class HospitalUserService {
 	/**
 	 * service: 유저 조회
 	 */
-    async getHospitalUser(email: string) {
+    async getHospitalUser(hospitalArg) {
+        const { email, hpid } = hospitalArg;
         let resultHospitalUser = await HospitalUser.findOne({
             where: {
-                email: email
+                [Op.or]: [{ email }, { hpid }]
             }
         })
         return resultHospitalUser;
