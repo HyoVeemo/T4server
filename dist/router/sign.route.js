@@ -30,6 +30,7 @@ class SignRoute {
          */
         this.signRouter = express.Router();
         //정의된 라우터 REST API 정의
+        this.signRouter.post('/checkDuplicated', checkDuplicated);
         this.signRouter.get('/verifyEmail', verifyEmail);
         this.signRouter.post("/user/signUp", userSignUp);
         this.signRouter.post("/user/signIn", userSignIn);
@@ -37,6 +38,37 @@ class SignRoute {
         this.signRouter.post("/hospital/signUp", hospitalSignUp);
         this.signRouter.post("/hospital/signIn", hospitalSignIn);
     }
+}
+function checkDuplicated(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        /**
+         * hpid -> 중복된 병원인지 체크, who -> user? or hospital?
+         */
+        const email = req.body.email || null; // null -> WHERE parameter "변수명" has invalid "undefined" value 방지하기 위함.
+        const userNickName = req.body.userNickName || null;
+        const hpid = req.body.hpid || null;
+        const who = req.body.who;
+        const wannaCheck = {
+            email,
+            userNickName,
+            hpid
+        };
+        try {
+            const result = yield auth_service_1.authService.isDuplicated(wannaCheck, who);
+            res.status(200).json({
+                success: true,
+                result,
+                message: 'checkDuplicated Succeeded'
+            });
+        }
+        catch (err) {
+            console.error(err);
+            res.json({
+                success: false,
+                message: 'checkDuplicated failed'
+            });
+        }
+    });
 }
 function verifyEmail(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,17 +84,13 @@ function verifyEmail(req, res) {
             console.error(err);
             res.send({
                 success: false,
-                statusCode: 500,
-                message: 'verifyEmail: 500'
+                message: 'verifyEmail failed'
             });
         }
     });
 }
 /**
  * route: 회원가입
- * @param req
- * @param res
- * @returns {Promise<void>}
  */
 function userSignUp(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,9 +114,6 @@ function userSignUp(req, res) {
 }
 /**
  * route: 로그인
- * @param req
- * @param res
- * @returns {Promise<void>}
  */
 function userSignIn(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -137,9 +162,6 @@ function updateUserInfo(req, res) {
 }
 /**
  * route: 회원가입
- * @param req
- * @param res
- * @returns {Promise<void>}
  */
 function hospitalSignUp(req, res) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -26,12 +26,14 @@ class UserService {
 	/**
 	 * service: 유저 조회
 	 */
-	async getUser(userArg: string) {
+	async getUser(userArg) {
+		const { email, userNickName } = userArg;
 		let resultUser: User = await User.findOne({
 			where: {
-				[Op.or]: [{ email: userArg }, { userNickName: userArg }]
+				[Op.or]: [{ email }, { userNickName }]
 			}
 		})
+
 		return resultUser;
 	}
 

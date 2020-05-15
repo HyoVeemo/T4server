@@ -38,6 +38,34 @@ interface ILoginHospitalUserData { // 병원 로그인용
 
 export class AuthService {
     constructor() { }
+
+    async isDuplicated(wannaCheck, who) {
+        // 사용자 가입일 때
+        if (who === 'user') {
+            const exUser = await userService.getUser(wannaCheck);
+            if (wannaCheck.email && exUser) {
+                return { error: true, message: 'Duplicated Email' };
+            }
+
+            if (wannaCheck.userNickName && exUser) {
+                return { error: true, message: 'Duplicated NickName' };
+            }
+        }
+        // 병원 관리자 가입일 때
+        if (who === 'hospital') {
+            const exHospitalUser = await hospitalUserService.getHospitalUser(wannaCheck);
+            if (wannaCheck.email && exHospitalUser) {
+                return { error: true, message: 'Duplicated Email' };
+            }
+
+            if (wannaCheck.hpid && exHospitalUser) {
+                return { error: true, message: 'Duplicated hpid' };
+            }
+        }
+
+        return { error: false, message: 'No Duplicated' };
+    }
+
     async sendMail(receiverEmail: string, keyForVerify: string, host: string, senderEmail: string, senderPw: string) {
         // 기본 SMTP transport를 사용하는 재사용가능한 transporter 객체를 생성
         let transporter = nodemailer.createTransport({
