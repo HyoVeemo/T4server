@@ -1,8 +1,13 @@
 import { Model, ForeignKey, Table, Column, HasMany, Comment, CreatedAt, UpdatedAt, AutoIncrement, PrimaryKey, DataType, AllowNull, BelongsToMany, BelongsTo } from "sequelize-typescript";
 import User from './User.model'
+import PostsHashtag from "./PostsHashtag.model";
 
 @Table
 export default class Posts extends Model<Posts>{    
+    @HasMany(()=>PostsHashtag)
+    postsHashtag:PostsHashtag;
+
+
     @PrimaryKey
     @AutoIncrement
     @Column({
@@ -18,18 +23,12 @@ export default class Posts extends Model<Posts>{
     @Column({
         type: DataType.TEXT
     })
-    content: string;
+    url: string;
     
     @Column({
         type: DataType.STRING
     })
     title: string;
-
-    @Column({
-        type: DataType.INTEGER
-    })
-    goodCount: string;
-    
 
     @CreatedAt
     createdAt: Date;

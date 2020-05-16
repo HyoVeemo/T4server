@@ -1,10 +1,10 @@
+import multer from 'multer';
 import express from 'express';
+import { auth } from '../utils/auth.util'
+import { S3Upload } from "../utils/imageUpload.util";
+import { verifyUser } from '../middleware/auth.middleware';
 import { reviewService } from '../service/review.service'
 import { userService } from '../service/user.service'
-import { auth } from '../utils/auth.util'
-import multer from 'multer';
-import { verifyUser } from '../middleware/auth.middleware';
-import { S3Upload } from "../utils/imageUpload.util";
 
 class ReviewRoute {
     public reviewRouter: express.Router = express.Router();

@@ -3,12 +3,18 @@ import Posts from '../models/Posts.model'
 
 interface ICreatePostsData{ 
     title: string,
-    content?: string,
-    img?:string
+    url?: string,
+    img?:string, 
 }
 interface IUpdatePostsData{
     title?:string,
-    content?:string,
+    url?:string,
+    img?:string
+}
+interface IStorePostsData{
+    postsIndex: number, 
+    title: string,
+    url?:string,
     img?:string
 }
 
