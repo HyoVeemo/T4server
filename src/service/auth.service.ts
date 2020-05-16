@@ -131,20 +131,21 @@ export class AuthService {
         const senderPw = req.app.locals.senderPw;
 
         // 아이디 중복 검사
-        const exUserEmail = await userService.getUser(userData.email);
-        if (exUserEmail) return { error: true, status: 409, message: 'Duplicated Email' };
+        let resultUser = await userService.getUserByEmail(userData.email);
+        if (resultUser) 
+            return { error: true, status: 409, message: 'Duplicated Email' };
 
         // 닉네임 중복 검사
-        const exUserNickName = await userService.getUser(userData.userNickName);
-        if (exUserNickName) return { error: true, status: 409, message: 'Duplicated NickName' };
+        resultUser = await userService.getUserByUserNickName(userData.userNickName);
+        if (resultUser) return { error: true, status: 409, message: 'Duplicated NickName' };
 
         // 인증 코드 생성
-        const keyOne = randomBytes(256).toString('hex').substr(100, 5);
-        const keyTwo = randomBytes(256).toString('base64').substr(50, 5);
-        let keyForVerify = keyOne + keyTwo;
+        const hxKey = randomBytes(256).toString('hex').substr(100, 5);
+        const baseKey   = randomBytes(256).toString('base64').substr(50, 5);
+        let keyForVerify = hxKey + baseKey;
         await userService.createUser({
             ...userData,
-            keyForVerify: keyForVerify
+            keyForVerify
         });
 
         await this.sendMail(userData.email, keyForVerify, host, senderEmail, senderPw);

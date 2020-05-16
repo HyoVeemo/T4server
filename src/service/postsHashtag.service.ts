@@ -23,9 +23,4 @@ class PostsHashtagService{
         })
         return result;
     };
-
-    async updateHashtag(postHash)
-
-
-
 }

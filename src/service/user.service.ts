@@ -26,14 +26,39 @@ class UserService {
 	/**
 	 * service: 유저 조회
 	 */
-	async getUser(userArg) {
-		const { email, userNickName } = userArg;
+	async getUser(userData: any) {
+		const { email, userNickName } = userData;
 		let resultUser: User = await User.findOne({
 			where: {
 				[Op.or]: [{ email }, { userNickName }]
 			}
 		})
+		return resultUser;
+	}
 
+	/**
+	 * service: 유저 아이디 조회
+	 * @param userData 
+	 */
+	async getUserByEmail(email: string){
+		let resultUser: User = await User.findOne({
+			where: {
+				email: email
+			}
+		})
+		return resultUser;
+	}
+
+	/**
+	 * service: 유저 닉네임 조회
+	 * @param userData 
+	 */
+	async getUserByUserNickName(userNickName: string){
+		let resultUser: User = await User.findOne({
+			where: {
+				userNickName: userNickName
+			}
+		})
 		return resultUser;
 	}
 
