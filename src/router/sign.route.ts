@@ -51,7 +51,6 @@ async function checkDuplicated(req: express.Request, res: express.Response) {
       message: 'checkDuplicated Succeeded'
     });
   } catch (err) {
-    console.error(err);
     res.json({
       success: false,
       message: 'checkDuplicated failed'
@@ -120,7 +119,7 @@ async function userSignIn(req, res) {
 }
 
 async function updateUserInfo(req: express.Request, res: express.Response) {
-  const { tokenIndex: userIndex } = auth(req);
+  const { userIndex } = auth(req);
   const updateData: IUpdateUser = {
     userPw: req.body.userPw,
     userNickName: req.body.userNickName,

@@ -1,12 +1,12 @@
 import express from 'express';
 import request from 'request-promise-native';
 
-class hashtagRoute{
+class hashtagRoute {
     public hashtagRouter: express.Router = express.Router();
-    
-    constructor(){
+
+    constructor() {
         this.hashtagRouter.post('/hashTag', createHashtag);
-        this.hashtagRouter.get('/heashTag')
+        this.hashtagRouter.get('/hashTag')
     }
 }
 
@@ -16,16 +16,16 @@ class hashtagRoute{
  * @param req 
  * @param res 
  */
-async function createHashtag(req, res){
+async function createHashtag(req, res) {
     const client = req.app.locals.client;
     // hashtag
     // hashtagIndex, 
     // hashtagName
-    try{
+    try {
         const result = await client.index({
             index: 'hashtag',
-            body:{
-            ...req.body            
+            body: {
+                ...req.body
             }
         })
         res.send({
@@ -33,10 +33,10 @@ async function createHashtag(req, res){
             result,
             statusCode: 200
         })
-    }catch(err){
+    } catch (err) {
         res.send({
             statuscode: 500,
-            message:'createHashtag'
+            message: 'createHashtag'
         })
     }
 }
@@ -45,24 +45,24 @@ async function createHashtag(req, res){
  * route : hashtag 전체 조회
  * 
  */
-async function listHashtag(req, res){
+async function listHashtag(req, res) {
     const params = {
         index: 'hashtag'
     }
     const client = req.app.locals.client
-    try{
+    try {
         const { body } = await client.search(params);
-        res. send({
-            success: true, 
-            statusCode: 200, 
+        res.send({
+            success: true,
+            statusCode: 200,
             message: 'listHashtag: 200',
             result: body.hits.hits
         })
-    }catch(err){
+    } catch (err) {
         console.error(err);
         res.send({
-            success: false, 
-            statusCode: 500 , 
+            success: false,
+            statusCode: 500,
             message: 'listHashtag: 500'
         })
     }
@@ -73,7 +73,7 @@ async function listHashtag(req, res){
  * @param req
  * @param res 
  */
-async function updateHashtag(req, res){
+async function updateHashtag(req, res) {
 
 }
 
@@ -82,6 +82,6 @@ async function updateHashtag(req, res){
  * @param req 
  * @param res 
  */
-async function deleteHashtag(req, res){
+async function deleteHashtag(req, res) {
 
 }

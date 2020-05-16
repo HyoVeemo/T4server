@@ -131,17 +131,16 @@ export class AuthService {
         const senderPw = req.app.locals.senderPw;
 
         // 아이디 중복 검사
-        let resultUser = await userService.getUserByEmail(userData.email);
-        if (resultUser) 
-            return { error: true, status: 409, message: 'Duplicated Email' };
+        const exUserEmail = await userService.getUserByEmail(userData.email);
+        if (exUserEmail) return { error: true, status: 409, message: 'Duplicated Email' };
 
         // 닉네임 중복 검사
-        resultUser = await userService.getUserByUserNickName(userData.userNickName);
-        if (resultUser) return { error: true, status: 409, message: 'Duplicated NickName' };
+        const exUserNickName = await userService.getUserByUserNickName(userData.userNickName);
+        if (exUserNickName) return { error: true, status: 409, message: 'Duplicated NickName' };
 
         // 인증 코드 생성
         const hxKey = randomBytes(256).toString('hex').substr(100, 5);
-        const baseKey   = randomBytes(256).toString('base64').substr(50, 5);
+        const baseKey = randomBytes(256).toString('base64').substr(50, 5);
         let keyForVerify = hxKey + baseKey;
         await userService.createUser({
             ...userData,
@@ -164,7 +163,7 @@ export class AuthService {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultUser = await userService.getUser(userData.email);
+        let resultUser = await userService.getUser(userData);
 
         //일치하는 유저 없음
         if (!resultUser) {
@@ -186,13 +185,8 @@ export class AuthService {
         if (resultUser) {
             // Token 생성. 
             const token = jwt.sign({
-                tokenIndex: resultUser.userIndex,
-                tokenEmail: resultUser.email,
-                tokenName: resultUser.userName,
-                tokenNickName: resultUser.userNickName,
-                tokenAge: resultUser.age,
-                tokenGender: resultUser.gender,
-                tokenTel: resultUser.tel
+                userIndex: resultUser.userIndex,
+                email: resultUser.email
             }, req.app.locals.secret);
 
             delete resultUser.userPw;
@@ -208,10 +202,14 @@ export class AuthService {
      * service: 회원가입
      * @param hospitalUserData 
      */
-    async hospitalSignUp(hospitalUserData: ICreateHospitalUserData): Promise<any> {
-        //아이디 중복 검사
-        const result = await hospitalUserService.getHospitalUser(hospitalUserData.email);
-        if (result) return { error: true, status: 409, message: 'Duplicated Id' };
+    async hospitalSignUp(hospitalUserData: ICreateHospitalUserData) {
+        //이메일 중복 검사
+        const exHospitalEmail = await hospitalUserService.getHospitalUserByEmail(hospitalUserData.email);
+        if (exHospitalEmail) return { error: true, message: 'Duplicated Email' };
+
+        //병원 중복 검사
+        const exHospitalHpid = await hospitalUserService.getHospitalUserByHpid(hospitalUserData.hpid);
+        if (exHospitalHpid) return { error: true, message: 'Duplicated Hpid' };
 
         const createAccount = await hospitalUserService.createHospitalUser(hospitalUserData);
         return createAccount;
@@ -221,14 +219,14 @@ export class AuthService {
     * service: 로그인
     * @param userData 
     */
-    async hospitalSignIn(req): Promise<any> {
+    async hospitalSignIn(req) {
         let hospitalUserData: ILoginHospitalUserData = req.body;
         //데이터 없음
         if (hospitalUserData.email === undefined || hospitalUserData.hospitalUserPw === undefined) {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultHospitalUser = await hospitalUserService.getHospitalUser(hospitalUserData.email);
+        let resultHospitalUser = await hospitalUserService.getHospitalUser(hospitalUserData);
 
         //일치하는 유저 없음
         if (!resultHospitalUser) {
@@ -245,10 +243,8 @@ export class AuthService {
         if (resultHospitalUser) {
             // Token 생성. 
             const token = jwt.sign({
-                tokenIndex: resultHospitalUser.hospitalUserIndex,
-                tokenHpid: resultHospitalUser.hpid,
-                tokenEmail: resultHospitalUser.email,
-                tokenTel: resultHospitalUser.tel
+                hpid: resultHospitalUser.hpid,
+                email: resultHospitalUser.email
             }, req.app.locals.secret);
             delete resultHospitalUser.hospitalUserPw;
             // 로그인한 사용자에게 token 제공. User 인증이 필요한 API 요청 시(글쓰기, 마이페이지 등) Request header에 토큰을 넣어 보낸다

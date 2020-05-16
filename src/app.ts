@@ -7,6 +7,7 @@ import { reviewRoute } from './router/review.route';
 import { reservationRoute } from './router/reservation.route';
 import { hospitalSubscriberRoute } from './router/hospitalSubscriber.route';
 import { hospitalOfficeRoute } from './router/hospitalOffice.route';
+import { hospitalManagementRoute } from './router/hospitalManagement.route';
 import Db from './db';
 import { searchRoute } from './router/search.route';
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
@@ -55,5 +56,6 @@ export class Server {
     this.app.use(reservationRoute.reservationRouter);
     this.app.use(hospitalSubscriberRoute.hospitalSubscriberRouter);
     this.app.use(searchRoute.searchRouter);
+    this.app.use(hospitalManagementRoute.hospitalManagementRouter);
   }
 }

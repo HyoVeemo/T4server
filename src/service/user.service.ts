@@ -8,6 +8,11 @@ interface IUpdateUser {
 	tel?: string;
 }
 
+interface IGetUser {
+	email?: string;
+	userNickName?: string;
+}
+
 class UserService {
 	constructor() {
 	}
@@ -26,8 +31,9 @@ class UserService {
 	/**
 	 * service: 유저 조회
 	 */
-	async getUser(userData: any) {
-		const { email, userNickName } = userData;
+	async getUser(userData: IGetUser) {
+		const email = userData.email || null;
+		const userNickName = userData.userNickName || null;
 		let resultUser: User = await User.findOne({
 			where: {
 				[Op.or]: [{ email }, { userNickName }]
@@ -36,48 +42,22 @@ class UserService {
 		return resultUser;
 	}
 
-	/**
-	 * service: 유저 아이디 조회
-	 * @param userData 
-	 */
-	async getUserByEmail(email: string){
+	async getUserByEmail(email: string) {
 		let resultUser: User = await User.findOne({
 			where: {
-				email: email
+				email
 			}
 		})
 		return resultUser;
 	}
 
-	/**
-	 * service: 유저 닉네임 조회
-	 * @param userData 
-	 */
-	async getUserByUserNickName(userNickName: string){
+	async getUserByUserNickName(userNickName: string) {
 		let resultUser: User = await User.findOne({
 			where: {
-				userNickName: userNickName
+				userNickName
 			}
 		})
 		return resultUser;
-	}
-
-	/**
-	 * service: 로그인 정보 인증
-	 */
-	async validateUser(userData: any) {
-		//유저 조회 
-		let resultUser = await this.getUser(userData.email); // DB에서 일치하는 userData 가져옴.
-		if (!resultUser) {
-			throw new Error('user id does not exist');
-		}
-
-		const IsPasswordValid = compareSync(userData.userPw, resultUser.userPw);
-		if (!IsPasswordValid) {
-			throw new Error('inValid password');
-		}
-
-		return resultUser.toJSON();
 	}
 
 	/**

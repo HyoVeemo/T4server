@@ -26,7 +26,7 @@ class ReviewRoute {
 
 async function postReview(req, res) {
     const hpid = req.params.hpid;
-    const { tokenIndex: userIndex } = auth(req);
+    const { userIndex } = auth(req);
     const contents = req.body.contents;
     const imgUrl = req.body.url; // 이미지 주소
     const rating = req.body.rating; // 별점
@@ -83,7 +83,7 @@ async function getAllReview(req, res) {
 
 
 async function getMyReview(req, res) {
-    const { tokenIndex: userIndex } = auth(req);
+    const { userIndex } = auth(req);
     try {
         const result = await reviewService.getMyReview(userIndex);
         res.send({
@@ -120,7 +120,7 @@ async function getReviewByUserNickName(req, res) {
 
 async function updateReview(req, res) {
     const reviewIndex = req.params.reviewIndex;
-    const { tokenIndex: userIndex } = auth(req);
+    const { userIndex } = auth(req);
     const updateData = {
         contents: req.body.contents,
         rating: req.body.rating,
@@ -144,7 +144,7 @@ async function updateReview(req, res) {
 
 async function deleteReview(req, res) {
     const reviewIndex = req.params.reviewIndex;
-    const { tokenIndex: userIndex } = auth(req);
+    const { userIndex } = auth(req);
     try {
         const result = await reviewService.deleteReview(reviewIndex, userIndex);
         res.send({
