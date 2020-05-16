@@ -51,7 +51,6 @@ async function checkDuplicated(req: express.Request, res: express.Response) {
       message: 'checkDuplicated Succeeded'
     });
   } catch (err) {
-    console.error(err);
     res.json({
       success: false,
       message: 'checkDuplicated failed'
@@ -82,7 +81,6 @@ async function verifyEmail(req: express.Request, res: express.Response) {
 async function userSignUp(req: express.Request, res: express.Response) {
   try {
     const result = await authService.userSignUp(req);
-
     res.send({
       success: true,
       result,

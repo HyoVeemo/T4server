@@ -14,7 +14,7 @@ class HospitalOfficeRoute {
 }
 
 async function registerHospitalOffice(req, res) { // 입력 데이터: officeName, treatmentName
-    const { tokenHpid: hpid } = auth(req);
+    const { hpid } = auth(req);
     const officeName: string = req.body.officeName; // 예: 김똑닥 선생님 - 내과
     let treatmentNameArr: Array<string>;
     const registerOfficeData = {
@@ -58,7 +58,7 @@ async function registerHospitalOffice(req, res) { // 입력 데이터: officeNam
 }
 
 async function getMyHospitalOffices(req, res) {
-    const { tokenHpid: hpid } = auth(req);
+    const { hpid } = auth(req);
     try {
         const result = await hospitalOfficeService.getOffices(hpid);
 

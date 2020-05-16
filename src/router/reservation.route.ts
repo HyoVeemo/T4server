@@ -150,7 +150,6 @@ async function deleteReservation(req, res) {
     const reservationIndex = req.params.reservationIndex;
     const { userIndex } = auth(req);
     try {
-        // const result = await reservationService.deleteReservation(reservationIndex, userIndex);
         const result = await reservationService.deleteReservation(reservationIndex, userIndex);
         res.send({
             success: true,

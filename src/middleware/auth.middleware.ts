@@ -51,7 +51,7 @@ export async function verifyHospital(req: express.Request, res: express.Response
     }
     try {
         const hospitalUserData = await verify(req, token);
-        const result = await hospitalUserService.getHospitalUser(hospitalUserData.tokenEmail);
+        const result = await hospitalUserService.getHospitalUser(hospitalUserData);
 
         if (result) {
             return next();

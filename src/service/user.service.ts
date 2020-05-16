@@ -39,26 +39,25 @@ class UserService {
 				[Op.or]: [{ email }, { userNickName }]
 			}
 		})
-
 		return resultUser;
 	}
 
-	/**
-	 * service: 로그인 정보 인증
-	 */
-	async validateUser(userData: any) {
-		//유저 조회 
-		let resultUser = await this.getUser(userData.email); // DB에서 일치하는 userData 가져옴.
-		if (!resultUser) {
-			throw new Error('user id does not exist');
-		}
+	async getUserByEmail(email: string) {
+		let resultUser: User = await User.findOne({
+			where: {
+				email
+			}
+		})
+		return resultUser;
+	}
 
-		const IsPasswordValid = compareSync(userData.userPw, resultUser.userPw);
-		if (!IsPasswordValid) {
-			throw new Error('inValid password');
-		}
-
-		return resultUser.toJSON();
+	async getUserByUserNickName(userNickName: string) {
+		let resultUser: User = await User.findOne({
+			where: {
+				userNickName
+			}
+		})
+		return resultUser;
 	}
 
 	/**

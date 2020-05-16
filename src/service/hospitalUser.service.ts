@@ -20,11 +20,30 @@ class HospitalUserService {
 	/**
 	 * service: 유저 조회
 	 */
-    async getHospitalUser(hospitalArg) {
-        const { email, hpid } = hospitalArg;
+    async getHospitalUser(hospitalData) {
+        const email = hospitalData.email || null;
+        const hpid = hospitalData.hpid || null;
         let resultHospitalUser = await HospitalUser.findOne({
             where: {
                 [Op.or]: [{ email }, { hpid }]
+            }
+        })
+        return resultHospitalUser;
+    }
+
+    async getHospitalUserByEmail(email: string) {
+        let resultHospitalUser: HospitalUser = await HospitalUser.findOne({
+            where: {
+                email
+            }
+        })
+        return resultHospitalUser;
+    }
+
+    async getHospitalUserByHpid(hpid: string) {
+        let resultHospitalUser: HospitalUser = await HospitalUser.findOne({
+            where: {
+                hpid
             }
         })
         return resultHospitalUser;
@@ -58,7 +77,7 @@ class HospitalUserService {
         }
         const result = await HospitalUser.update(hospitalUserData, {
             where: {
-                hospitalUserIndex: hospitalUserIndex
+                hospitalUserIndex
             }
         });
 
@@ -71,7 +90,7 @@ class HospitalUserService {
     async deleteHositalUser(hospitalUserIndex: number) {
         await HospitalUser.destroy({
             where: {
-                hospitalUserIndex: hospitalUserIndex
+                hospitalUserIndex
             }
         })
     }

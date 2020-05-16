@@ -6,7 +6,7 @@ class SearchRoute {
     public searchRouter: express.Router = express.Router();
 
     constructor() {
-        this.searchRouter.get('/store/hospitals', storeHospital); // 엘라스틱서치에 호스피탈 저장
+        this.searchRouter.get('/store/hospitals', storeHospital); // 엘라스틱서치에 병원 저장
         this.searchRouter.get('/search/content/:content', searchHospital); // 엘라스틱서치에서 병원 검색
     }
 }
@@ -36,12 +36,16 @@ async function storeHospital(req, res) {
             });
         }
         res.send({
-            message: 'Post succeeded'
+            success: true, 
+            statusCode: 500,
+            message: 'storeHospital: 200'
         })
     } catch (err) {
         console.error(err);
         res.send({
-            message: 'Post failed'
+            success: false,
+            statusCode: 500,
+            message: 'storehospital: 500'
         })
     }
 }
@@ -59,18 +63,22 @@ async function searchHospital(req, res): Promise<void> {
         }
     }
     const client = req.app.locals.client;
-
+    
     try {
         const { body } = await client.search(params)
 
         res.send({
-            message: 'Search succeeded',
+            success: true,
+            stautsCode: 200,
+            message: 'searchHospital 200',
             result: body.hits.hits
         })
     } catch (err) {
         console.error(err);
         res.send({
-            message: 'Search failed'
+            success: false, 
+            statusCode: 500,
+            message: 'searchHospital:  500'
         })
     }
 }
