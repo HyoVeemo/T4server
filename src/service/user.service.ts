@@ -8,6 +8,11 @@ interface IUpdateUser {
 	tel?: string;
 }
 
+interface IGetUser {
+	email?: string;
+	userNickName?: string;
+}
+
 class UserService {
 	constructor() {
 	}
@@ -26,8 +31,9 @@ class UserService {
 	/**
 	 * service: 유저 조회
 	 */
-	async getUser(userArg) {
-		const { email, userNickName } = userArg;
+	async getUser(userData: IGetUser) {
+		const email = userData.email || null;
+		const userNickName = userData.userNickName || null;
 		let resultUser: User = await User.findOne({
 			where: {
 				[Op.or]: [{ email }, { userNickName }]

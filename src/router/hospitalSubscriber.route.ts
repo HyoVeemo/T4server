@@ -13,7 +13,7 @@ class HospitalSubscriberRoute {
 
 async function getAllHospitalSubscribers(req, res) {
     try {
-        const { tokenIndex: userIndex } = auth(req);
+        const { userIndex } = auth(req);
         let { location } = req.query;
         location = JSON.parse(location);
 
@@ -36,7 +36,7 @@ async function getAllHospitalSubscribers(req, res) {
 async function updateHospitalSubscriber(req, res): Promise<any> {
     try {
         const hpid = req.params.hpid;
-        let { tokenIndex: userIndex } = auth(req);
+        let { userIndex } = auth(req);
         let resultHopitalSubscriber = await hospitalSubscriberService.getHospitalSubscriber(userIndex, hpid);
         let result;
 

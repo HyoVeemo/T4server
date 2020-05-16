@@ -131,11 +131,11 @@ export class AuthService {
         const senderPw = req.app.locals.senderPw;
 
         // 아이디 중복 검사
-        const exUserEmail = await userService.getUser(userData.email);
+        const exUserEmail = await userService.getUser(userData);
         if (exUserEmail) return { error: true, status: 409, message: 'Duplicated Email' };
 
         // 닉네임 중복 검사
-        const exUserNickName = await userService.getUser(userData.userNickName);
+        const exUserNickName = await userService.getUser(userData);
         if (exUserNickName) return { error: true, status: 409, message: 'Duplicated NickName' };
 
         // 인증 코드 생성
@@ -163,7 +163,7 @@ export class AuthService {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultUser = await userService.getUser(userData.email);
+        let resultUser = await userService.getUser(userData);
 
         //일치하는 유저 없음
         if (!resultUser) {
@@ -185,13 +185,8 @@ export class AuthService {
         if (resultUser) {
             // Token 생성. 
             const token = jwt.sign({
-                tokenIndex: resultUser.userIndex,
-                tokenEmail: resultUser.email,
-                tokenName: resultUser.userName,
-                tokenNickName: resultUser.userNickName,
-                tokenAge: resultUser.age,
-                tokenGender: resultUser.gender,
-                tokenTel: resultUser.tel
+                userIndex: resultUser.userIndex,
+                email: resultUser.email
             }, req.app.locals.secret);
 
             delete resultUser.userPw;
