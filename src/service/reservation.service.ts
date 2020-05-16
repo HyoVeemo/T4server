@@ -2,7 +2,7 @@ import Reservation from '../models/Reservation.model';
 import Hospital from '../models/Hospital.model';
 import HospitalOffice from '../models/HospitalOffice.model';
 import User from '../models/User.model';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 
 interface IReservationCreateData {
     userIndex: number;
@@ -31,17 +31,13 @@ class ReservationService {
                 userIndex: reservationData.userIndex
             }
         }
-        const data = await Reservation.findOne(option); // 그 시간에 예약한 게 없으면
+        const data = await Reservation.findOne(option);
         if (!data) {
             let resultCount;
-            /** 
-             * 입력받은(요청 통해서 넘어온) 예약날짜와 진료실 번호, 그리고 예약시간과 예약시간 + 15분 사이에 예약 돼있는 모든 로우 count하는 쿼리. 
-             * 즉 기존 예약 정보와 시간이 겹치는 부분이 있으면 count함.
-            */
-            let query = "SELECT COUNT(*) FROM Reservations WHERE ( officeIndex = :officeIndex"; // reservationDate -> 예약날짜
-            query += " AND reservationDate = :reservationDate"; // officeIndex -> 진료실 번호
-            query += " AND reservationTime = :reservationTime"; // reservationTime -> 예약시간
-            query += " AND status = :status )"; // ACCEPTED 상태인 예약이 두 개면 안 됨.
+            let query = "SELECT COUNT(*) FROM Reservations WHERE ( officeIndex = :officeIndex";
+            query += " AND reservationDate = :reservationDate";
+            query += " AND reservationTime = :reservationTime";
+            query += " AND status = :status )";
 
             const values = {
                 officeIndex: reservationData.officeIndex,
@@ -82,7 +78,7 @@ class ReservationService {
         const option = {
             where: {
                 userIndex: userIndex,
-                [Op.or]: [ // 응답대기중, 예약됨.
+                [Op.or]: [
                     {
                         status: 'PENDING'
                     },
@@ -91,6 +87,7 @@ class ReservationService {
                     }
                 ]
             },
+            order: [Sequelize.literal('createdAt DESC')],
             include: [{
                 model: Hospital,
                 attributes: ['dutyName']
@@ -118,7 +115,7 @@ class ReservationService {
             where: {
                 userIndex: userIndex,
                 deleted: false,
-                [Op.or]: [ // 거절됨, 타임아웃, 취소됨.
+                [Op.or]: [
                     {
                         status: 'REFUSED'
                     },
@@ -130,6 +127,7 @@ class ReservationService {
                     }
                 ]
             },
+            order: [Sequelize.literal(`STR_TO_DATE(CONCAT(reservationDate, ' ', reservationTime), '%Y-%m-%d %H:%i:%s') DESC`)],
             include: [{
                 model: Hospital,
                 attributes: ['dutyName', 'dutyTel']
@@ -144,10 +142,7 @@ class ReservationService {
         return await Reservation.findAndCountAll(option);
     }
 
-    /**
-     * 병원 측에서 예약 요청 수락 또는 거절 시 상태 변경.
-     * @param reservationIndex 
-     */
+    /* 병원 측에서 예약 요청 수락 또는 거절 시 상태 변경 */
     async updateReservationStatus(reservationIndex, reply) {
         let change;
         if (reply === 'accept') {

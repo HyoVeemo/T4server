@@ -2,6 +2,12 @@ import User from '../models/User.model';
 import { hashSync, compareSync } from 'bcryptjs';
 import { Op } from 'sequelize';
 
+interface IUpdateUser {
+	userPw?: string;
+	userNickName?: string;
+	tel?: string;
+}
+
 class UserService {
 	constructor() {
 	}
@@ -20,12 +26,14 @@ class UserService {
 	/**
 	 * service: 유저 조회
 	 */
-	async getUser(userArg: string) {
+	async getUser(userArg) {
+		const { email, userNickName } = userArg;
 		let resultUser: User = await User.findOne({
 			where: {
-				[Op.or]: [{ email: userArg }, { userNickName: userArg }]
+				[Op.or]: [{ email }, { userNickName }]
 			}
 		})
+
 		return resultUser;
 	}
 
@@ -50,18 +58,32 @@ class UserService {
 	/**
 	 * service: 유저 정보 업데이트
 	 */
-	async updateUser(userIndex: number, userData: any) {
-		if (userData.userPw) {
+	async updateUser(userIndex: number, userData: IUpdateUser) {
+		if (userData.userPw) { // 비밀번호 수정
 			const hashedPassword = hashSync(userData.userPw, 8);
 			userData.userPw = hashedPassword;
 		}
-		const result = await User.update(userData, {
+		if (userData.userNickName) { // 닉네임 중복 검사
+			const result = await User.findOne({
+				where: {
+					userNickName: userData.userNickName
+				}
+			});
+
+			if (result) {
+				return '중복된 닉네임입니다.'
+			}
+		}
+
+		const updateResult = await User.update(userData, {
 			where: {
 				userIndex: userIndex
 			}
 		});
 
-		return result;
+		if (updateResult[0] === 1) {
+			return '변경 완료';
+		}
 	}
 
 	/**
@@ -76,4 +98,4 @@ class UserService {
 	}
 }
 
-export const userService: UserService = new UserService();
+export const userService = new UserService();

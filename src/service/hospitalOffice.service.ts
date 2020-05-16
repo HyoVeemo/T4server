@@ -38,11 +38,7 @@ class HospitalOfficeService {
         return await HospitalOffice.findAll(option);
     }
 
-    /**
-     * 진료실 정보 수정.
-     * @param officeIndex 
-     * @param alterOfficeData 
-     */
+    /* 진료실 정보 수정 */
     async updateHospitalOffice(officeIndex, alterOfficeData: IUpdateOfficeData) {
         if (alterOfficeData.officeName) {
             const change = { officeName: alterOfficeData.officeName };
@@ -92,11 +88,6 @@ class HospitalOfficeService {
         return await HospitalOffice.findAll(option);
     }
 
-    /**
-     * 진료실 번호와 진료 항목 이름으로 진료 항목 번호 찾기.
-     * @param officeIndex 
-     * @param treatmentName 
-     */
     async getTreatmentIndexByOfficeIndexAndTreatmentName(officeIndex, treatmentName) {
         const result = await Treatment.findOne({
             where: { officeIndex: officeIndex, treatmentName: treatmentName }

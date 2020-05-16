@@ -38,6 +38,34 @@ interface ILoginHospitalUserData { // 병원 로그인용
 
 export class AuthService {
     constructor() { }
+
+    async isDuplicated(wannaCheck, who) {
+        // 사용자 가입일 때
+        if (who === 'user') {
+            const exUser = await userService.getUser(wannaCheck);
+            if (wannaCheck.email && exUser) {
+                return { error: true, message: 'Duplicated Email' };
+            }
+
+            if (wannaCheck.userNickName && exUser) {
+                return { error: true, message: 'Duplicated NickName' };
+            }
+        }
+        // 병원 관리자 가입일 때
+        if (who === 'hospital') {
+            const exHospitalUser = await hospitalUserService.getHospitalUser(wannaCheck);
+            if (wannaCheck.email && exHospitalUser) {
+                return { error: true, message: 'Duplicated Email' };
+            }
+
+            if (wannaCheck.hpid && exHospitalUser) {
+                return { error: true, message: 'Duplicated hpid' };
+            }
+        }
+
+        return { error: false, message: 'No Duplicated' };
+    }
+
     async sendMail(receiverEmail: string, keyForVerify: string, host: string, senderEmail: string, senderPw: string) {
         // 기본 SMTP transport를 사용하는 재사용가능한 transporter 객체를 생성
         let transporter = nodemailer.createTransport({
@@ -102,9 +130,13 @@ export class AuthService {
         const senderEmail = req.app.locals.senderEmail;
         const senderPw = req.app.locals.senderPw;
 
-        //아이디 중복 검사
-        const exUser = await userService.getUser(userData.email);
-        if (exUser) return { error: true, status: 409, message: 'Duplicated Id' };
+        // 아이디 중복 검사
+        const exUserEmail = await userService.getUser(userData.email);
+        if (exUserEmail) return { error: true, status: 409, message: 'Duplicated Email' };
+
+        // 닉네임 중복 검사
+        const exUserNickName = await userService.getUser(userData.userNickName);
+        if (exUserNickName) return { error: true, status: 409, message: 'Duplicated NickName' };
 
         // 인증 코드 생성
         const keyOne = randomBytes(256).toString('hex').substr(100, 5);
