@@ -102,7 +102,7 @@ async function getMyReview(req, res) {
 async function getReviewByUserNickName(req, res) {
     const userNickName = req.params.userNickName;
     try {
-        const resultUser = await userService.getUser(userNickName);
+        const resultUser = await userService.getUserByUserNickName(userNickName);
         const result = await reviewService.getUserReview(resultUser.userIndex);
         res.send({
             success: true,

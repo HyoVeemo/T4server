@@ -39,31 +39,29 @@ interface ILoginHospitalUserData { // 병원 로그인용
 export class AuthService {
     constructor() { }
 
-    async isDuplicated(wannaCheck, who) {
-        // 사용자 가입일 때
-        if (who === 'user') {
-            const exUser = await userService.getUser(wannaCheck);
-            if (wannaCheck.email && exUser) {
-                return { error: true, message: 'Duplicated Email' };
-            }
-
-            if (wannaCheck.userNickName && exUser) {
+    async isDuplicated(userData, role) {
+        let resultUser;
+        let resultUserByNickName;
+        let resultUserByHpid; 
+        if ( role === 'user') {
+            // 사용자 가입일 때
+            resultUser = await userService.getUserByEmail(userData.email);
+            resultUserByNickName = await userService.getUserByUserNickName(userData.userNickName)
+            if(resultUserByNickName)
                 return { error: true, message: 'Duplicated NickName' };
-            }
-        }
-        // 병원 관리자 가입일 때
-        if (who === 'hospital') {
-            const exHospitalUser = await hospitalUserService.getHospitalUser(wannaCheck);
-            if (wannaCheck.email && exHospitalUser) {
-                return { error: true, message: 'Duplicated Email' };
-            }
-
-            if (wannaCheck.hpid && exHospitalUser) {
+        }else if ( role === 'hospital') {
+            // 병원 관리자 가입일 때
+            resultUser = await hospitalUserService.getHospitalUserByEmail(userData.email);
+            resultUserByHpid = await hospitalUserService.getHospitalUserByHpid(userData.hpid);
+            if(resultUserByHpid)
                 return { error: true, message: 'Duplicated hpid' };
-            }
+        }
+        if (resultUser) {
+            return { error: true, message: 'Duplicated Email' };
         }
 
         return { error: false, message: 'No Duplicated' };
+    
     }
 
     async sendMail(receiverEmail: string, keyForVerify: string, host: string, senderEmail: string, senderPw: string) {
@@ -130,14 +128,6 @@ export class AuthService {
         const senderEmail = req.app.locals.senderEmail;
         const senderPw = req.app.locals.senderPw;
 
-        // 아이디 중복 검사
-        const exUserEmail = await userService.getUserByEmail(userData.email);
-        if (exUserEmail) return { error: true, status: 409, message: 'Duplicated Email' };
-
-        // 닉네임 중복 검사
-        const exUserNickName = await userService.getUserByUserNickName(userData.userNickName);
-        if (exUserNickName) return { error: true, status: 409, message: 'Duplicated NickName' };
-
         // 인증 코드 생성
         const hxKey = randomBytes(256).toString('hex').substr(100, 5);
         const baseKey = randomBytes(256).toString('base64').substr(50, 5);
@@ -148,7 +138,6 @@ export class AuthService {
         });
 
         await this.sendMail(userData.email, keyForVerify, host, senderEmail, senderPw);
-
         return userData;
     }
 
@@ -163,7 +152,7 @@ export class AuthService {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultUser = await userService.getUser(userData);
+        let resultUser = await userService.getUserByEmail(userData.email);
 
         //일치하는 유저 없음
         if (!resultUser) {
@@ -203,14 +192,6 @@ export class AuthService {
      * @param hospitalUserData 
      */
     async hospitalSignUp(hospitalUserData: ICreateHospitalUserData) {
-        //이메일 중복 검사
-        const exHospitalEmail = await hospitalUserService.getHospitalUserByEmail(hospitalUserData.email);
-        if (exHospitalEmail) return { error: true, message: 'Duplicated Email' };
-
-        //병원 중복 검사
-        const exHospitalHpid = await hospitalUserService.getHospitalUserByHpid(hospitalUserData.hpid);
-        if (exHospitalHpid) return { error: true, message: 'Duplicated Hpid' };
-
         const createAccount = await hospitalUserService.createHospitalUser(hospitalUserData);
         return createAccount;
     }
