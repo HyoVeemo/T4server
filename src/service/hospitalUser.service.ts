@@ -50,24 +50,6 @@ class HospitalUserService {
     }
 
 	/**
-	 * service: 로그인 정보 인증
-	 */
-    async validateHospitalUser(hospitalUserData) {
-        //유저 조회 
-        let resultHospitalUser = await this.getHospitalUser(hospitalUserData.email); // DB에서 일치하는 userData 가져옴.
-        if (!resultHospitalUser) {
-            throw new Error('user id does not exist');
-        }
-
-        const IsPasswordValid = compareSync(hospitalUserData.hospitalUserPw, resultHospitalUser.hospitalUserPw);
-        if (!IsPasswordValid) {
-            throw new Error('inValid password');
-        }
-
-        return resultHospitalUser.toJSON();
-    }
-
-	/**
 	 * service: 유저 정보 업데이트
 	 */
     async updateHospitalUser(hospitalUserIndex: number, hospitalUserData: any) {
