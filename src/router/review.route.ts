@@ -1,7 +1,7 @@
 import multer from 'multer';
 import express from 'express';
 import { auth } from '../utils/auth.util'
-import { S3Upload,uploadImg  } from "../utils/imageUpload.util";
+import { S3Upload, uploadImg } from "../utils/imageUpload.util";
 import { verifyUser } from '../middleware/auth.middleware';
 import { reviewService } from '../service/review.service'
 import { userService } from '../service/user.service'
@@ -102,7 +102,7 @@ async function getMyReview(req, res) {
 async function getReviewByUserNickName(req, res) {
     const userNickName = req.params.userNickName;
     try {
-        const resultUser = await userService.getUser(userNickName);
+        const resultUser = await userService.getUserByUserNickName(userNickName);
         const result = await reviewService.getUserReview(resultUser.userIndex);
         res.send({
             success: true,
