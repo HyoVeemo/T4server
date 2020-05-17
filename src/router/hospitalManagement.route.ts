@@ -15,7 +15,15 @@ class HospitalManagementRoute {
     }
 }
 
-async function getWaitingReservations(req: express.Request, res: express.Response) { }
+async function getWaitingReservations(req: express.Request, res: express.Response) {
+    try {
+
+    } catch (err) {
+        res.status(500).json({
+            message: 'getWaitingReservations failed'
+        })
+    }
+}
 
 async function getAcceptedReservations(req: express.Request, res: express.Response) { }
 
