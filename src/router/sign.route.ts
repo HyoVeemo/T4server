@@ -22,13 +22,9 @@ class SignRoute {
     //정의된 라우터 REST API 정의
     this.signRouter.post('/checkDuplicated', checkDuplicated);
     this.signRouter.get('/verifyEmail', verifyEmail);
-    this.signRouter.get('/user/:email',getUserByEmail);
-    this.signRouter.get('/user/:userNickName',getUserByNickName);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
-    this.signRouter.get("/hospital/:email",getHospitalUserByEmail);
-    this.signRouter.get("/hospital/:hpid",getHospitalUserByhpid);
     this.signRouter.post("/hospital/signUp", hospitalSignUp)
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
   }
@@ -36,11 +32,11 @@ class SignRoute {
 
 async function checkDuplicated(req: express.Request, res: express.Response) {
 
-  const role: "user"|"hospital" = req.body.role;
+  const role: "user" | "hospital" = req.body.role;
   const userData = {
-     email: req.body.email||null,
-     userNickName: req.body.userNickName||null,
-     hpid: req.body.hpid||null
+    email: req.body.email || null,
+    userNickName: req.body.userNickName || null,
+    hpid: req.body.hpid || null
   }
   try {
     const result = await authService.isDuplicated(userData, role);
@@ -72,50 +68,6 @@ async function verifyEmail(req: express.Request, res: express.Response) {
       success: false,
       message: 'verifyEmail failed'
     });
-  }
-}
-
-/**
- * route: 회원 email 조회
- */
-async function getUserByEmail(req: express.Request, res: express.Response){
-  try{
-    const email = req.params.email;
-    const result = await userService.getUserByEmail(email);
-    res.send({
-      success: true,
-      result,
-      message: 'getUser : 200'
-    });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getUser :500'
-    })
-  }
-}
-
-/**
- * route: 회원 NickName 조회
- */
-async function getUserByNickName(req: express.Request, res: express.Response){
-  try{
-    const userNickName = req.params.userNickName;
-    const result = await userService.getUserByUserNickName(userNickName);
-    res.send({
-      success: true,
-      result,
-      message: 'getUser : 200'
-    });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getUser :500'
-    })
   }
 }
 
@@ -182,55 +134,6 @@ async function updateUser(req: express.Request, res: express.Response) {
       success: false,
       message: 'updateUserInfo: 500'
     });
-  }
-}
-
-/**
- * route: 병원 hpid 조회
- * @param req 
- * @param res 
- */
-async function getHospitalUserByhpid(req, res){
-  try{
-    const hpid = req.params.hpid;
-    const result = await hospitalUserService.getHospitalUserByHpid(hpid)
-    res.send({
-      success: true,
-      result,
-      message: 'getHospitalUser : 200'
-    });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getHospitalUser :500'
-    })
-  }
-}
-
-
-/**
- * route: 병원 email 조회
- * @param req 
- * @param res 
- */
-async function getHospitalUserByEmail(req, res){
-  try{
-    const email = req.params.email;
-    const result = await hospitalUserService.getHospitalUserByEmail(email)
-    res.send({
-      success: true,
-      result,
-      message: 'getHospitalUser : 200'
-    });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getHospitalUser :500'
-    })
   }
 }
 
