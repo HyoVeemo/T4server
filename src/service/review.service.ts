@@ -34,6 +34,7 @@ class ReviewService {
                 ]
             }
             const result = await Review.findAndCountAll(option);
+
             return result;
         } catch (err) {
             console.error(err);

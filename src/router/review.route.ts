@@ -15,8 +15,8 @@ class ReviewRoute {
         this.reviewRouter.post('/review/img', verifyUser, S3Upload('reviewImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.reviewRouter.post('/review/hpid/:hpid', verifyUser, this.upload.none(), postReview); // 리뷰(이미지 포함) 등록 라우터
         this.reviewRouter.get('/review/hpid/:hpid', getAllReview); // 한 병원의 모든 리뷰 가져오는 라우터
-        this.reviewRouter.get('/review/myReview', verifyUser, getMyReview); // 리뷰 모아보기
-        this.reviewRouter.get('/review', getReviewByUserNickName);
+        this.reviewRouter.get('/review', verifyUser, getMyReview); // 리뷰 모아보기
+        this.reviewRouter.get('/review/userNickName/:userNickName', getReviewByUserNickName);
         this.reviewRouter.patch('/review/reviewIndex/:reviewIndex', verifyUser, this.upload.none(), updateReview); // 리뷰 수정 라우터
         this.reviewRouter.delete('/review/reviewIndex/:reviewIndex', verifyUser, deleteReview); // 리뷰 삭제 라우터
         this.reviewRouter.get('/review/rating/hpid/:hpid', getRating); // 한 병원 평점 가져오기
@@ -100,14 +100,10 @@ async function getMyReview(req, res) {
 }
 
 async function getReviewByUserNickName(req, res) {
-    const userNickName = req.query.userNickName;
-    console.log(userNickName);
+    const userNickName = req.params.userNickName;
     try {
-        let result;
         const resultUser = await userService.getUserByUserNickName(userNickName);
-        result = await reviewService.getUserReview(resultUser.userIndex);
-        console.log(result);
-
+        const result = await reviewService.getUserReview(resultUser.userIndex);
         res.send({
             success: true,
             result,

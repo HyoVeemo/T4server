@@ -27,7 +27,7 @@ export async function verifyUser(req: express.Request, res: express.Response, ne
             res.status(403).json({
                 success: false,
                 statusCode: 403,
-                message: 'verify: 403 '
+                message: 'verify: 403 권한이 없습니다.'
             })
         }
     } catch (err) {
@@ -59,7 +59,7 @@ export async function verifyHospital(req: express.Request, res: express.Response
             res.status(403).json({
                 success: false,
                 statusCode: 403,
-                message: 'verify: 403 z'
+                message: 'verify: 403 권한이 없습니다.'
             })
         }
     } catch (err) {
