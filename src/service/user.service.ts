@@ -51,13 +51,13 @@ class UserService {
 		return resultUser;
 	}
 
-	async getUserByUserNickName(userNickName: string) {
+	async getUserByUserNickName(userNickName: string):Promise<any> {
 		let resultUser: User = await User.findOne({
 			where: {
 				userNickName
 			}
 		})
-		return resultUser;
+		return resultUser.toJSON();
 	}
 
 	/**
