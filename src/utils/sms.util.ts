@@ -28,4 +28,6 @@ export default (phoneNumber) => {
                 console.error(err, err.stack);
             }
         )
+
+    return authenticationNumber;
 }

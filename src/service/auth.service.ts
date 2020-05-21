@@ -42,18 +42,18 @@ export class AuthService {
     async isDuplicated(userData, role) {
         let resultUser;
         let resultUserByNickName;
-        let resultUserByHpid; 
-        if ( role === 'user') {
+        let resultUserByHpid;
+        if (role === 'user') {
             // 사용자 가입일 때
             resultUser = await userService.getUserByEmail(userData.email);
             resultUserByNickName = await userService.getUserByUserNickName(userData.userNickName)
-            if(resultUserByNickName)
+            if (resultUserByNickName)
                 return { error: true, message: 'Duplicated NickName' };
-        }else if ( role === 'hospital') {
+        } else if (role === 'hospital') {
             // 병원 관리자 가입일 때
             resultUser = await hospitalUserService.getHospitalUserByEmail(userData.email);
             resultUserByHpid = await hospitalUserService.getHospitalUserByHpid(userData.hpid);
-            if(resultUserByHpid)
+            if (resultUserByHpid)
                 return { error: true, message: 'Duplicated hpid' };
         }
         if (resultUser) {
@@ -61,7 +61,7 @@ export class AuthService {
         }
 
         return { error: false, message: 'No Duplicated' };
-    
+
     }
 
     async sendMail(receiverEmail: string, keyForVerify: string, host: string, senderEmail: string, senderPw: string) {

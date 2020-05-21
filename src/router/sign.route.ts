@@ -22,6 +22,7 @@ class SignRoute {
     //정의된 라우터 REST API 정의
     this.signRouter.post('/checkDuplicated', checkDuplicated);
     this.signRouter.post('/sendSMS', sendSMS);
+    this.signRouter.post('/verifyPhoneNumber', verifyPhoneNumber);
     this.signRouter.get('/verifyEmail', verifyEmail);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
@@ -31,20 +32,59 @@ class SignRoute {
   }
 }
 
+let tempAuthObj = {};
+
 async function sendSMS(req: express.Request, res: express.Response) {
   try {
-    await sendMessage(req.body.tel);
-
+    const authenticationNumber = await sendMessage(req.body.tel);
+    tempAuthObj[req.body.tel] = authenticationNumber;
     res.status(200).json({
       success: true,
-      message: 'sendSMS Succeeded'
+      message: 'sendSMS succeeded'
     });
   } catch (err) {
+    console.error(err);
     res.json({
       success: false,
       message: 'sendSMS failed'
     });
   }
+}
+
+async function verifyPhoneNumber(req: express.Request, res: express.Response) {
+  try {
+    const { tel, userInputNumber } = req.body;
+
+    if (tel !== undefined && userInputNumber !== undefined) {
+      if (tempAuthObj[tel] === userInputNumber) {
+        delete tempAuthObj[req.body.tel];
+        res.status(200).json({
+          success: true,
+          message: 'verifyPhoneNumber Succeeded'
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          message: 'sendSMS failed'
+        });
+      }
+    } else {
+      if (tel === undefined || tel === '') {
+        res.status(400).json('변경할 휴대폰 번호를 입력해주세요');
+      } else if (userInputNumber === undefined) {
+        res.status(400).json('인증번호를 입력해주세요');
+      } else {
+        res.status(400).json('변경할 휴대폰 번호를 입력해주세요');
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    res.json({
+      success: false,
+      message: 'sendSMS failed'
+    });
+  }
+
 }
 
 async function checkDuplicated(req: express.Request, res: express.Response) {
