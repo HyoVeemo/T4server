@@ -2,7 +2,7 @@ import * as express from "express";
 import { authService } from "../service/auth.service";
 import { userService } from "../service/user.service";
 import { auth } from '../utils/auth.util';
-import { hospitalUserService } from "../service/hospitalUser.service";
+import sendMessage from '../utils/sms.util';
 
 interface IUpdateUser {
   userPw?: string;
@@ -21,12 +21,29 @@ class SignRoute {
   constructor() {
     //정의된 라우터 REST API 정의
     this.signRouter.post('/checkDuplicated', checkDuplicated);
+    this.signRouter.post('/sendSMS', sendSMS);
     this.signRouter.get('/verifyEmail', verifyEmail);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
     this.signRouter.post("/hospital/signUp", hospitalSignUp)
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
+  }
+}
+
+async function sendSMS(req: express.Request, res: express.Response) {
+  try {
+    await sendMessage(req.body.tel);
+
+    res.status(200).json({
+      success: true,
+      message: 'sendSMS Succeeded'
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      message: 'sendSMS failed'
+    });
   }
 }
 
