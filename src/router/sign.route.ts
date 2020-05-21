@@ -87,6 +87,23 @@ async function verifyPhoneNumber(req: express.Request, res: express.Response) {
 
 }
 
+async function verifyEmail(req: express.Request, res: express.Response) {
+  try {
+    const result = await authService.updateEmailVerify(req.query);
+    res.send({
+      success: true,
+      result,
+      message: 'verifyEmail: 200'
+    });
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: false,
+      message: 'verifyEmail failed'
+    });
+  }
+}
+
 async function checkDuplicated(req: express.Request, res: express.Response) {
 
   const role: "user" | "hospital" = req.body.role;
@@ -107,23 +124,6 @@ async function checkDuplicated(req: express.Request, res: express.Response) {
     res.json({
       success: false,
       message: 'checkDuplicated failed'
-    });
-  }
-}
-
-async function verifyEmail(req: express.Request, res: express.Response) {
-  try {
-    const result = await authService.updateEmailVerify(req.query);
-    res.send({
-      success: true,
-      result,
-      message: 'verifyEmail: 200'
-    });
-  } catch (err) {
-    console.error(err);
-    res.send({
-      success: false,
-      message: 'verifyEmail failed'
     });
   }
 }
@@ -217,9 +217,6 @@ async function hospitalSignUp(req, res) {
 
 /**
  * route: 로그인
- * @param req 
- * @param res 
- * @returns {Promise<void>}
  */
 async function hospitalSignIn(req, res) {
   try {
