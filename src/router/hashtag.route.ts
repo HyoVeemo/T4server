@@ -6,7 +6,7 @@ class hashtagRoute {
 
     constructor() {
         this.hashtagRouter.post('/hashTag', createHashtag);
-        this.hashtagRouter.get('/hashTag')
+        this.hashtagRouter.get('/hashTag');
     }
 }
 

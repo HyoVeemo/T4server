@@ -1,6 +1,5 @@
 import HospitalUser from '../models/HospitalUser.model';
-import { hashSync, compareSync } from 'bcryptjs';
-import { Op } from 'sequelize';
+import { hashSync } from 'bcryptjs';
 
 class HospitalUserService {
     constructor() {
