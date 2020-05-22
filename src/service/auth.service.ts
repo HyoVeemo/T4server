@@ -36,7 +36,7 @@ interface ILoginHospitalUserData { // 병원 로그인용
     hospitalUserPw: string;
 }
 
-export class AuthService {
+class AuthService {
     constructor() { }
 
     async isDuplicated(userData, role) {
@@ -172,7 +172,6 @@ export class AuthService {
         resultUser = resultUser.toJSON() as User;
 
         if (resultUser) {
-            // Token 생성. 
             const token = jwt.sign({
                 userIndex: resultUser.userIndex,
                 email: resultUser.email
@@ -207,7 +206,7 @@ export class AuthService {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultHospitalUser = await hospitalUserService.getHospitalUser(hospitalUserData);
+        let resultHospitalUser = await hospitalUserService.getHospitalUserByEmail(hospitalUserData.email);
 
         //일치하는 유저 없음
         if (!resultHospitalUser) {

@@ -44,10 +44,6 @@ async function registerHospitalOffice(req, res) { // 입력 데이터: officeNam
                 message: 'registerHospitalOffice: 200'
             });
         }
-        res.send({
-            success: true,
-            message: 'registerHospitalOffice: 200'
-        });
     } catch (err) {
         res.send({
             success: false,

@@ -1,16 +1,10 @@
 import User from '../models/User.model';
-import { hashSync, compareSync } from 'bcryptjs';
-import { Op } from 'sequelize';
+import { hashSync } from 'bcryptjs';
 
 interface IUpdateUser {
 	userPw?: string;
 	userNickName?: string;
 	tel?: string;
-}
-
-interface IGetUser {
-	email?: string;
-	userNickName?: string;
 }
 
 class UserService {
@@ -28,24 +22,19 @@ class UserService {
 		return resultUser.toJSON();
 	}
 
-	/**
-	 * service: 유저 조회
-	 */
-	async getUser(userData: IGetUser) {
-		const email = userData.email || null;
-		const userNickName = userData.userNickName || null;
+	async getUserByEmail(email: string) {
 		let resultUser: User = await User.findOne({
 			where: {
-				[Op.or]: [{ email }, { userNickName }]
+				email
 			}
 		})
 		return resultUser;
 	}
 
-	async getUserByEmail(email: string) {
-		let resultUser: User = await User.findOne({
+	async getUserBySNSId(snsId: string) {
+		const resultUser: User = await User.findOne({
 			where: {
-				email
+				snsId
 			}
 		})
 		return resultUser;

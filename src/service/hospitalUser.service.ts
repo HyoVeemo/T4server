@@ -1,6 +1,5 @@
 import HospitalUser from '../models/HospitalUser.model';
-import { hashSync, compareSync } from 'bcryptjs';
-import { Op } from 'sequelize';
+import { hashSync } from 'bcryptjs';
 
 class HospitalUserService {
     constructor() {
@@ -15,20 +14,6 @@ class HospitalUserService {
 
         let resultHospitalUser = await HospitalUser.create(hospitalUserData);
         return resultHospitalUser.toJSON();
-    }
-
-	/**
-	 * service: 유저 조회
-	 */
-    async getHospitalUser(hospitalData) {
-        const email = hospitalData.email || null;
-        const hpid = hospitalData.hpid || null;
-        let resultHospitalUser = await HospitalUser.findOne({
-            where: {
-                [Op.or]: [{ email }, { hpid }]
-            }
-        })
-        return resultHospitalUser;
     }
 
     async getHospitalUserByEmail(email: string) {
