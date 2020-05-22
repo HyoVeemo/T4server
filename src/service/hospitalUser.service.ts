@@ -17,20 +17,6 @@ class HospitalUserService {
         return resultHospitalUser.toJSON();
     }
 
-	/**
-	 * service: 유저 조회
-	 */
-    async getHospitalUser(hospitalData) {
-        const email = hospitalData.email || null;
-        const hpid = hospitalData.hpid || null;
-        let resultHospitalUser = await HospitalUser.findOne({
-            where: {
-                [Op.or]: [{ email }, { hpid }]
-            }
-        })
-        return resultHospitalUser;
-    }
-
     async getHospitalUserByEmail(email: string) {
         let resultHospitalUser: HospitalUser = await HospitalUser.findOne({
             where: {

@@ -8,6 +8,7 @@ import { reservationRoute } from './router/reservation.route';
 import { hospitalSubscriberRoute } from './router/hospitalSubscriber.route';
 import { hospitalOfficeRoute } from './router/hospitalOffice.route';
 import { hospitalManagementRoute } from './router/hospitalManagement.route';
+import { kakaoUserRoute } from './router/kakaoUser.route';
 import Db from './db';
 import { searchRoute } from './router/search.route';
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
@@ -43,13 +44,14 @@ export class Server {
   }
 
   private initMiddlewares() {
+    this.app.use(logger('dev'));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
-    this.app.use(logger('dev'));
   }
 
   private setRouter() {
     this.app.use(signRoute.signRouter);
+    this.app.use(kakaoUserRoute.kakaoUserRouter);
     this.app.use(hospitalRoute.hospitalRouter);
     this.app.use(hospitalOfficeRoute.hospitalOfficeRouter);
     this.app.use(reviewRoute.reviewRouter);

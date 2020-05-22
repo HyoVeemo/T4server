@@ -10,6 +10,8 @@ import Reservation from "./Reservation.model";
       "email",
       "emailVerified",
       "userPw",
+      "snsId",
+      "provider",
       "userName",
       "userNickName",
       "age",
@@ -38,7 +40,6 @@ export default class User extends Model<User> {
   @Column(DataType.INTEGER)
   userIndex: number;
 
-  @AllowNull(false)
   @IsEmail
   @Unique
   @Column(DataType.STRING)
@@ -48,16 +49,21 @@ export default class User extends Model<User> {
   @Column
   emailVerified: boolean;
 
-  @AllowNull(false)
   @Column
   keyForVerify: string;
 
-  @AllowNull(false)
   @Column(DataType.STRING)
   userPw: string;
 
+  @Unique
+  @Column(DataType.STRING(40))
+  snsId: string;
+
+  @Default('local')
+  @Column(DataType.STRING(20))
+  provider: string;
+
   @Comment('실명')
-  @AllowNull(false)
   @Column
   userName: string;
 

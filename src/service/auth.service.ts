@@ -36,24 +36,24 @@ interface ILoginHospitalUserData { // 병원 로그인용
     hospitalUserPw: string;
 }
 
-export class AuthService {
+class AuthService {
     constructor() { }
 
     async isDuplicated(userData, role) {
         let resultUser;
         let resultUserByNickName;
-        let resultUserByHpid; 
-        if ( role === 'user') {
+        let resultUserByHpid;
+        if (role === 'user') {
             // 사용자 가입일 때
             resultUser = await userService.getUserByEmail(userData.email);
             resultUserByNickName = await userService.getUserByUserNickName(userData.userNickName)
-            if(resultUserByNickName)
+            if (resultUserByNickName)
                 return { error: true, message: 'Duplicated NickName' };
-        }else if ( role === 'hospital') {
+        } else if (role === 'hospital') {
             // 병원 관리자 가입일 때
             resultUser = await hospitalUserService.getHospitalUserByEmail(userData.email);
             resultUserByHpid = await hospitalUserService.getHospitalUserByHpid(userData.hpid);
-            if(resultUserByHpid)
+            if (resultUserByHpid)
                 return { error: true, message: 'Duplicated hpid' };
         }
         if (resultUser) {
@@ -61,7 +61,7 @@ export class AuthService {
         }
 
         return { error: false, message: 'No Duplicated' };
-    
+
     }
 
     async sendMail(receiverEmail: string, keyForVerify: string, host: string, senderEmail: string, senderPw: string) {
@@ -172,7 +172,6 @@ export class AuthService {
         resultUser = resultUser.toJSON() as User;
 
         if (resultUser) {
-            // Token 생성. 
             const token = jwt.sign({
                 userIndex: resultUser.userIndex,
                 email: resultUser.email
@@ -207,7 +206,7 @@ export class AuthService {
             throw new Error('No UserData Input');
         }
         //유저 조회 
-        let resultHospitalUser = await hospitalUserService.getHospitalUser(hospitalUserData);
+        let resultHospitalUser = await hospitalUserService.getHospitalUserByEmail(hospitalUserData.email);
 
         //일치하는 유저 없음
         if (!resultHospitalUser) {

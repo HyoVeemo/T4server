@@ -2,7 +2,6 @@ import * as express from "express";
 import { authService } from "../service/auth.service";
 import { userService } from "../service/user.service";
 import { auth } from '../utils/auth.util';
-import { hospitalUserService } from "../service/hospitalUser.service";
 
 interface IUpdateUser {
   userPw?: string;
