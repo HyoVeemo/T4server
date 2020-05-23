@@ -43,10 +43,13 @@ class AuthService {
         let resultUser;
         let resultUserByNickName;
         let resultUserByHpid;
-        if (role === 'user') {
-            // 사용자 가입일 때
-            resultUser = await userService.getUserByEmail(userData.email);
-            resultUserByNickName = await userService.getUserByUserNickName(userData.userNickName)
+        if (role === 'user') { // 로컬 사용자 가입일 때
+            if (userData.email !== null) { // 이메일 중복 검사
+                resultUser = await userService.getUserByEmail(userData.email);
+            } else if (userData.userNickName !== null) { // 닉네임 중복 검사
+                resultUserByNickName = await userService.getUserByUserNickName(userData.userNickName);
+            }
+
             if (resultUserByNickName)
                 return { error: true, message: 'Duplicated NickName' };
         } else if (role === 'hospital') {
