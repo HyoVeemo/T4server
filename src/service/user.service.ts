@@ -1,5 +1,7 @@
 import User from '../models/User.model';
-import { hashSync } from 'bcryptjs';
+import Review from '../models/Review.model';
+import Reservation from '../models/Reservation.model';
+import { hashSync, compareSync } from 'bcryptjs';
 
 interface IUpdateUser {
 	userPw?: string;
@@ -83,12 +85,28 @@ class UserService {
 	/**
 	 * service: 유저 삭제
 	 */
-	async deleteUser(userIndex: number) {
-		await User.destroy({
-			where: {
-				userIndex: userIndex
-			}
-		})
+	async deleteUser(userIndex: number, userInputPw: string) {
+		const resultUser = await User.findOne({ where: { userIndex } });
+
+		const IsPasswordValid = compareSync(userInputPw, resultUser.userPw);
+
+		if (IsPasswordValid) {
+			await User.destroy({
+				where: {
+					userIndex
+				}
+			});
+
+			return {
+				success: true,
+				message: 'closeAccount: 200 - 탈퇴 완료.'
+			};
+		}
+
+		return {
+			success: false,
+			message: 'closeAccount: 401 - 비밀번호가 틀렸습니다.'
+		};
 	}
 }
 

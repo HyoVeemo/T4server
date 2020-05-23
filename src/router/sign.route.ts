@@ -3,6 +3,7 @@ import { authService } from "../service/auth.service";
 import { userService } from "../service/user.service";
 import { auth } from '../utils/auth.util';
 import sendMessage from '../utils/sms.util';
+import { verifyUser } from '../middleware/auth.middleware';
 
 interface IUpdateUser {
   userPw?: string;
@@ -27,8 +28,9 @@ class SignRoute {
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
-    this.signRouter.post("/hospital/signUp", hospitalSignUp)
+    this.signRouter.post("/hospital/signUp", hospitalSignUp);
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
+    this.signRouter.post("/user/closeAccount", verifyUser, closeAccount);
   }
 }
 
@@ -128,9 +130,6 @@ async function checkDuplicated(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 회원가입
- */
 async function userSignUp(req: express.Request, res: express.Response) {
   try {
     const result = await authService.userSignUp(req);
@@ -149,9 +148,6 @@ async function userSignUp(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 로그인
- */
 async function userSignIn(req, res) {
   try {
     const result = await authService.userSignIn(req);
@@ -194,9 +190,21 @@ async function updateUser(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 회원가입
- */
+async function closeAccount(req: express.Request, res: express.Response) {
+  try {
+    const { userIndex } = auth(req);
+    const { userInputPw } = req.body;
+    const result = await userService.deleteUser(userIndex, userInputPw);
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: true,
+      message: 'closeAccount: 500'
+    });
+  }
+}
+
 async function hospitalSignUp(req, res) {
   try {
     const result = await authService.hospitalSignUp(req.body);
@@ -215,9 +223,6 @@ async function hospitalSignUp(req, res) {
   }
 }
 
-/**
- * route: 로그인
- */
 async function hospitalSignIn(req, res) {
   try {
     const result = await authService.hospitalSignIn(req);
