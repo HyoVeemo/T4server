@@ -88,25 +88,41 @@ class UserService {
 	async deleteUser(userIndex: number, userInputPw: string) {
 		const resultUser = await User.findOne({ where: { userIndex } });
 
-		const IsPasswordValid = compareSync(userInputPw, resultUser.userPw);
+		if (resultUser.provider === 'local') {
+			const IsPasswordValid = compareSync(userInputPw, resultUser.userPw);
 
-		if (IsPasswordValid) {
-			await User.destroy({
-				where: {
-					userIndex
-				}
-			});
+			if (IsPasswordValid) {
+				await User.destroy({
+					where: {
+						userIndex
+					}
+				});
+
+				return {
+					success: true,
+					message: 'closeAccount: 200 - 로컬 사용자 탈퇴 완료.'
+				};
+			}
 
 			return {
-				success: true,
-				message: 'closeAccount: 200 - 탈퇴 완료.'
+				success: false,
+				message: 'closeAccount: 401 - 비밀번호가 틀렸습니다.'
 			};
 		}
 
+		// 카카오 사용자는 비밀번호 인증 없이 즉각 탈퇴
+		await User.destroy({
+			where: {
+				userIndex
+			}
+		});
+
 		return {
-			success: false,
-			message: 'closeAccount: 401 - 비밀번호가 틀렸습니다.'
+			success: true,
+			message: 'closeAccount: 200 - 카카오 사용자 탈퇴 완료.'
 		};
+
+
 	}
 }
 
