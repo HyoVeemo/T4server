@@ -2,10 +2,12 @@ import * as express from 'express'
 import { verifyUser } from '../middleware/auth.middleware';
 import { hashtagService } from '../service/hashtag.service';
 import { postsHashtagService } from '../service/postsHashtag.service';
+import { S3Upload, uploadImg } from '../utils/imageUpload.util';
 
 class PostsRoute {
     public postsRouter: express.Router = express.Router();
     constructor() {
+        this.postsRouter.post('/posts/img', S3Upload('postsImage').single('img'), uploadImg); // S3에 이미지 업로드하는 라우터
         this.postsRouter.post('/posts', createPosts);
         this.postsRouter.get('/posts', listPosts);
         this.postsRouter.delete('/posts/:postsId', deletePosts);
