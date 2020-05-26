@@ -4,9 +4,6 @@ import PostsHashtag from "./PostsHashtag.model";
 
 @Table
 export default class Posts extends Model<Posts>{    
-    @HasMany(()=>PostsHashtag)
-    postsHashtag:PostsHashtag;
-
 
     @PrimaryKey
     @AutoIncrement

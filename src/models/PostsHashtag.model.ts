@@ -1,17 +1,13 @@
 import { Model, Table, Column, HasMany, AutoIncrement, DataType, BelongsTo, PrimaryKey, AllowNull, BelongsToMany, ForeignKey } from "sequelize-typescript";
-import Posts from './Posts.model';
 import Hashtag from './Hashtag.model';
 
 @Table({
     timestamps: false
 })
 export default class PostsHashtag extends Model<PostsHashtag>{
-    @BelongsTo(()=>Posts)
-    posts:Posts;
     @BelongsTo(()=>Hashtag)
     hashtag: Hashtag;
 
-    
     @PrimaryKey
     @AutoIncrement
     @Column({
@@ -19,14 +15,13 @@ export default class PostsHashtag extends Model<PostsHashtag>{
     })
     PostsHashtagIndex: number;
 
-
-    @ForeignKey(()=>Posts)
+    @AllowNull(false)
     @Column({
-        type: DataType.INTEGER
+        type: DataType.STRING
     })
-    postsIndex:number;
+    postsIndex:string;
 
-
+    @AllowNull(false)
     @ForeignKey(()=>Hashtag)
     @Column({
         type: DataType.INTEGER

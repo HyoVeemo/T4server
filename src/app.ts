@@ -11,6 +11,8 @@ import { hospitalManagementRoute } from './router/hospitalManagement.route';
 import Db from './db';
 import { searchRoute } from './router/search.route';
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
+import { postsRoute } from "./router/posts.route";
+import { hashtagRoute } from "./router/hashtag.route";
 
 
 export class Server {
@@ -53,9 +55,11 @@ export class Server {
     this.app.use(hospitalRoute.hospitalRouter);
     this.app.use(hospitalOfficeRoute.hospitalOfficeRouter);
     this.app.use(reviewRoute.reviewRouter);
+    this.app.use(postsRoute.postsRouter);
     this.app.use(reservationRoute.reservationRouter);
     this.app.use(hospitalSubscriberRoute.hospitalSubscriberRouter);
     this.app.use(searchRoute.searchRouter);
     this.app.use(hospitalManagementRoute.hospitalManagementRouter);
+    this.app.use(hashtagRoute.hashtagRouter);
   }
 }

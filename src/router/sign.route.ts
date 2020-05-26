@@ -22,8 +22,6 @@ class SignRoute {
     //정의된 라우터 REST API 정의
     this.signRouter.post('/checkDuplicated', checkDuplicated);
     this.signRouter.get('/verifyEmail', verifyEmail);
-    this.signRouter.get('/user/:email',getUserByEmail);
-    this.signRouter.get('/user/:userNickName',getUserByNickName);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
