@@ -72,24 +72,29 @@ async function createPosts(req: express.Request, res: express.Response) {
 async function listPosts(req, res) {
     const client = req.app.locals.client
         // 입력 예: Posts?filter=""&pn={"offset":0,"page":1} 
-        let { filter, pn } = req.query;
+        let { filter,pn } = req.query;
         pn = JSON.parse(pn);
-        let params = 
+
+        let params: any = 
             {
-                "index": "posts",
-                    "body": {
-                        "from": pn.offset * (pn.page - 1),
-                        "size": pn.offset,
-                        "query": {
-                            "dis_max": {
-                                "queries": [
-                                    {"match":{"title._text.nori": filter }},
-                                    {"match":{"hashtag._text.nori": filter }}
-                                ]
-                            }
+                "index": "posts"
+            }
+
+
+        if(filter){    
+            params.body = {
+                    "from": pn.offset * (pn.page - 1),
+                    "size": pn.offset,
+                    "query": {
+                        "dis_max": {
+                            "queries": [
+                                {"match":{"title._text.nori": filter }},
+                                {"match":{"hashtag._text.nori": filter }}
+                            ]
                         }
                     }
                 }
+            }
     try {
         const { body } = await client.search(params);
         res.send({
