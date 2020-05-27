@@ -25,7 +25,7 @@ class SignRoute {
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
-    this.signRouter.post("/hospital/signUp", hospitalSignUp)
+    this.signRouter.post("/hospital/signUp", hospitalSignUp);
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
   }
 }

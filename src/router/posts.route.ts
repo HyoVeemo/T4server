@@ -70,13 +70,16 @@ async function listPosts(req, res) {
     const client = req.app.locals.client
     // 입력 예: Posts?filter=""&pn={"offset":0,"page":1} 
     let { filter, pn } = req.query;
-    pn = JSON.parse(pn);
-    let params =
+    pn = pn == undefined ? undefined : JSON.parse(pn);
+
+    let params: any =
     {
-        "index": "posts",
-        "body": {
-            "from": pn.offset * (pn.page - 1),
-            "size": pn.offset,
+        "index": "posts"
+    }
+
+
+    if (filter) {
+        params.body = {
             "query": {
                 "dis_max": {
                     "queries": [
@@ -86,6 +89,27 @@ async function listPosts(req, res) {
                 }
             }
         }
+    }
+
+    if (pn) {
+        params.body.from = pn.offset * (pn.page - 1);
+        params.body.size = pn.offset;
+    }
+    try {
+        const { body } = await client.search(params);
+        res.send({
+            success: true,
+            result: body.hits.hits,
+            statusCode: 200,
+            message: 'listPosts'
+        });
+    } catch (err) {
+        console.log(err)
+        res.send({
+            success: false,
+            statusCode: 500,
+            message: 'listPosts:500'
+        })
     }
     try {
         const { body } = await client.search(params);
