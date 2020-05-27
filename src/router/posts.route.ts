@@ -73,7 +73,7 @@ async function listPosts(req, res) {
     const client = req.app.locals.client
         // 입력 예: Posts?filter=""&pn={"offset":0,"page":1} 
         let { filter,pn } = req.query;
-        pn = JSON.parse(pn);
+        pn = pn==undefined? undefined: JSON.parse(pn);
 
         let params: any = 
             {
@@ -83,8 +83,6 @@ async function listPosts(req, res) {
 
         if(filter){    
             params.body = {
-                    "from": pn.offset * (pn.page - 1),
-                    "size": pn.offset,
                     "query": {
                         "dis_max": {
                             "queries": [
@@ -95,6 +93,11 @@ async function listPosts(req, res) {
                     }
                 }
             }
+
+        if(pn){
+            params.body.from = pn.offset * (pn.page - 1);
+            params.body.size = pn.offset;
+        }
     try {
         const { body } = await client.search(params);
         res.send({
