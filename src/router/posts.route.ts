@@ -77,7 +77,8 @@ async function listPosts(req, res) {
 
         let params: any = 
             {
-                "index": "posts"
+                "index": "posts",
+                "body":{}
             }
 
 
