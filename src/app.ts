@@ -14,6 +14,7 @@ import { searchRoute } from './router/search.route';
 import { Client } from '@elastic/elasticsearch'
 import { postsRoute } from "./router/posts.route";
 import { hashtagRoute } from "./router/hashtag.route";
+import cors from 'cors';
 
 
 export class Server {
@@ -46,6 +47,7 @@ export class Server {
   }
 
   private initMiddlewares() {
+    this.app.use(cors()); // cors 미들웨어 추가
     this.app.use(logger('dev'));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
