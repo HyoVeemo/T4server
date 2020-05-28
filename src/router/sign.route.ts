@@ -2,7 +2,8 @@ import * as express from "express";
 import { authService } from "../service/auth.service";
 import { userService } from "../service/user.service";
 import { auth } from '../utils/auth.util';
-import { hospitalUserService } from "../service/hospitalUser.service";
+import sendMessage from '../utils/sms.util';
+import { verifyUser } from '../middleware/auth.middleware';
 
 interface IUpdateUser {
   userPw?: string;
@@ -21,12 +22,87 @@ class SignRoute {
   constructor() {
     //정의된 라우터 REST API 정의
     this.signRouter.post('/checkDuplicated', checkDuplicated);
+    this.signRouter.post('/sendSMS', sendSMS);
+    this.signRouter.post('/verifyPhoneNumber', verifyPhoneNumber);
     this.signRouter.get('/verifyEmail', verifyEmail);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
+    this.signRouter.post("/user/closeAccount", verifyUser, closeAccount); // 회원 탈퇴
     this.signRouter.post("/hospital/signUp", hospitalSignUp);
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
+  }
+}
+
+let tempAuthObj = {};
+
+async function sendSMS(req: express.Request, res: express.Response) {
+  try {
+    const authenticationNumber = await sendMessage(req.body.tel);
+    tempAuthObj[req.body.tel] = authenticationNumber;
+    res.status(200).json({
+      success: true,
+      message: 'sendSMS succeeded'
+    });
+  } catch (err) {
+    console.error(err);
+    res.json({
+      success: false,
+      message: 'sendSMS failed'
+    });
+  }
+}
+
+async function verifyPhoneNumber(req: express.Request, res: express.Response) {
+  try {
+    const { tel, userInputNumber } = req.body;
+
+    if (tel !== undefined && userInputNumber !== undefined) {
+      if (tempAuthObj[tel] === userInputNumber) {
+        delete tempAuthObj[req.body.tel];
+        res.status(200).json({
+          success: true,
+          message: 'verifyPhoneNumber Succeeded'
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          message: 'sendSMS failed'
+        });
+      }
+    } else {
+      if (tel === undefined || tel === '') {
+        res.status(400).json('변경할 휴대폰 번호를 입력해주세요');
+      } else if (userInputNumber === undefined) {
+        res.status(400).json('인증번호를 입력해주세요');
+      } else {
+        res.status(400).json('변경할 휴대폰 번호를 입력해주세요');
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    res.json({
+      success: false,
+      message: 'sendSMS failed'
+    });
+  }
+
+}
+
+async function verifyEmail(req: express.Request, res: express.Response) {
+  try {
+    const result = await authService.updateEmailVerify(req.query);
+    res.send({
+      success: true,
+      result,
+      message: 'verifyEmail: 200'
+    });
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: false,
+      message: 'verifyEmail failed'
+    });
   }
 }
 
@@ -54,26 +130,6 @@ async function checkDuplicated(req: express.Request, res: express.Response) {
   }
 }
 
-async function verifyEmail(req: express.Request, res: express.Response) {
-  try {
-    const result = await authService.updateEmailVerify(req.query);
-    res.send({
-      success: true,
-      result,
-      message: 'verifyEmail: 200'
-    });
-  } catch (err) {
-    console.error(err);
-    res.send({
-      success: false,
-      message: 'verifyEmail failed'
-    });
-  }
-}
-
-/**
- * route: 회원가입
- */
 async function userSignUp(req: express.Request, res: express.Response) {
   try {
     const result = await authService.userSignUp(req);
@@ -92,9 +148,6 @@ async function userSignUp(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 로그인
- */
 async function userSignIn(req, res) {
   try {
     const result = await authService.userSignIn(req);
@@ -137,9 +190,21 @@ async function updateUser(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 회원가입
- */
+async function closeAccount(req: express.Request, res: express.Response) {
+  try {
+    const { userIndex } = auth(req);
+    const { userInputPw } = req.body;
+    const result = await userService.deleteUser(userIndex, userInputPw);
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+    res.send({
+      success: true,
+      message: 'closeAccount: 500'
+    });
+  }
+}
+
 async function hospitalSignUp(req, res) {
   try {
     const result = await authService.hospitalSignUp(req.body);
@@ -158,12 +223,6 @@ async function hospitalSignUp(req, res) {
   }
 }
 
-/**
- * route: 로그인
- * @param req 
- * @param res 
- * @returns {Promise<void>}
- */
 async function hospitalSignIn(req, res) {
   try {
     const result = await authService.hospitalSignIn(req);

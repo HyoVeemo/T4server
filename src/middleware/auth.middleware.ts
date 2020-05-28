@@ -18,8 +18,14 @@ export async function verifyUser(req: express.Request, res: express.Response, ne
         })
     }
     try {
+        let result;
         const userData = await verify(req, token);
-        const result = await userService.getUser(userData);
+
+        if (userData.provider) {
+            result = await userService.getUserBySNSId(userData.snsId);
+        } else {
+            result = await userService.getUserByEmail(userData.email);
+        }
 
         if (result) {
             return next();
@@ -51,7 +57,7 @@ export async function verifyHospital(req: express.Request, res: express.Response
     }
     try {
         const hospitalUserData = await verify(req, token);
-        const result = await hospitalUserService.getHospitalUser(hospitalUserData);
+        const result = await hospitalUserService.getHospitalUserByEmail(hospitalUserData.email);
 
         if (result) {
             return next();
