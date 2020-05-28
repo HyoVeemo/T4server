@@ -72,11 +72,11 @@ async function listPosts(req, res) {
     let { filter, pn } = req.query;
     pn = pn == undefined ? undefined : JSON.parse(pn);
 
-        let params: any = 
-            {
-                "index": "posts",
-                "body":{}
-            }
+    let params: any =
+    {
+        "index": "posts",
+        "body": {}
+    }
 
 
     if (filter) {
