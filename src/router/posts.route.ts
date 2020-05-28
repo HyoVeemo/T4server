@@ -111,22 +111,6 @@ async function listPosts(req, res) {
             message: 'listPosts:500'
         })
     }
-    try {
-        const { body } = await client.search(params);
-        res.send({
-            success: true,
-            result: body.hits.hits,
-            statusCode: 200,
-            message: 'listPosts'
-        });
-    } catch (err) {
-        console.log(err)
-        res.send({
-            success: false,
-            statusCode: 500,
-            message: 'listPosts:500'
-        })
-    }
 }
 
 async function deletePosts(req, res) {
