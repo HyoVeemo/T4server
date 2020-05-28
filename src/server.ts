@@ -1,7 +1,7 @@
 import { Server } from "./app";
 //import { hospitalAPI } from './utils/hospitalApi.util'
 import AWS from "aws-sdk";
-AWS.config.update({ region: 'ap-northeast-2' });
+AWS.config.update({ region: 'ap-northeast-1' });
 
 (async function () {
   try {
@@ -10,8 +10,6 @@ AWS.config.update({ region: 'ap-northeast-2' });
     AWS.config.credentials = credentials;
     const ssm: AWS.SSM = await new AWS.SSM();
 
-    // Request
-    // 정보를 얻고싶은 parameter 이름
     const params = {
       Name: 'config',
       WithDecryption: false

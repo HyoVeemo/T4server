@@ -1,16 +1,10 @@
 import User from '../models/User.model';
 import { hashSync, compareSync } from 'bcryptjs';
-import { Op } from 'sequelize';
 
 interface IUpdateUser {
 	userPw?: string;
 	userNickName?: string;
 	tel?: string;
-}
-
-interface IGetUser {
-	email?: string;
-	userNickName?: string;
 }
 
 class UserService {
@@ -28,24 +22,19 @@ class UserService {
 		return resultUser.toJSON();
 	}
 
-	/**
-	 * service: 유저 조회
-	 */
-	async getUser(userData: IGetUser) {
-		const email = userData.email || null;
-		const userNickName = userData.userNickName || null;
-		let resultUser: User = await User.findOne({
-			where: {
-				[Op.or]: [{ email }, { userNickName }]
-			}
-		})
-		return resultUser;
-	}
-
 	async getUserByEmail(email: string) {
 		let resultUser: User = await User.findOne({
 			where: {
 				email
+			}
+		});
+		return resultUser;
+	}
+
+	async getUserBySNSId(snsId: string) {
+		const resultUser: User = await User.findOne({
+			where: {
+				snsId
 			}
 		})
 		return resultUser;
@@ -94,12 +83,44 @@ class UserService {
 	/**
 	 * service: 유저 삭제
 	 */
-	async deleteUser(userIndex: number) {
+	async deleteUser(userIndex: number, userInputPw: string) {
+		const resultUser = await User.findOne({ where: { userIndex } });
+
+		if (resultUser.provider === 'local') {
+			const IsPasswordValid = compareSync(userInputPw, resultUser.userPw);
+
+			if (IsPasswordValid) {
+				await User.destroy({
+					where: {
+						userIndex
+					}
+				});
+
+				return {
+					success: true,
+					message: 'closeAccount: 200 - 로컬 사용자 탈퇴 완료.'
+				};
+			}
+
+			return {
+				success: false,
+				message: 'closeAccount: 401 - 비밀번호가 틀렸습니다.'
+			};
+		}
+
+		// 카카오 사용자는 비밀번호 인증 없이 즉각 탈퇴
 		await User.destroy({
 			where: {
-				userIndex: userIndex
+				userIndex
 			}
-		})
+		});
+
+		return {
+			success: true,
+			message: 'closeAccount: 200 - 카카오 사용자 탈퇴 완료.'
+		};
+
+
 	}
 }
 

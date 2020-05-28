@@ -1,6 +1,5 @@
 import express from 'express';
-import request from 'request-promise-native';
-import {hashtagService} from '../service/hashtag.service';
+import { hashtagService } from '../service/hashtag.service';
 
 class HashtagRoute {
     public hashtagRouter: express.Router = express.Router();

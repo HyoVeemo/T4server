@@ -2,54 +2,54 @@ import PostsHashtag from '../models/PostsHashtag.model'
 import Hashtag from '../models/Hashtag.model';
 import { hashtagService } from './hashtag.service';
 
-interface ICreatePostsData{
+interface ICreatePostsData {
     postsIndex: string,
     hashtagIndex: number
 }
 
-class PostsHashtagService{
-    constructor(){
+class PostsHashtagService {
+    constructor() {
 
     }
-    async createPostsHashtag(postsHashtagData: any){
+    async createPostsHashtag(postsHashtagData: any) {
         let resultPostsHashtag = await PostsHashtag.create(postsHashtagData);
         return resultPostsHashtag;
     }
 
-    async getPostsHashtagByHashtag(hashtagIndex: number){
+    async getPostsHashtagByHashtag(hashtagIndex: number) {
         let result = await PostsHashtag.findAll({
-            where:{
+            where: {
                 hashtagIndex: hashtagIndex
             }
         })
         return result;
     };
-    async getPostsHashtagByPostsId(postsId:string){
+    async getPostsHashtagByPostsId(postsId: string) {
         let result = await PostsHashtag.findAndCountAll({
-            where:{
+            where: {
                 postsIndex: postsId
             }
         })
         let results = []
-        for(const row of result.rows){
+        for (const row of result.rows) {
             results.push(row.toJSON());
         }
         return results;
     };
 
-    async deletePostsHashtag(postsId:string){
+    async deletePostsHashtag(postsId: string) {
         let result = await this.getPostsHashtagByPostsId(postsId);
 
         await PostsHashtag.destroy({
-            where:{
+            where: {
                 postsIndex: postsId
             }
         })
-        
-        for(const row of result){
+
+        for (const row of result) {
             let count = await this.getPostsHashtagByHashtag(row.hashtagIndex);
             console.log(count);
-            if(count.length<1){
+            if (count.length < 1) {
                 await hashtagService.deleteHashtag(row.hashtagIndex);
             }
         }
