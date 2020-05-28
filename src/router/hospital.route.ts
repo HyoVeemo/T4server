@@ -61,7 +61,7 @@ async function getHospital(req: express.Request, res: express.Response) {
 }
 
 async function postHospitalImg(req: express.Request, res: express.Response) {
-    const { tokenHpid: hpid } = auth(req);
+    const { hpid } = auth(req);
     const imgUrl = req.body.img
     try {
         await hospitalService.postHospitalImg(hpid, imgUrl);

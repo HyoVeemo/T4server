@@ -2,7 +2,8 @@ import * as express from "express";
 import { authService } from "../service/auth.service";
 import { userService } from "../service/user.service";
 import { auth } from '../utils/auth.util';
-import { hospitalUserService } from "../service/hospitalUser.service";
+import sendMessage from '../utils/sms.util';
+import { verifyUser } from '../middleware/auth.middleware';
 
 interface IUpdateUser {
   userPw?: string;
@@ -21,37 +22,71 @@ class SignRoute {
   constructor() {
     //정의된 라우터 REST API 정의
     this.signRouter.post('/checkDuplicated', checkDuplicated);
+    this.signRouter.post('/sendSMS', sendSMS);
+    this.signRouter.post('/verifyPhoneNumber', verifyPhoneNumber);
     this.signRouter.get('/verifyEmail', verifyEmail);
     this.signRouter.post("/user/signUp", userSignUp);
     this.signRouter.post("/user/signIn", userSignIn);
     this.signRouter.patch("/user", updateUser);
-    this.signRouter.post("/hospital/signUp", hospitalSignUp)
+    this.signRouter.post("/user/closeAccount", verifyUser, closeAccount); // 회원 탈퇴
+    this.signRouter.post("/hospital/signUp", hospitalSignUp);
     this.signRouter.post("/hospital/signIn", hospitalSignIn);
   }
 }
 
-async function checkDuplicated(req: express.Request, res: express.Response) {
+let tempAuthObj = {};
 
-  const role: "user"|"hospital" = req.body.role;
-  const userData = {
-     email: req.body.email||null,
-     userNickName: req.body.userNickName||null,
-     hpid: req.body.hpid||null
-  }
+async function sendSMS(req: express.Request, res: express.Response) {
   try {
-    const result = await authService.isDuplicated(userData, role);
-
+    const authenticationNumber = await sendMessage(req.body.tel);
+    tempAuthObj[req.body.tel] = authenticationNumber;
     res.status(200).json({
       success: true,
-      result,
-      message: 'checkDuplicated Succeeded'
+      message: 'sendSMS succeeded'
     });
   } catch (err) {
+    console.error(err);
     res.json({
       success: false,
-      message: 'checkDuplicated failed'
+      message: 'sendSMS failed'
     });
   }
+}
+
+async function verifyPhoneNumber(req: express.Request, res: express.Response) {
+  try {
+    const { tel, userInputNumber } = req.body;
+
+    if (tel !== undefined && userInputNumber !== undefined) {
+      if (tempAuthObj[tel] === userInputNumber) {
+        delete tempAuthObj[req.body.tel];
+        res.status(200).json({
+          success: true,
+          message: 'verifyPhoneNumber Succeeded'
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          message: 'sendSMS failed'
+        });
+      }
+    } else {
+      if (tel === undefined || tel === '') {
+        res.status(400).json('변경할 휴대폰 번호를 입력해주세요');
+      } else if (userInputNumber === undefined) {
+        res.status(400).json('인증번호를 입력해주세요');
+      } else {
+        res.status(400).json('변경할 휴대폰 번호를 입력해주세요');
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    res.json({
+      success: false,
+      message: 'sendSMS failed'
+    });
+  }
+
 }
 
 async function verifyEmail(req: express.Request, res: express.Response) {
@@ -71,53 +106,30 @@ async function verifyEmail(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 회원 email 조회
- */
-async function getUserByEmail(req: express.Request, res: express.Response){
-  try{
-    const email = req.params.email;
-    const result = await userService.getUserByEmail(email);
-    res.send({
+async function checkDuplicated(req: express.Request, res: express.Response) {
+
+  const role: "user" | "hospital" = req.body.role;
+  const userData = {
+    email: req.body.email || null,
+    userNickName: req.body.userNickName || null,
+    hpid: req.body.hpid || null
+  }
+  try {
+    const result = await authService.isDuplicated(userData, role);
+
+    res.status(200).json({
       success: true,
       result,
-      message: 'getUser : 200'
+      message: 'checkDuplicated Succeeded'
     });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getUser :500'
-    })
+  } catch (err) {
+    res.json({
+      success: false,
+      message: 'checkDuplicated failed'
+    });
   }
 }
 
-/**
- * route: 회원 NickName 조회
- */
-async function getUserByNickName(req: express.Request, res: express.Response){
-  try{
-    const userNickName = req.params.userNickName;
-    const result = await userService.getUserByUserNickName(userNickName);
-    res.send({
-      success: true,
-      result,
-      message: 'getUser : 200'
-    });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getUser :500'
-    })
-  }
-}
-
-/**
- * route: 회원가입
- */
 async function userSignUp(req: express.Request, res: express.Response) {
   try {
     const result = await authService.userSignUp(req);
@@ -136,9 +148,6 @@ async function userSignUp(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 로그인
- */
 async function userSignIn(req, res) {
   try {
     const result = await authService.userSignIn(req);
@@ -181,58 +190,21 @@ async function updateUser(req: express.Request, res: express.Response) {
   }
 }
 
-/**
- * route: 병원 hpid 조회
- * @param req 
- * @param res 
- */
-async function getHospitalUserByhpid(req, res){
-  try{
-    const hpid = req.params.hpid;
-    const result = await hospitalUserService.getHospitalUserByHpid(hpid)
+async function closeAccount(req: express.Request, res: express.Response) {
+  try {
+    const { userIndex } = auth(req);
+    const { userInputPw } = req.body;
+    const result = await userService.deleteUser(userIndex, userInputPw);
+    res.send(result);
+  } catch (err) {
+    console.error(err);
     res.send({
       success: true,
-      result,
-      message: 'getHospitalUser : 200'
+      message: 'closeAccount: 500'
     });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getHospitalUser :500'
-    })
   }
 }
 
-
-/**
- * route: 병원 email 조회
- * @param req 
- * @param res 
- */
-async function getHospitalUserByEmail(req, res){
-  try{
-    const email = req.params.email;
-    const result = await hospitalUserService.getHospitalUserByEmail(email)
-    res.send({
-      success: true,
-      result,
-      message: 'getHospitalUser : 200'
-    });
-  }catch(error){
-    console.error(error);
-    res.send({
-      success:false,
-      statusCode: 500,
-      message: 'getHospitalUser :500'
-    })
-  }
-}
-
-/**
- * route: 회원가입
- */
 async function hospitalSignUp(req, res) {
   try {
     const result = await authService.hospitalSignUp(req.body);
@@ -251,12 +223,6 @@ async function hospitalSignUp(req, res) {
   }
 }
 
-/**
- * route: 로그인
- * @param req 
- * @param res 
- * @returns {Promise<void>}
- */
 async function hospitalSignIn(req, res) {
   try {
     const result = await authService.hospitalSignIn(req);

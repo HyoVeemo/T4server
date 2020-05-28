@@ -9,7 +9,9 @@ import Treatment from "./Treatment.model";
  */
 @Table
 export default class Reservation extends Model<Reservation>{
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, {
+        onDelete: "CASCADE"
+    })
     user: User;
 
     @BelongsTo(() => Hospital)
