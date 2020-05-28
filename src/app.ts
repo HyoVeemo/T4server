@@ -47,10 +47,10 @@ export class Server {
   }
 
   private initMiddlewares() {
+    this.app.use(cors()); // cors 미들웨어 추가
     this.app.use(logger('dev'));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
-    this.app.use(cors()); // cors 미들웨어 추가
   }
 
   private setRouter() {
