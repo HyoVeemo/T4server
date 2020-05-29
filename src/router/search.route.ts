@@ -8,6 +8,7 @@ class SearchRoute {
     constructor() {
         this.searchRouter.get('/store/hospitals', storeHospital); // 엘라스틱서치에 병원 저장
         this.searchRouter.get('/search/content/:content', searchHospital); // 엘라스틱서치에서 병원 검색
+        this.searchRouter.get('/search/address', searchHospitalAddress); // 엘라스틱서치에서 병원 주소 검색
     }
 }
 
@@ -36,7 +37,7 @@ async function storeHospital(req, res) {
             });
         }
         res.send({
-            success: true, 
+            success: true,
             statusCode: 500,
             message: 'storeHospital: 200'
         })
@@ -50,7 +51,7 @@ async function storeHospital(req, res) {
     }
 }
 
-async function searchHospital(req, res): Promise<void> {
+async function searchHospital(req: express.Request, res: express.Response) {
     const content = req.params.content;
     const params = {
         index: 'hospitals',
@@ -63,22 +64,52 @@ async function searchHospital(req, res): Promise<void> {
         }
     }
     const client = req.app.locals.client;
-    
+
     try {
         const { body } = await client.search(params)
 
         res.send({
             success: true,
-            stautsCode: 200,
-            message: 'searchHospital 200',
+            statusCode: 200,
+            message: 'searchHospital: 200',
             result: body.hits.hits
         })
     } catch (err) {
         console.error(err);
         res.send({
-            success: false, 
+            success: false,
             statusCode: 500,
             message: 'searchHospital:  500'
+        })
+    }
+}
+
+async function searchHospitalAddress(req: express.Request, res: express.Response) {
+    const { content } = req.query;
+    const params = {
+        index: 'hospitals',
+        body: {
+            query: {
+                match: {
+                    'dutyAddr._text.nori': content
+                }
+            }
+        }
+    }
+    const client = req.app.locals.client;
+
+    try {
+        const { body } = await client.search(params)
+        res.status(200).json({
+            success: true,
+            message: 'searchHospitalAddress: 200',
+            result: body.hits.hits
+        })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            success: false,
+            message: 'searchHospitalAddress: 500'
         })
     }
 }
