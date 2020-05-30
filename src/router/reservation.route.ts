@@ -14,7 +14,6 @@ class ReservationRoute {
         this.reservationRouter.get('/reservation/history', verifyUser, getReservationLog) // 지난 예약 내역 보기
         this.reservationRouter.patch('/cancel/reservationIndex/:reservationIndex', verifyUser, cancelReservation); // (사용자 본인이) 예약 취소하기
         this.reservationRouter.patch('/delete/reservationIndex/:reservationIndex', verifyUser, deleteReservation); // (사용자 본인이) 예약 삭제하기
-
     }
 }
 

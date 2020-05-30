@@ -30,6 +30,8 @@ export class Server {
     this.app.locals.secret = configInfo.secret;
     this.app.locals.senderEmail = configInfo.senderEmail;
     this.app.locals.senderPw = configInfo.senderPw;
+    this.app.locals.APP_ID = configInfo.APP_ID;
+    this.app.locals.API_KEY = configInfo.API_KEY;
 
     this.client = new Client({ node: configInfo.ELASTIC_CLIENT });
     this.app.locals.client = this.client;
