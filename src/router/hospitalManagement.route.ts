@@ -121,7 +121,7 @@ async function deleteReservation(req: express.Request, res: express.Response) {
             success: true,
             result,
             message: 'deleteReservation succeeded'
-        })
+        });
     } catch (err) {
         console.error(err);
 
