@@ -13,7 +13,7 @@ interface IUpdateUser {
 class KaKaoUserService {
     constructor() { }
 
-    async signUp(req) {
+    async signIn(req) {
         const { snsId, provider } = req.body;
         //데이터 없음
         if (snsId === undefined || provider === undefined) {
@@ -21,18 +21,23 @@ class KaKaoUserService {
         }
 
         // 유저 조회 
-        const exSNSId = await userService.getUserBySNSId(snsId);
+        const exUser = await userService.getUserBySNSId(snsId);
 
-        if (exSNSId) {
-            return 'exSNSId exists';
+        if (exUser) {
+            return {
+                message: 'exSNSId exists',
+                token: exUser['dataValues']['kakaoUserToken']
+            };
         } else {
             const resultUser = await User.create({ snsId, provider });
-
+            const userIndex = resultUser['dataValues']['userIndex'];
             const token = jwt.sign({
-                userIndex: resultUser['dataValues']['userIndex'],
+                userIndex,
                 snsId,
                 provider
             }, req.app.locals.secret);
+
+            await User.update({ kakaoUserToken: token }, { where: { userIndex } });
 
             return token;
         }

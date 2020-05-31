@@ -16,7 +16,8 @@ import Reservation from "./Reservation.model";
       "userNickName",
       "age",
       "gender",
-      "tel"
+      "tel",
+      'kakaoUserToken'
     ]
   }
 })
@@ -62,6 +63,10 @@ export default class User extends Model<User> {
   @Default('local')
   @Column(DataType.STRING(20))
   provider: string;
+
+  @Unique
+  @Column
+  kakaoUserToken: string;
 
   @Comment('실명')
   @Column
