@@ -13,7 +13,7 @@ export default class Db {
        * host: aws ec2 endpoint
       */
       host: DB_MIN,
-      database: DB_TEST,
+      database: DB_MIN,
       dialect: "mysql",
       username: "seo",
       password: DB_PASSWORD,
