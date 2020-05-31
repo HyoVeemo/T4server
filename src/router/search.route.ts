@@ -38,7 +38,7 @@ async function storeHospital(req, res) {
         }
         res.send({
             success: true,
-            statusCode: 500,
+            statusCode: 200,
             message: 'storeHospital: 200'
         })
     } catch (err) {
