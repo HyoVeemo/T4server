@@ -23,10 +23,17 @@ class KaKaoUserService {
         // 유저 조회 
         const exUser = await userService.getUserBySNSId(snsId);
 
+        let userNickName = null;
+
         if (exUser) {
+            if (exUser['dataValues']['userNickName']) {
+                userNickName = exUser['dataValues']['userNickName'];
+            }
+
             return {
                 message: 'exSNSId exists',
-                token: exUser['dataValues']['kakaoUserToken']
+                token: exUser['dataValues']['kakaoUserToken'],
+                userNickName
             };
         } else {
             const resultUser = await User.create({ snsId, provider });
