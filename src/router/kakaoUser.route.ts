@@ -9,25 +9,25 @@ class KakaoUserRoute {
      */
     public kakaoUserRouter: express.Router = express.Router();
     constructor() {
-        this.kakaoUserRouter.post('/kakao/signUp', kakaoUserSignUp);
+        this.kakaoUserRouter.post('/kakao/signIn', kakaoUserSignIn);
         this.kakaoUserRouter.patch('/kakao/user', verifyUser, updateKakaoUser);
     }
 }
 
-async function kakaoUserSignUp(req: express.Request, res: express.Response) {
+async function kakaoUserSignIn(req: express.Request, res: express.Response) {
     try {
-        const token = await kakaoUserService.signUp(req);
+        const token = await kakaoUserService.signIn(req);
 
         res.status(200).json({
             success: true,
             token,
-            message: 'kakaoUserSignUp succeeded'
+            message: 'kakaoUserSignIn succeeded'
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({
             success: false,
-            message: 'kakaoUserSignUp failed'
+            message: 'kakaoUserSignIn failed'
         });
     }
 }
