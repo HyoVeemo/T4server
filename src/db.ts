@@ -7,12 +7,12 @@ export default class Db {
   public sequelize: Sequelize;
   public path: string;
 
-  constructor({ DB_TEST, DB_PASSWORD, DB_HOST }) { // DB_MIN -> DB_HYO 로 수정
+  constructor({ DB_MIN, DB_PASSWORD, DB_HOST }) { // DB_MIN -> DB_HYO 로 수정
     this.sequelize = new Sequelize({
       /**
        * host: aws ec2 endpoint
       */
-      host: DB_HOST,
+      host: DB_MIN,
       database: DB_TEST,
       dialect: "mysql",
       username: "seo",
