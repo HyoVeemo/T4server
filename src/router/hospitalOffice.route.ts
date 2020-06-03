@@ -10,6 +10,7 @@ class HospitalOfficeRoute {
         this.hospitalOfficeRouter.get('/office', verifyHospital, getMyHospitalOffices); // 진료실 조회
         this.hospitalOfficeRouter.patch('/office/officeIndex/:officeIndex', verifyHospital, updateHospitalOffice); // 진료실 정보 변경.
         this.hospitalOfficeRouter.delete('/office/officeIndex/:officeIndex', verifyHospital, deleteHospitalOffice); // 진료실 삭제.
+        this.hospitalOfficeRouter.delete('/office/treatmentIndex/:treatmentIndex', verifyHospital, deleteTreatment); // 진료항목 삭제
     }
 }
 
@@ -112,6 +113,23 @@ async function deleteHospitalOffice(req, res) {
             success: false,
             result: err,
             message: 'deleteHospitalOffice: 500'
+        });
+    }
+}
+
+async function deleteTreatment(req, res) {
+    try {
+        const treatmentIndex: number = req.params.treatmentIndex;
+        await hospitalOfficeService.deleteTreatment(treatmentIndex);
+        res.status(200).send({
+            success: true,
+            message: 'deleteTreatment: 200'
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            result: err,
+            message: 'deleteTreatment: 500'
         });
     }
 }
