@@ -66,7 +66,15 @@ class HospitalOfficeService {
     async deleteHospitalOffice(officeIndex: number) {
         await HospitalOffice.destroy({
             where: {
-                officeIndex: officeIndex
+                officeIndex
+            }
+        })
+    }
+
+    async deleteTreatment(treatmentIndex: number) {
+        await Treatment.destroy({
+            where: {
+                treatmentIndex
             }
         })
     }

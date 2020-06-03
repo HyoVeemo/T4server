@@ -20,7 +20,9 @@ export default class Reservation extends Model<Reservation>{
     @BelongsTo(() => HospitalOffice)
     hospitalOffice: HospitalOffice;
 
-    @BelongsTo(() => Treatment)
+    @BelongsTo(() => Treatment, {
+        onDelete: "CASCADE"
+    })
     treatment: Treatment;
 
     @PrimaryKey
