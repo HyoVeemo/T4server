@@ -10,6 +10,16 @@ class HospitalManagementService {
 
     }
 
+    async commentOnReservation(reservationIndex, diagnosis) {
+        const result = await Reservation.update({ diagnosis }, { where: { reservationIndex, status: 'TIMEOUT' } });
+
+        if (result[0] === 1) {
+            return '변경 완료';
+        } else {
+            return '변경 사항 없음 - TIMEOUT 상태인 예약만 변경 가능.'
+        }
+    }
+
     async getWaitingReservations(hpid: string) {
         return await Reservation.findAndCountAll({
             where: {
