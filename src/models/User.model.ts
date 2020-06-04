@@ -17,7 +17,8 @@ import Reservation from "./Reservation.model";
       "age",
       "gender",
       "tel",
-      'kakaoUserToken'
+      'kakaoUserToken',
+      "playerId"
     ]
   }
 })
@@ -86,6 +87,10 @@ export default class User extends Model<User> {
   @Unique
   @Column(DataType.STRING)
   tel: string;
+
+  @Unique
+  @Column(DataType.STRING(50))
+  playerId: string;
 
   @CreatedAt
   createdAt: Date;

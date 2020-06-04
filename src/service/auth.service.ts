@@ -22,6 +22,7 @@ interface ICreateUserData { // 사용자 회원가입용
 interface ILoginData { // 사용자 로그인용
     email: string;
     userPw: string;
+    playerId: string;
 }
 
 interface ICreateHospitalUserData { // 병원 회원가입용
@@ -122,8 +123,6 @@ class AuthService {
 
     /**
      * service: 회원가입
-     * @param userData 
-     * @param host 
      */
     async userSignUp(req) {
         const userData: ICreateUserData = req.body;
@@ -141,12 +140,12 @@ class AuthService {
         });
 
         await this.sendMail(userData.email, keyForVerify, host, senderEmail, senderPw);
+
         return userData;
     }
 
     /**
      * service: 로그인
-     * @param userData 
      */
     async userSignIn(req) {
         let userData: ILoginData = req.body;
@@ -175,6 +174,8 @@ class AuthService {
         resultUser = resultUser.toJSON() as User;
 
         if (resultUser) {
+            await User.update({ playerId: userData.playerId }, { where: { userIndex: resultUser.userIndex } });
+
             const token = jwt.sign({
                 userIndex: resultUser.userIndex,
                 email: resultUser.email
@@ -200,7 +201,6 @@ class AuthService {
 
     /**
     * service: 로그인
-    * @param userData 
     */
     async hospitalSignIn(req) {
         let hospitalUserData: ILoginHospitalUserData = req.body;
@@ -223,14 +223,14 @@ class AuthService {
         }
 
         resultHospitalUser = resultHospitalUser.toJSON() as HospitalUser;
+
         if (resultHospitalUser) {
-            // Token 생성. 
             const token = jwt.sign({
                 hpid: resultHospitalUser.hpid,
                 email: resultHospitalUser.email
             }, req.app.locals.secret);
             delete resultHospitalUser.hospitalUserPw;
-            // 로그인한 사용자에게 token 제공. User 인증이 필요한 API 요청 시(글쓰기, 마이페이지 등) Request header에 토큰을 넣어 보낸다
+
             return {
                 ...resultHospitalUser,
                 token
