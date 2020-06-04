@@ -35,7 +35,7 @@ export class Server {
 
     this.client = new Client({ node: configInfo.ELASTIC_CLIENT });
     this.app.locals.client = this.client;
-    console.log(configInfo)
+
     /**
     *  데이터베이스 연결 ( 설정 주의 )
     *  force:true  | DROPS ALL TABLE AND CREATE
