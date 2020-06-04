@@ -78,7 +78,7 @@ async function getReservationLogs(req: express.Request, res: express.Response) {
 async function acceptReservation(req: express.Request, res: express.Response) {
     try {
         const reply = 'accept';
-        const result = await hospitalManagementService.updateReservationStatus(req.params.reservationIndex, reply);
+        const result = await hospitalManagementService.updateReservationStatus(req, reply);
         res.send({
             success: true,
             result,
@@ -96,7 +96,7 @@ async function acceptReservation(req: express.Request, res: express.Response) {
 async function refuseReservation(req: express.Request, res: express.Response) {
     try {
         const reply = 'refuse';
-        const result = await hospitalManagementService.updateReservationStatus(req.params.reservationIndex, reply);
+        const result = await hospitalManagementService.updateReservationStatus(req, reply);
         res.send({
             success: true,
             result,
@@ -121,7 +121,7 @@ async function deleteReservation(req: express.Request, res: express.Response) {
             success: true,
             result,
             message: 'deleteReservation succeeded'
-        })
+        });
     } catch (err) {
         console.error(err);
 

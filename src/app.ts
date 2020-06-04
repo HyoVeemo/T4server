@@ -9,11 +9,11 @@ import { hospitalSubscriberRoute } from './router/hospitalSubscriber.route';
 import { hospitalOfficeRoute } from './router/hospitalOffice.route';
 import { hospitalManagementRoute } from './router/hospitalManagement.route';
 import { kakaoUserRoute } from './router/kakaoUser.route';
-import Db from './db';
 import { searchRoute } from './router/search.route';
 import { Client } from '@elastic/elasticsearch'
 import { postsRoute } from "./router/posts.route";
 import { hashtagRoute } from "./router/hashtag.route";
+import Db from './db';
 import cors from 'cors';
 
 
@@ -31,6 +31,8 @@ export class Server {
     this.app.locals.secret = configInfo.secret;
     this.app.locals.senderEmail = configInfo.senderEmail;
     this.app.locals.senderPw = configInfo.senderPw;
+    this.app.locals.APP_ID = configInfo.APP_ID;
+    this.app.locals.API_KEY = configInfo.API_KEY;
 
     this.client = new Client({ node: configInfo.ELASTIC_CLIENT });
     this.app.locals.client = this.client;
@@ -47,7 +49,7 @@ export class Server {
   }
 
   private initMiddlewares() {
-    this.app.use(cors()); // cors 미들웨어 추가
+    this.app.use(cors());
     this.app.use(logger('dev'));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());

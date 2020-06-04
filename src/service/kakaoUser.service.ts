@@ -14,7 +14,7 @@ class KaKaoUserService {
     constructor() { }
 
     async signIn(req) {
-        const { snsId, provider } = req.body;
+        const { snsId, provider, playerId } = req.body;
         //데이터 없음
         if (snsId === undefined || provider === undefined) {
             throw new Error('No UserData Input');
@@ -30,13 +30,15 @@ class KaKaoUserService {
                 userNickName = exUser['dataValues']['userNickName'];
             }
 
+            await User.update({ playerId }, { where: { userIndex: exUser['dataValues']['userIndex'] } });
+
             return {
                 message: 'exSNSId exists',
                 token: exUser['dataValues']['kakaoUserToken'],
                 userNickName
             };
         } else {
-            const resultUser = await User.create({ snsId, provider });
+            const resultUser = await User.create({ snsId, provider, playerId });
             const userIndex = resultUser['dataValues']['userIndex'];
             const token = jwt.sign({
                 userIndex,
