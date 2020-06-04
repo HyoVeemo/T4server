@@ -1,6 +1,9 @@
 import * as bodyParser from "body-parser";
-import logger from "morgan"; // Express 서버에서 발생하는 이벤트들 기록해주는 미들웨어.
+import logger from "morgan";
 import express from "express";
+import Db from './db';
+import { Client } from '@elastic/elasticsearch';
+import cors from 'cors';
 import { signRoute } from "./router/sign.route";
 import { hospitalRoute } from "./router/hospital.route";
 import { reviewRoute } from './router/review.route';
@@ -10,12 +13,8 @@ import { hospitalOfficeRoute } from './router/hospitalOffice.route';
 import { hospitalManagementRoute } from './router/hospitalManagement.route';
 import { kakaoUserRoute } from './router/kakaoUser.route';
 import { searchRoute } from './router/search.route';
-import { Client } from '@elastic/elasticsearch'
 import { postsRoute } from "./router/posts.route";
 import { hashtagRoute } from "./router/hashtag.route";
-import Db from './db';
-import cors from 'cors';
-
 
 export class Server {
   public app: express.Application;

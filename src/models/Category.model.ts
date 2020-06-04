@@ -1,4 +1,4 @@
-import { Model, Table, Column, HasMany, AutoIncrement, BelongsTo, PrimaryKey, AllowNull, BelongsToMany, ForeignKey } from "sequelize-typescript";
+import { Model, Table, Column, HasMany, AutoIncrement, PrimaryKey, AllowNull, BelongsToMany } from "sequelize-typescript";
 import Hospital from "./Hospital.model";
 import HospitalCategory from "./HospitalCategory.model";
 

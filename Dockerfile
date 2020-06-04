@@ -4,7 +4,7 @@ FROM node:11.14.0-alpine
 #저자 정보
 LABEL maintainer = 'dott.goo@gmail.com'
 
-#app 폴더 만들기 - NodeJS 어플리케이션 폴더
+#가상 머신에 app 폴더 만들기 - NodeJS 어플리케이션 폴더
 RUN mkdir -p /app
 #winston 등을 사용할떄엔 log 폴더도 생성
 

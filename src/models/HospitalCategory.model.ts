@@ -1,4 +1,4 @@
-import { Model, Table, Column, PrimaryKey, BelongsTo, ForeignKey } from "sequelize-typescript";
+import { Model, Table, Column, BelongsTo, ForeignKey } from "sequelize-typescript";
 import Hospital from "./Hospital.model";
 import Category from "./Category.model";
 
