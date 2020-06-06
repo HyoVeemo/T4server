@@ -11,9 +11,6 @@ class UserService {
 	constructor() {
 	}
 
-	/**
-	 * service: 유저 생성
-	 */
 	async createUser(userData: any) {
 		const hashedPassword = hashSync(userData.userPw, 8);
 		userData.userPw = hashedPassword;
@@ -49,9 +46,6 @@ class UserService {
 		return resultUser;
 	}
 
-	/**
-	 * service: 유저 정보 업데이트
-	 */
 	async updateUser(userIndex: number, userData: IUpdateUser) {
 		if (userData.userPw) { // 비밀번호 수정
 			const hashedPassword = hashSync(userData.userPw, 8);
@@ -80,9 +74,6 @@ class UserService {
 		}
 	}
 
-	/**
-	 * service: 유저 삭제
-	 */
 	async deleteUser(userIndex: number, userInputPw: string) {
 		const resultUser = await User.findOne({ where: { userIndex } });
 
@@ -119,8 +110,6 @@ class UserService {
 			success: true,
 			message: 'closeAccount: 200 - 카카오 사용자 탈퇴 완료.'
 		};
-
-
 	}
 }
 

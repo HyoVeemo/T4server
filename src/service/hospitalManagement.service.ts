@@ -20,6 +20,56 @@ class HospitalManagementService {
         }
     }
 
+    async getCommentOnReservation(reservationIndex) {
+        const option = {
+            where: {
+                reservationIndex
+            },
+            include: [{
+                model: HospitalOffice,
+                attributes: ['officeName']
+            }, {
+                model: User,
+                attributes: ['userName', 'age', 'tel']
+            }]
+        }
+
+        return await Reservation.findOne(option);
+    }
+
+    async getPatientMedicalHistory(hpid, userIndex) {
+        const option = {
+            where: {
+                userIndex,
+                hpid,
+                [Op.or]: [
+                    {
+                        status: 'REFUSED'
+                    },
+                    {
+                        status: 'TIMEOUT'
+                    },
+                    {
+                        status: 'CANCELED'
+                    }
+                ]
+            },
+            order: [Sequelize.literal(`STR_TO_DATE(CONCAT(reservationDate, ' ', reservationTime), '%Y-%m-%d %H:%i:%s') DESC`)],
+            include: [{
+                model: Hospital,
+                attributes: ['dutyName']
+            }, {
+                model: HospitalOffice,
+                attributes: ['officeName']
+            }, {
+                model: User,
+                attributes: ['userName', 'age', 'tel']
+            }]
+        };
+
+        return await Reservation.findAndCountAll(option);
+    }
+
     async getWaitingReservations(hpid: string) {
         return await Reservation.findAndCountAll({
             where: {
