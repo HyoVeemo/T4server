@@ -10,6 +10,66 @@ class HospitalManagementService {
 
     }
 
+    async commentOnReservation(reservationIndex, diagnosis) {
+        const result = await Reservation.update({ diagnosis }, { where: { reservationIndex, status: 'TIMEOUT' } });
+
+        if (result[0] === 1) {
+            return '변경 완료';
+        } else {
+            return '변경 사항 없음 - TIMEOUT 상태인 예약만 변경 가능.'
+        }
+    }
+
+    async getCommentOnReservation(reservationIndex) {
+        const option = {
+            where: {
+                reservationIndex
+            },
+            include: [{
+                model: HospitalOffice,
+                attributes: ['officeName']
+            }, {
+                model: User,
+                attributes: ['userName', 'age', 'tel']
+            }]
+        }
+
+        return await Reservation.findOne(option);
+    }
+
+    async getPatientMedicalHistory(hpid, userIndex) {
+        const option = {
+            where: {
+                userIndex,
+                hpid,
+                [Op.or]: [
+                    {
+                        status: 'REFUSED'
+                    },
+                    {
+                        status: 'TIMEOUT'
+                    },
+                    {
+                        status: 'CANCELED'
+                    }
+                ]
+            },
+            order: [Sequelize.literal(`STR_TO_DATE(CONCAT(reservationDate, ' ', reservationTime), '%Y-%m-%d %H:%i:%s') DESC`)],
+            include: [{
+                model: Hospital,
+                attributes: ['dutyName']
+            }, {
+                model: HospitalOffice,
+                attributes: ['officeName']
+            }, {
+                model: User,
+                attributes: ['userName', 'age', 'tel']
+            }]
+        };
+
+        return await Reservation.findAndCountAll(option);
+    }
+
     async getWaitingReservations(hpid: string) {
         return await Reservation.findAndCountAll({
             where: {

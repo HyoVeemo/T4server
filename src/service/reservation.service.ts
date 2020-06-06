@@ -138,7 +138,7 @@ class ReservationService {
                 model: User,
                 attributes: ['userName', 'age', 'tel', 'email']
             }]
-        }
+        };
         return await Reservation.findAndCountAll(option);
     }
 

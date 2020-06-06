@@ -6,12 +6,74 @@ import { hospitalManagementService } from "../service/hospitalManagement.service
 class HospitalManagementRoute {
     public hospitalManagementRouter: express.Router = express.Router();
     constructor() {
+        this.hospitalManagementRouter.post('/manage/comment/reservationIndex/:reservationIndex', verifyHospital, commentOnReservation); // 진단서 생성.
+        this.hospitalManagementRouter.get('/manage/comment/reservationIndex/:reservationIndex', verifyHospital, getCommentOnReservation); // 환자 지난 내역 보기.
+        this.hospitalManagementRouter.get('/manage/medicalHistory/userIndex/:userIndex', verifyHospital, getPatientMedicalHistory); // 환자 지난 내역 보기.
         this.hospitalManagementRouter.get('/manage/reservation/waiting', verifyHospital, getWaitingReservations); // 응답 대기중인 예약 보기
         this.hospitalManagementRouter.get('/manage/reservation/accepted', verifyHospital, getAcceptedReservations); // 수락된 예약 목록 보기
         this.hospitalManagementRouter.get('/manage/reservation/history', verifyHospital, getReservationLogs); // 지난 예약 내역 보기(취소/거절/타임아웃)
         this.hospitalManagementRouter.patch('/manage/accept/reservationIndex/:reservationIndex', verifyHospital, acceptReservation); // 병원 측에서 예약 수락 시 status 업데이트 (PENDING -> ACCEPTED)
         this.hospitalManagementRouter.patch('/manage/refuse/reservationIndex/:reservationIndex', verifyHospital, refuseReservation); // 병원 측에서 예약 거절 시 status 업데이트 (PENDING -> REFUSED)
         this.hospitalManagementRouter.delete('/manage/delete/reservationIndex/:reservationIndex', verifyHospital, deleteReservation); // (병원측에서) 지난 예약 내역 삭제하기
+    }
+}
+
+async function commentOnReservation(req: express.Request, res: express.Response) {
+    try {
+        const result = await hospitalManagementService.commentOnReservation(req.params.reservationIndex, req.body.diagnosis);
+
+        res.status(200).json({
+            success: true,
+            result,
+            message: 'commentOnReservation succeeded'
+        });
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: 'commentOnReservation failed'
+        });
+    }
+}
+
+async function getCommentOnReservation(req: express.Request, res: express.Response) {
+    try {
+        const result = await hospitalManagementService.getCommentOnReservation(req.params.reservationIndex);
+
+        res.status(200).json({
+            success: true,
+            result,
+            message: 'getCommentOnReservation succeeded'
+        });
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: 'getCommentOnReservation failed'
+        });
+    }
+}
+
+async function getPatientMedicalHistory(req: express.Request, res: express.Response) {
+    try {
+        const { hpid } = auth(req);
+        const userIndex = req.params.userIndex;
+        const result = await hospitalManagementService.getPatientMedicalHistory(hpid, userIndex);
+
+        res.status(200).json({
+            success: true,
+            result,
+            message: 'getPatientMedicalHistory succeeded'
+        });
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: 'getPatientMedicalHistory failed'
+        });
     }
 }
 
@@ -24,7 +86,7 @@ async function getWaitingReservations(req: express.Request, res: express.Respons
             success: true,
             result,
             message: 'getWaitingReservations succeeded'
-        })
+        });
     } catch (err) {
         console.error(err);
 
