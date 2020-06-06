@@ -63,7 +63,7 @@ export default class Reservation extends Model<Reservation>{
     comment: string;
 
     @Comment('진단서')
-    @Column
+    @Column(DataType.TEXT)
     diagnosis: string;
 
     @Comment('예약현황: PENDING -> (병원에서 예약 수락 후) ACCEPTED, 거절하면 REFUSED, 예약 시간이 지나면 TIMEOUT')
