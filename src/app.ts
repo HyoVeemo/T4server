@@ -4,6 +4,7 @@ import express from "express";
 import Db from './db';
 import { Client } from '@elastic/elasticsearch';
 import cors from 'cors';
+import forceSSL from 'express-force-ssl';
 import { signRoute } from "./router/sign.route";
 import { hospitalRoute } from "./router/hospital.route";
 import { reviewRoute } from './router/review.route';
@@ -30,8 +31,6 @@ export class Server {
     this.app.locals.secret = configInfo.secret;
     this.app.locals.senderEmail = configInfo.senderEmail;
     this.app.locals.senderPw = configInfo.senderPw;
-    this.app.locals.APP_ID = configInfo.APP_ID;
-    this.app.locals.API_KEY = configInfo.API_KEY;
 
     this.client = new Client({ node: configInfo.ELASTIC_CLIENT });
     this.app.locals.client = this.client;
@@ -48,10 +47,11 @@ export class Server {
   }
 
   private initMiddlewares() {
-    this.app.use(cors());
+    this.app.use(cors()); // cors 미들웨어 추가
     this.app.use(logger('dev'));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
+    this.app.use('/',express.static('public'));
   }
 
   private setRouter() {

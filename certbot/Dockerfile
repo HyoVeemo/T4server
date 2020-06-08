@@ -13,6 +13,8 @@ RUN wget https://dl.eff.org/certbot-auto
 RUN chmod a+x ./certbot-auto
 # Run certbot-auto so that it installs itself
 RUN /scripts/certbot-auto -n certificates
+RUN echo "22 03 * * 2,7 root /scripts/certbot-auto renew" >/etc/cron.d/certbot
+
 
 # /webroots/DOMAIN.TLD/.well-known/... files go here
 VOLUME /webroots
