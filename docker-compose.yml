@@ -5,7 +5,7 @@ services:
     build: .
     container_name: app
     ports:
-      - "80:8001"
+      - "8001:8001"
       - "443:443"
     restart: always
     volumes:
@@ -20,9 +20,15 @@ services:
     volumes:
       - certbot-webroot-ppodeum:/webroots/ppodeum.site/.well-known
       - certbot-letsencrypt:/etc/letsencrypt
+  
+  manager:
+    build: ./hospitalAdmin
+    container_name: manager
+    restart: always
+    ports:
+      - "3000:3000"
+    stdin_open: true
 
 volumes:
   certbot-webroot-ppodeum:
   certbot-letsencrypt:
-~
-~
