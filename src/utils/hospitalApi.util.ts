@@ -11,7 +11,7 @@ export async function hospitalAPI() {
     const queryString1: string = `?Q0=${encodeURIComponent(
       "서울특별시"
     )}&Q1=${encodeURIComponent(
-      "성북구"
+      "마포구"
     )}&pageNo=1&numOfRows=1000&ServiceKey=${SERVICE_KEY}`;
     const requestUrl1: string = host1 + queryString1;
     const result1 = await request.get(requestUrl1);
@@ -23,6 +23,7 @@ export async function hospitalAPI() {
     const hospitalArr = jsonObj.response.body.items.item;
     const keys = Object.keys(hospitalArr); // 병원 개수
     let hospitalList;
+
     for (const key in keys) {
       const queryString2: string = `?HPID=${hospitalArr[key].hpid._text}&ServiceKey=${SERVICE_KEY}`;
       const requestUrl2: string = host2 + queryString2;

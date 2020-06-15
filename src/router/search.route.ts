@@ -17,9 +17,7 @@ async function storeHospital(req, res) {
     const SERVICE_KEY: string = 'I2F%2B1Oce6drCgGSm33cvy%2F3uLnHQ4BY46ALKDYUbKqPqslTOBJTUzx1yH%2FPt%2FsnttC0mZeVuTudJWDJ70xLCnw%3D%3D';
     const queryString: string = `?Q0=${encodeURIComponent(
         "서울특별시"
-    )}&Q1=${encodeURIComponent(
-        "성북구"
-    )}&pageNo=1&numOfRows=1000&ServiceKey=${SERVICE_KEY}`;
+    )}&pageNo=1&numOfRows=20000&ServiceKey=${SERVICE_KEY}`;
     const requestUrl: string = host + queryString;
     const result = await request.get(requestUrl); // <- 요청 보냄
     const xmlToJson = convert.xml2json(result, {
