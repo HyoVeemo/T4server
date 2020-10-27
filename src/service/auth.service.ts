@@ -81,7 +81,7 @@ class AuthService {
         // 옵션
         let url = `http://${host}/verifyEmail?key=${encodeURIComponent(keyForVerify)}&email=${receiverEmail}`;
         let mailOpt = {
-            from: "leemagnon@gmail.com",
+            from: senderEmail,
             to: receiverEmail,
             subject: "가입 인증을 진행해주세요.",
             html: `<b>뽀듬 서비스를 이용해 주셔서 감사합니다.</b><br> 

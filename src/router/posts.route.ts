@@ -18,7 +18,6 @@ async function createPosts(req: express.Request, res: express.Response) {
         let hashtags;
         hashtags = req.body.hashtag.split(',')
 
-        //elastic search에 저장
         const client = req.app.locals.client;
         const result = await client.index({
             index: 'posts',
